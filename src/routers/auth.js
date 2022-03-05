@@ -19,8 +19,8 @@ router.get("/auth/logout", (req, res) => {
     console.log('req.user', req.user)
     if (req.user) {
         req.logout();
-        res.send("done");
     }
+    res.send("done");
 })
 
 module.exports = router;
