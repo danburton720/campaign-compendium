@@ -27,9 +27,9 @@ const Login = () => {
 
 
     const googleLogin = () => {
-        console.log('opening URL', API.auth.google)
-        window.open(API.auth.google, "_self");
-    }
+        console.log('opening URL', API.auth.google);
+        window.open(API.auth.google, '_self');
+    };
 
     return (
         <>
@@ -37,7 +37,7 @@ const Login = () => {
             <Button
                 variant="contained"
                 onClick={googleLogin}
-                startIcon={<GoogleIcon />}
+                startIcon={<GoogleIcon/>}
             >
                 Login with Google
             </Button>

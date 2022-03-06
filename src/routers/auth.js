@@ -2,8 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = new express.Router();
 
-// TODO add production env here when known
-const redirect = process.env.NODE_ENV === "production" ? "ADD_THIS_WHEN_KNOWN" : "http://localhost:3000";
+const redirect = process.env.CLIENT;
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

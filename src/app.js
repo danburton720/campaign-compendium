@@ -11,14 +11,11 @@ const userRouter = require('./routers/user');
 
 const app = express();
 
-// TODO add production origin too when known
-const origins = [
-    "http://localhost:3000"
-];
+const origin = process.env.CLIENT
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: origins, credentials: true }));
+app.use(cors({ origin, credentials: true }));
 
 const sessionOpts = {
     secret: "secretcode",

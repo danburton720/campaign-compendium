@@ -14,12 +14,12 @@ const Campaigns = () => {
 
     const handleLogout = () => {
         axios.get(API.auth.logout, { withCredentials: true }).then(res => {
-            if (res.data === "done") {
-                dispatch(clearAllStorage())
+            if (res.data === 'done') {
+                dispatch(clearAllStorage());
                 navigate('/login');
             }
         });
-    }
+    };
 
     return (
         <>

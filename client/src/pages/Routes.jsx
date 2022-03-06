@@ -12,7 +12,7 @@ const Routes = () => {
         const currentUser = useSelector((state) => state.auth?.currentUser);
 
         if (isEmpty(currentUser)) {
-            return <Navigate to={ROUTES.LOGIN} />;
+            return <Navigate to={ROUTES.LOGIN}/>;
         }
 
         return children;
@@ -21,10 +21,10 @@ const Routes = () => {
     return (
         <BrowserRouter>
             <SwitchRoutes>
-                <Route path={ROUTES.LOGIN} element={<Login />} />
-                <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns /></RequireAuth>} />
+                <Route path={ROUTES.LOGIN} element={<Login/>}/>
+                <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
 
-                <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS} />} />
+                <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>
             </SwitchRoutes>
         </BrowserRouter>
     );
