@@ -27,7 +27,6 @@ const Login = () => {
 
 
     const googleLogin = () => {
-        console.log('opening URL', API.auth.google);
         window.open(API.auth.google, '_self');
     };
 

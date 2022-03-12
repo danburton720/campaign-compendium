@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes as SwitchRoutes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { isEmpty } from 'ramda';
 
 import { ROUTES } from '../constants';
 import Campaigns from './Campaigns';
-import { useSelector } from 'react-redux';
 import Login from './Login';
-import { isEmpty } from 'ramda';
 
 const Routes = () => {
     const RequireAuth = ({ children }) => {
