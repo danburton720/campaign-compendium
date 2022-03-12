@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import axios from 'axios';
 
 import { API } from '../config/api';
@@ -23,7 +23,7 @@ const Campaigns = () => {
 
     return (
         <>
-            <div>Campaigns page</div>
+            <Typography variant="h1">Campaigns page</Typography>
             <Button
                 variant="contained"
                 onClick={handleLogout}
