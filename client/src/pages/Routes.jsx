@@ -24,7 +24,7 @@ const Routes = () => {
                 <Route path={ROUTES.LOGIN} element={<Login/>}/>
                 <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
 
-                <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>
+                {/*<Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>*/}
             </SwitchRoutes>
         </BrowserRouter>
     );
