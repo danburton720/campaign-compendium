@@ -4,7 +4,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
 const session = require('express-session');
 const User = require('./models/user');
-const path = require('path');
 require('./db/mongoose');
 
 const authRouter = require('./routers/auth');
@@ -15,7 +14,6 @@ const app = express();
 const origin = process.env.CLIENT
 
 // Middleware
-app.use(express.static(path.resolve(__dirname, "./client/build")));
 app.use(express.json());
 app.use(cors({ origin, credentials: true }));
 
