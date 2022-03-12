@@ -4,6 +4,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
 const session = require('express-session');
 const User = require('./models/user');
+const path = require('path');
 require('./db/mongoose');
 
 const authRouter = require('./routers/auth');
@@ -81,6 +82,14 @@ passport.use(new GoogleStrategy({
             done('There was a problem logging you in. Try again later.', null);
         }
     }));
+
+if(process.env.NODE_ENV === "production"){
+    app.use(express.static("./client/build"));
+    const path = require("path");
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
 
 app.use(authRouter);
 app.use(userRouter);
