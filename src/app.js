@@ -4,6 +4,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
 const session = require('express-session');
 const User = require('./models/user');
+const path = require('path');
 require('./db/mongoose');
 
 const authRouter = require('./routers/auth');
@@ -85,5 +86,12 @@ passport.use(new GoogleStrategy({
 app.use(authRouter);
 app.use(userRouter);
 
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'front_end', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'front_end', 'build', 'index.html'))
+    });
+}
 
 module.exports = app;
