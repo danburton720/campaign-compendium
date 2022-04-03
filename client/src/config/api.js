@@ -8,5 +8,8 @@ export const API = {
     },
     user: {
         user: `${API_ROOT}/user`
+    },
+    campaigns: {
+        campaigns: `${API_ROOT}/campaigns`
     }
 };

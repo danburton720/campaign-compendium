@@ -17,12 +17,12 @@ const PageWrapper = () => {
                     paddingLeft: '2rem',
                     paddingRight: '2rem',
                     paddingBottom: '2rem',
-                    height: '100vh',
                     backgroundImage: `url(${backgroundImage})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundAttachment: 'fixed',
                     backgroundPosition: 'center',
+                    // height: '100vh',
                 }}
             >
                 <Box sx={{ position: 'absolute', top: '2rem', right: '2rem'}}><AccountMenu /></Box>

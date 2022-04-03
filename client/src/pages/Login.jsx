@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { isEmpty } from 'ramda';
 
@@ -10,6 +10,7 @@ import { API } from '../config/api';
 import { getCurrentUser } from '../actions/authActions';
 import { ROUTES } from '../constants';
 import CustomButton from '../components/UI/CustomButton';
+import { extraPalette } from '../themes/mui';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -46,8 +47,8 @@ const Login = () => {
         >
             <Box height='100%' width='100%' display='flex' flexDirection='column' alignItems='center'>
                 <Box display="flex" flexDirection="column" alignItems='center' gap={2} marginTop='25vh' marginBottom='9vh'>
-                    <Typography variant="h1" color="textSecondary">Welcome, adventurer</Typography>
-                    <Typography variant="subtitle1" color="textSecondary" sx={{ textAlign: 'center'}}>Welcome to <strong>Campaign Compendium</strong>. Please login with your Google account to get started</Typography>
+                    <Typography variant="h1" sx={{ color: extraPalette.WHITE }}>Welcome, adventurer</Typography>
+                    <Typography variant="subtitle1" sx={{ textAlign: 'center', color: extraPalette.WHITE }}>Welcome to <strong>Campaign Compendium</strong>. Please login with your Google account to get started</Typography>
                 </Box>
                 <CustomButton
                     onClick={googleLogin}

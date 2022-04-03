@@ -5,7 +5,6 @@ import { extraPalette } from '../../themes/mui';
 const CustomButton = ({ children, ...props }) => {
     return (
         <Button
-            // size="large"
             {...props}
             sx={{
                 ...props.sx,
