@@ -20,7 +20,7 @@ const Campaigns = () => {
     }
 
     return (
-        <>
+        <Box height='calc(100vh - 5rem - 2rem)'>
             <Typography variant="h1" sx={{ fontWeight: 400, color: extraPalette.WHITE }}>Hello, <strong>{currentUser.firstName}</strong></Typography>
             <Box display="flex" flexDirection="column" marginTop='2rem'>
                 <Typography variant="h3" sx={{ marginBottom: '1rem', color: extraPalette.WHITE }}>My campaigns</Typography>
@@ -37,7 +37,7 @@ const Campaigns = () => {
                     </CardContent>
                 </Card>
             </Box>
-        </>
+        </Box>
     );
 };
 

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Chip, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, Chip, TextField, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import isEmail from 'validator/lib/isEmail';
+import axios from 'axios';
 
 import { extraPalette } from '../themes/mui';
 import { ROUTES } from '../constants';
+import { API } from '../config/api';
 
 const CreateCampaign = () => {
     const navigate = useNavigate();
@@ -24,8 +26,23 @@ const CreateCampaign = () => {
         setInvitedPlayers(invitedPlayers.filter(player => player !== playerToRemove));
     }
 
+    const handleCreateCampaign = async () => {
+        try {
+            await axios.post(API.campaigns.campaigns, {
+                name,
+                description,
+                invitedUsers: invitedPlayers
+            }, { withCredentials: true });
+            console.log('post successful')
+            console.log('send a notification')
+            navigate(ROUTES.CAMPAIGNS);
+        } catch (err) {
+            console.log('send a notification that the post was unsuccessful')
+        }
+    }
+
     return (
-        <Box height='100vh'>
+        <Box height='100%'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
@@ -70,7 +87,8 @@ const CreateCampaign = () => {
                 <Card>
                     <CardContent sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                         <Box display="flex" flexDirection="column" width="100%" maxWidth="340px">
-                            <Typography variant="h4">Add players</Typography>
+                            <Typography variant="h4">Add players <span style={{ fontWeight: 400, color: extraPalette.GREY6 }}>(or skip for now)</span></Typography>
+                            <Alert severity="info" sx={{ marginTop: '1rem' }}>The user must already exist in the system to gain access</Alert>
                             <TextField
                                 id='email-address'
                                 label='Email address'
@@ -91,14 +109,22 @@ const CreateCampaign = () => {
                         </Box>
                         <Box display="flex" flexDirection="column" flex={1}>
                             <Typography variant="h4">Players to be invited</Typography>
-                            <Box width='100%' display="flex" flexWrap='wrap' gap={2} sx={{ marginTop: '1rem' }}>
-                                {invitedPlayers.map((player, key) => (
+                            <Box width='100%' height='100%' display="flex" flexWrap='wrap' gap={2} sx={{marginTop: '1rem'}}>
+                                {invitedPlayers.length > 0 ? invitedPlayers.map((player, key) => (
                                     <Chip color="primary" key={key} label={player} onDelete={() => handleRemovePlayer(player)} />
-                                ))}
+                                )) : <Alert severity="info" sx={{ height: '100%', width: '100%' }}>No players have been added, try adding one!</Alert>}
                             </Box>
                         </Box>
                     </CardContent>
                 </Card>
+                <Button
+                    variant="contained"
+                    sx={{ marginBottom: '2rem', justifySelf: 'flex-start', width: '100%', maxWidth: '340px' }}
+                    disabled={!name || !description}
+                    onClick={() => handleCreateCampaign()}
+                >
+                    Create campaign
+                </Button>
             </Box>
         </Box>
     )

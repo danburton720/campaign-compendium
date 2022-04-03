@@ -32,7 +32,6 @@ export function getCurrentUser() {
         dispatch(setCurrentUserPending(true));
         try {
             const response = await axios.get(API.user.user, { withCredentials: true });
-            console.log('response', response);
             if (response.data) {
                 dispatch(setCurrentUser(response.data));
                 dispatch(setCurrentUserPending(false));
