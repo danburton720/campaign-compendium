@@ -9,6 +9,7 @@ require('./db/mongoose');
 
 const authRouter = require('./routers/auth');
 const userRouter = require('./routers/user');
+const campaignRouter = require('./routers/campaign');
 
 const app = express();
 
@@ -90,6 +91,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(authRouter);
 app.use(userRouter);
+app.use(campaignRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{

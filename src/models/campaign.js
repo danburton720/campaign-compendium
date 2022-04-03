@@ -10,7 +10,7 @@ const CampaignSchema = new mongoose.Schema({
         required: true
     },
     createdBy: {
-        type: monggoose.Schema.Types.ObjectId, ref: 'User',
+        type: mongoose.Schema.Types.ObjectId, ref: 'User',
         required: true
     }
 });
