@@ -17,7 +17,6 @@ const PageWrapper = () => {
                     paddingLeft: '2rem',
                     paddingRight: '2rem',
                     paddingBottom: '2rem',
-                    height: '100vh',
                     backgroundImage: `url(${backgroundImage})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',

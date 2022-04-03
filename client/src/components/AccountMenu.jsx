@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
     Avatar,
     Box,
@@ -12,12 +13,12 @@ import {
     Typography
 } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { API } from '../config/api';
 import { clearAllStorage } from '../actions/rootActions';
 import { useTheme } from '@mui/material/styles';
+import { ROUTES } from '../constants';
 
 const AccountMenu = () => {
     const theme = useTheme();
@@ -45,7 +46,7 @@ const AccountMenu = () => {
         axios.get(API.auth.logout, { withCredentials: true }).then(res => {
             if (res.data === 'done') {
                 dispatch(clearAllStorage());
-                navigate('/login');
+                navigate(ROUTES.LOGIN);
             }
         });
     };

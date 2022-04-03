@@ -65,7 +65,7 @@ export const mui_theme = {
         },
         text: {
             primary: extraPalette.BLACK,
-            secondary: extraPalette.WHITE
+            secondary: extraPalette.GREY5
         },
         background: {
             default: extraPalette.GREY1
@@ -95,10 +95,10 @@ export const mui_theme = {
             // letterSpacing: '1.14px',
             lineHeight: '26px'
         },
-        // table header
+        // headline 4
         h4: {
-            fontWeight: 700,
-            fontSize: '13px',
+            fontWeight: 600,
+            fontSize: '16px',
             letterSpacing: 0,
             lineHeight: '16px',
         },

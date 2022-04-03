@@ -7,6 +7,7 @@ import { ROUTES } from '../constants';
 import Campaigns from './Campaigns';
 import Login from './Login';
 import PageWrapper from './PageWrapper';
+import CreateCampaign from './CreateCampaign';
 
 const Routes = () => {
     const RequireAuth = ({ children }) => {
@@ -26,6 +27,7 @@ const Routes = () => {
                 <Route path="/" element={<PageWrapper />}>
                   <Route index element={<Navigate to={ROUTES.CAMPAIGNS} />} />
                   <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
+                  <Route path={ROUTES.CREATE_CAMPAIGN} element={<RequireAuth><CreateCampaign /></RequireAuth>}/>
                 </Route>
                 <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>
             </SwitchRoutes>
