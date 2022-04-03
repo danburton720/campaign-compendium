@@ -6,6 +6,7 @@ import { isEmpty } from 'ramda';
 import { ROUTES } from '../constants';
 import Campaigns from './Campaigns';
 import Login from './Login';
+import PageWrapper from './PageWrapper';
 
 const Routes = () => {
     const RequireAuth = ({ children }) => {
@@ -22,8 +23,10 @@ const Routes = () => {
         <BrowserRouter>
             <SwitchRoutes>
                 <Route path={ROUTES.LOGIN} element={<Login/>}/>
-                <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
-
+                <Route path="/" element={<PageWrapper />}>
+                  <Route index element={<Navigate to={ROUTES.CAMPAIGNS} />} />
+                  <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
+                </Route>
                 <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>
             </SwitchRoutes>
         </BrowserRouter>

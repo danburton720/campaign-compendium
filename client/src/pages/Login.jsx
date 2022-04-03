@@ -46,8 +46,8 @@ const Login = () => {
         >
             <Box height='100%' width='100%' display='flex' flexDirection='column' alignItems='center'>
                 <Box display="flex" flexDirection="column" alignItems='center' gap={2} marginTop='25vh' marginBottom='9vh'>
-                    <Typography variant="h1">Welcome, adventurer</Typography>
-                    <Typography variant="subtitle1" sx={{ textAlign: 'center'}}>Welcome to <strong>Campaign Compendium</strong>. Please login with your Google account to get started</Typography>
+                    <Typography variant="h1" color="textSecondary">Welcome, adventurer</Typography>
+                    <Typography variant="subtitle1" color="textSecondary" sx={{ textAlign: 'center'}}>Welcome to <strong>Campaign Compendium</strong>. Please login with your Google account to get started</Typography>
                 </Box>
                 <CustomButton
                     onClick={googleLogin}
