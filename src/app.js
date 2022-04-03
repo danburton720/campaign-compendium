@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
-const session = require('express-session');
+const session = require('cookie-session');
 const User = require('./models/user');
 const path = require('path');
 require('./db/mongoose');
@@ -12,7 +12,7 @@ const userRouter = require('./routers/user');
 
 const app = express();
 
-const origin = process.env.CLIENT
+const origin = process.env.CLIENT;
 
 // Middleware
 app.use(express.json());

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import axios from 'axios';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 import Routes from './pages/Routes';
 import configureStore from './config/store';
 import { loadState, saveState } from './config/localStorage';
 import { logout } from './actions/authActions';
+import { mui_theme } from './themes/mui';
+import SnackbarProvider from './utils/snackbar';
 
 const persistedState = loadState();
 
@@ -29,9 +32,16 @@ axios.interceptors.response.use(response => {
 );
 
 const App = () => {
+    const theme = createTheme(mui_theme);
+
     return (
         <Provider store={store}>
-            <Routes/>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SnackbarProvider>
+                    <Routes/>
+                </SnackbarProvider>
+            </ThemeProvider>
         </Provider>
     );
 };
