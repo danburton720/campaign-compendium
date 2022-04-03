@@ -49,7 +49,7 @@ export const extraShadows = {
 export const mui_theme = {
     palette: {
         primary: {
-            main: '#32a8ae',
+            main: '#0D7288',
         },
         success: {
             main: '#31B886',
@@ -64,8 +64,8 @@ export const mui_theme = {
             main: '#FF9800'
         },
         text: {
-            primary: extraPalette.WHITE,
-            secondary: extraPalette.BLACK
+            primary: extraPalette.BLACK,
+            secondary: extraPalette.WHITE
         },
         background: {
             default: extraPalette.GREY1
@@ -83,9 +83,9 @@ export const mui_theme = {
         },
         // Headline 2
         h2: {
-            fontWeight: 900, // black/heavy
-            fontSize: '32px',
-            letterSpacing: '1.54px',
+            fontWeight: 500, // medium
+            fontSize: '24px',
+            // letterSpacing: '1.54px',
             lineHeight: '36px'
         },
         // Headline 3

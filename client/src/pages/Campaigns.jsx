@@ -1,35 +1,22 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button, Typography } from '@mui/material';
-import axios from 'axios';
-
-import { API } from '../config/api';
-import { clearAllStorage } from '../actions/rootActions';
-
+import { useSelector } from 'react-redux';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 const Campaigns = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const currentUser = useSelector(state => state.auth.currentUser);
+    const currentUserPending = useSelector(state => state.auth.currentUserPending);
 
-    const handleLogout = () => {
-        axios.get(API.auth.logout, { withCredentials: true }).then(res => {
-            if (res.data === 'done') {
-                dispatch(clearAllStorage());
-                navigate('/login');
-            }
-        });
-    };
+    if (currentUserPending) {
+        return (
+            <Box display='flex' width='100%' height='100vh'>
+                <CircularProgress />
+            </Box>
+        )
+    }
 
     return (
         <>
-            <Typography variant="h1">Campaigns page</Typography>
-            <Button
-                variant="contained"
-                onClick={handleLogout}
-            >
-                Logout
-            </Button>
+            <Typography variant="h1" color="textSecondary" sx={{ fontWeight: 400 }}>Hello, <strong>{currentUser.firstName}</strong></Typography>
         </>
     );
 };
