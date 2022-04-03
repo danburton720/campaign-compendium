@@ -37,7 +37,7 @@ const Campaigns = () => {
                 <Typography variant="h3" sx={{ marginBottom: '1rem', color: extraPalette.WHITE }}>My campaigns</Typography>
                 <Box display="flex" flexWrap='wrap' gap={3}>
                     {createdCampaigns.map(campaign => (
-                        <Card key={campaign.id} sx={{ height: '300px', width: '350px' }}>
+                        <Card key={campaign._id} sx={{ height: '300px', width: '350px' }}>
                             <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
                                 <Box height='100%' display='flex' flexDirection='column'>
                                     <Typography variant="h3">{campaign.name}</Typography>
@@ -76,7 +76,7 @@ const Campaigns = () => {
                 <Typography variant="h3" sx={{ marginBottom: '1rem', marginTop: '2rem', color: extraPalette.WHITE }}>Campaigns I'm playing</Typography>
                 <Box display="flex" flexWrap='wrap' gap={3}>
                     {playerCampaigns.map(campaign => (
-                        <Card key={campaign.id} sx={{ height: '300px', width: '350px' }}>
+                        <Card key={campaign._id} sx={{ height: '300px', width: '350px' }}>
                             <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
                                 <Box height='100%' display='flex' flexDirection='column'>
                                     <Typography variant="h3">{campaign.name}</Typography>
@@ -110,7 +110,7 @@ const Campaigns = () => {
                 <Typography variant="h3" sx={{ marginBottom: '1rem', marginTop: '2rem', color: extraPalette.WHITE }}>Campaigns I'm invited to</Typography>
                 <Box display="flex" flexWrap='wrap' gap={3}>
                     {playerCampaigns.map(campaign => (
-                        <Card key={campaign.id} sx={{ height: '300px', width: '350px' }}>
+                        <Card key={campaign._id} sx={{ height: '300px', width: '350px' }}>
                             <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
                                 <Box height='100%' display='flex' flexDirection='column'>
                                     <Typography variant="h3">{campaign.name}</Typography>

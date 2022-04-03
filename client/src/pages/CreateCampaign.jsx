@@ -46,7 +46,7 @@ const CreateCampaign = () => {
     }, [])
 
     return (
-        <Box height='100%'>
+        <Box minHeight='calc(100vh - 5rem - 2rem)'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
