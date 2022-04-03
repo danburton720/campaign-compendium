@@ -84,15 +84,15 @@ export const mui_theme = {
         // Headline 2
         h2: {
             fontWeight: 500, // medium
-            fontSize: '24px',
+            fontSize: '28px',
             // letterSpacing: '1.54px',
             lineHeight: '36px'
         },
         // Headline 3
         h3: {
-            fontWeight: 900, // black/heavy
-            fontSize: '26px',
-            letterSpacing: '1.14px',
+            fontWeight: 400, // regular
+            fontSize: '20px',
+            // letterSpacing: '1.14px',
             lineHeight: '26px'
         },
         // table header
@@ -150,12 +150,12 @@ export const mui_theme = {
             lineHeight: '24px',
         },
         // Button
-        button: {
-            fontWeight: 700, // bold (can be medium 500)
-            fontSize: '16px',
-            letterSpacing: '0.38px',
-            lineHeight: '24px',
-        },
+        // button: {
+        //     fontWeight: 700, // bold (can be medium 500)
+        //     fontSize: '16px',
+        //     letterSpacing: '0.38px',
+        //     lineHeight: '24px',
+        // },
         // Micro text
         caption: {
             fontWeight: 500, // medium
