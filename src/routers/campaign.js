@@ -69,12 +69,42 @@ router.get("/campaigns/player", async (req, res) => {
     if (req.user) {
         // get all campaigns the user is a player in
         const campaigns = [];
-        const characters = await Character.find({ 'userId': req.user._id });
+        const characters = await Character.find({ 'userId': req.user._id }).lean();
         for (const character of characters) {
-            const campaign = await Campaign.findOne({ '_id': character.campaignId });
+            const campaign = await Campaign.findById(character.campaignId).lean();
+            campaign.character = character;
             campaigns.push(campaign);
         }
         res.status(200).send(campaigns)
+    } else {
+        res.status(401).send({});
+    }
+});
+
+router.get("/campaigns/:id", async (req, res) => {
+    if (req.user) {
+        const _id = req.params.id;
+        try {
+            const campaign = await Campaign.findById(_id).lean();
+            if (!campaign) return res.status(404).send();
+            // we've found a campaign so we need to get associated player and character info
+            // first get all characters in this campaign
+            const newCampaign = campaign;
+            const characters = await Character.find({ 'campaignId': _id }).lean();
+            if (characters) {
+                // we have characters so we need to get the user to whom each of these characters belongs
+                const charactersAndUsers = [];
+                for (const character of characters) {
+                    const user = await User.findById(character.userId, '_id displayName firstName lastName image').lean();
+                    // if we found a user (we should) then include the character and user info
+                    if (user) charactersAndUsers.push({ ...character, user });
+                }
+                newCampaign.characters = charactersAndUsers;
+            }
+            res.send(newCampaign);
+        } catch (e) {
+            res.status(500).send();
+        }
     } else {
         res.status(401).send({});
     }
