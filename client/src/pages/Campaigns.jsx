@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 
 import { ROUTES } from '../constants';
 import { extraPalette } from '../themes/mui';
@@ -129,16 +129,7 @@ const Campaigns = () => {
                         </Card>
                     ))}
                     {playerCampaigns.length === 0 &&
-                    <Card sx={{ height: '100px', width: '350px' }}>
-                        <CardContent sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%',
-                            justifyContent: 'space-between'
-                        }}>
-                            <Typography>Not playing any campaigns :(</Typography>
-                        </CardContent>
-                    </Card>
+                        <Alert severity="info" sx={{ width: '100%' }}>Looks like you aren't playing in any campaigns right now</Alert>
                     }
                 </Box>
 
@@ -174,16 +165,7 @@ const Campaigns = () => {
                         </Card>
                     ))}
                     {invitedCampaigns.length === 0 &&
-                    <Card sx={{ height: '100px', width: '350px' }}>
-                        <CardContent sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%',
-                            justifyContent: 'space-between'
-                        }}>
-                            <Typography>Not invited to any campaigns :(</Typography>
-                        </CardContent>
-                    </Card>
+                        <Alert severity="info" sx={{ width: '100%' }}>Looks like you haven't been invited to join any campaigns</Alert>
                     }
                 </Box>
             </Box>

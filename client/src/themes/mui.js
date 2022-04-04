@@ -55,7 +55,7 @@ export const mui_theme = {
             main: '#31B886',
         },
         info: {
-            main: '#03A9F4'
+            main: '#00A098'
         },
         error: {
             main: '#9b0a11'
