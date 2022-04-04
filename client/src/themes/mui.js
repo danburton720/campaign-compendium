@@ -146,7 +146,7 @@ export const mui_theme = {
         body2: {
             fontWeight: 400, // regular
             fontSize: '16px',
-            letterSpacing: '-0.24px',
+            // letterSpacing: '-0.24px',
             lineHeight: '24px',
         },
         // Button

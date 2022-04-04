@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Box, Button, Card, CardContent, Chip, TextField, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -41,8 +41,12 @@ const CreateCampaign = () => {
         }
     }
 
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
     return (
-        <Box height='100%'>
+        <Box minHeight='calc(100vh - 5rem - 2rem)'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
