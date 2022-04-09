@@ -8,5 +8,14 @@ export const API = {
     },
     user: {
         user: `${API_ROOT}/user`
+    },
+    campaigns: {
+        campaigns: `${API_ROOT}/campaigns`,
+        created: `${API_ROOT}/campaigns/created`,
+        player: `${API_ROOT}/campaigns/player`,
+        campaign: `${API_ROOT}/campaigns/{campaignId}`
+    },
+    characters: {
+        character: `${API_ROOT}/characters/{characterId}`
     }
 };

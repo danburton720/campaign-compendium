@@ -2,17 +2,19 @@ const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
-const session = require('express-session');
+const session = require('cookie-session');
 const User = require('./models/user');
 const path = require('path');
 require('./db/mongoose');
 
 const authRouter = require('./routers/auth');
 const userRouter = require('./routers/user');
+const campaignRouter = require('./routers/campaign');
+const characterRouter = require('./routers/character');
 
 const app = express();
 
-const origin = process.env.CLIENT
+const origin = process.env.CLIENT;
 
 // Middleware
 app.use(express.json());
@@ -90,6 +92,8 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(authRouter);
 app.use(userRouter);
+app.use(campaignRouter);
+app.use(characterRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{
