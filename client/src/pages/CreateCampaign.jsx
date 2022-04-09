@@ -43,7 +43,7 @@ const CreateCampaign = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0)
-    }, [])
+    }, []);
 
     return (
         <Box minHeight='calc(100vh - 5rem - 2rem)'>

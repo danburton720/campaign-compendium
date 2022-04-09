@@ -138,7 +138,7 @@ export const mui_theme = {
         // Paragraphs
         body1: {
             fontWeight: 400, // regular (can be medium 500 or bold 700)
-            fontSize: '18px',
+            fontSize: '16px',
             // letterSpacing: '-0.27px',
             lineHeight: '24px'
         },

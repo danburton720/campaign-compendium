@@ -73,7 +73,15 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Continue campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        justifySelf: 'flex-end'
+                                    }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Continue campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
@@ -124,7 +132,15 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Continue campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        justifySelf: 'flex-end'
+                                    }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Continue campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}

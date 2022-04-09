@@ -8,6 +8,7 @@ import Campaigns from './Campaigns';
 import Login from './Login';
 import PageWrapper from './PageWrapper';
 import CreateCampaign from './CreateCampaign';
+import ViewCampaign from './ViewCampaign';
 
 const Routes = () => {
     const RequireAuth = ({ children }) => {
@@ -28,6 +29,7 @@ const Routes = () => {
                   <Route index element={<Navigate to={ROUTES.CAMPAIGNS} />} />
                   <Route path={ROUTES.CAMPAIGNS} element={<RequireAuth><Campaigns/></RequireAuth>}/>
                   <Route path={ROUTES.CREATE_CAMPAIGN} element={<RequireAuth><CreateCampaign /></RequireAuth>}/>
+                  <Route path={ROUTES.VIEW_CAMPAIGN} element={<RequireAuth><ViewCampaign /></RequireAuth>}/>
                 </Route>
                 <Route path="*" element={<Navigate to={ROUTES.CAMPAIGNS}/>}/>
             </SwitchRoutes>
