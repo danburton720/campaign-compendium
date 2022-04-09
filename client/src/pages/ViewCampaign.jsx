@@ -8,6 +8,7 @@ import { ROUTES } from '../constants';
 import { extraPalette } from '../themes/mui';
 import { getCampaign } from '../actions/campaignActions';
 import { usePrevious } from '../hooks/usePrevious';
+import PlayerCard from '../components/PlayerCard';
 
 const ViewCampaign = () => {
     const campaignPending = useSelector(state => state.campaigns.campaignPending);
@@ -21,14 +22,16 @@ const ViewCampaign = () => {
 
     const dispatch = useDispatch();
 
+    // TODO if the logged in user is a player in the campaign, render a card containing their character information
+
     const getPlayers = () => {
         if (campaignData && campaignData.characters && campaignData.characters.length > 0) {
+            // TODO if the logged in user is the creator, show them player cards with actions and user info
+            // TODO if the logged in user is a player in the campaign, render a card with the other characters in the campaign
             return (
-                <Box>
+                <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
                     {campaignData.characters.map(character => (
-                        <Box>
-                            {character.name}
-                        </Box>
+                        <PlayerCard player={character} />
                     ))}
                 </Box>
             )
@@ -85,6 +88,7 @@ const ViewCampaign = () => {
                     <Typography sx={{ marginBottom: '2rem', color: extraPalette.WHITE }}>{campaignData.description}</Typography>
                 </Box>
             }
+            <Typography variant="h3" sx={{ marginBottom: '1rem', color: extraPalette.WHITE }}>Players</Typography>
             {getPlayers()}
         </Box>
     )

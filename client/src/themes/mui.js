@@ -130,10 +130,10 @@ export const mui_theme = {
         // },
         // Smaller text
         subtitle2: {
-            fontWeight: 400, // regular (can be bold 700)
-            fontSize: '14px',
+            fontWeight: 500, // regular (can be bold 700)
+            fontSize: '12px',
             // letterSpacing: '-0.21px',
-            lineHeight: '18px',
+            // lineHeight: '18px',
         },
         // Paragraphs
         body1: {

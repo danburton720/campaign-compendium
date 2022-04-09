@@ -145,7 +145,7 @@ const Campaigns = () => {
                         </Card>
                     ))}
                     {playerCampaigns.length === 0 &&
-                        <Alert severity="info" sx={{ width: '100%' }}>Looks like you aren't playing in any campaigns right now</Alert>
+                        <Alert severity="info">Looks like you aren't playing in any campaigns right now</Alert>
                     }
                 </Box>
 
@@ -181,7 +181,7 @@ const Campaigns = () => {
                         </Card>
                     ))}
                     {invitedCampaigns.length === 0 &&
-                        <Alert severity="info" sx={{ width: '100%' }}>Looks like you haven't been invited to join any campaigns</Alert>
+                        <Alert severity="info">Looks like you haven't been invited to join any campaigns</Alert>
                     }
                 </Box>
             </Box>

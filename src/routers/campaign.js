@@ -95,7 +95,7 @@ router.get("/campaigns/:id", async (req, res) => {
                 // we have characters so we need to get the user to whom each of these characters belongs
                 const charactersAndUsers = [];
                 for (const character of characters) {
-                    const user = await User.findById(character.userId, '_id displayName firstName lastName image').lean();
+                    const user = await User.findById(character.userId, '_id displayName firstName lastName email image').lean();
                     // if we found a user (we should) then include the character and user info
                     if (user) charactersAndUsers.push({ ...character, user });
                 }
