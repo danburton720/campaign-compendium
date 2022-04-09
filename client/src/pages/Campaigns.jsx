@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 
 import { ROUTES } from '../constants';
 import { extraPalette } from '../themes/mui';
@@ -73,7 +73,15 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Continue campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        justifySelf: 'flex-end'
+                                    }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Continue campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
@@ -124,21 +132,20 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Continue campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        justifySelf: 'flex-end'
+                                    }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Continue campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
                     {playerCampaigns.length === 0 &&
-                    <Card sx={{ height: '100px', width: '350px' }}>
-                        <CardContent sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%',
-                            justifyContent: 'space-between'
-                        }}>
-                            <Typography>Not playing any campaigns :(</Typography>
-                        </CardContent>
-                    </Card>
+                        <Alert severity="info">Looks like you aren't playing in any campaigns right now</Alert>
                     }
                 </Box>
 
@@ -169,21 +176,18 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Join campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{ justifySelf: 'flex-end' }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Join campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
                     {invitedCampaigns.length === 0 &&
-                    <Card sx={{ height: '100px', width: '350px' }}>
-                        <CardContent sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%',
-                            justifyContent: 'space-between'
-                        }}>
-                            <Typography>Not invited to any campaigns :(</Typography>
-                        </CardContent>
-                    </Card>
+                        <Alert severity="info">Looks like you haven't been invited to join any campaigns</Alert>
                     }
                 </Box>
             </Box>

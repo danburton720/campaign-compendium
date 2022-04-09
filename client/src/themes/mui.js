@@ -55,7 +55,7 @@ export const mui_theme = {
             main: '#31B886',
         },
         info: {
-            main: '#03A9F4'
+            main: '#00A098'
         },
         error: {
             main: '#9b0a11'
@@ -130,15 +130,15 @@ export const mui_theme = {
         // },
         // Smaller text
         subtitle2: {
-            fontWeight: 400, // regular (can be bold 700)
-            fontSize: '14px',
+            fontWeight: 500, // regular (can be bold 700)
+            fontSize: '12px',
             // letterSpacing: '-0.21px',
-            lineHeight: '18px',
+            // lineHeight: '18px',
         },
         // Paragraphs
         body1: {
             fontWeight: 400, // regular (can be medium 500 or bold 700)
-            fontSize: '18px',
+            fontSize: '16px',
             // letterSpacing: '-0.27px',
             lineHeight: '24px'
         },

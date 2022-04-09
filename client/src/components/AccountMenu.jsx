@@ -60,7 +60,12 @@ const AccountMenu = () => {
                 aria-expanded={open ? 'true' : undefined}
                 sx={{ height: 60, width: 60 }}
             >
-                <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                <Avatar
+                    sx={{ bgcolor: theme.palette.primary.main }}
+                    src={currentUser?.image}
+                    alt={`${currentUser?.firstName?.charAt(0).toUpperCase()}${currentUser?.lastName?.charAt(0).toUpperCase()}`}
+                    referrerPolicy="no-referrer"
+                >
                     {currentUserPending ? <CircularProgress /> : `${currentUser?.firstName?.charAt(0).toUpperCase()}${currentUser?.lastName?.charAt(0).toUpperCase()}`}
                 </Avatar>
             </IconButton>

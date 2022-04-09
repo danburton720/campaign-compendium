@@ -26,6 +26,7 @@ router.post('/campaigns', async (req, res) => {
                     // create a character for this user
                     const character = new Character({
                         name: 'My character',
+                        description: 'My character description',
                         race: 'Human',
                         class: 'Barbarian',
                         externalLink: '',
@@ -95,7 +96,7 @@ router.get("/campaigns/:id", async (req, res) => {
                 // we have characters so we need to get the user to whom each of these characters belongs
                 const charactersAndUsers = [];
                 for (const character of characters) {
-                    const user = await User.findById(character.userId, '_id displayName firstName lastName image').lean();
+                    const user = await User.findById(character.userId, '_id displayName firstName lastName email image').lean();
                     // if we found a user (we should) then include the character and user info
                     if (user) charactersAndUsers.push({ ...character, user });
                 }
@@ -103,7 +104,53 @@ router.get("/campaigns/:id", async (req, res) => {
             }
             res.send(newCampaign);
         } catch (e) {
-            res.status(500).send();
+            res.status(500).send(e);
+        }
+    } else {
+        res.status(401).send({});
+    }
+});
+
+router.patch("/campaigns/:id", async (req, res) => {
+    if (req.user) {
+        const _id = req.params.id;
+        try {
+            const campaign = await Campaign.findById(_id);
+            if (req.body.hasOwnProperty('name')) campaign.name = req.body.name;
+            if (req.body.hasOwnProperty('description')) campaign.description = req.body.description;
+            await campaign.save();
+            res.send(campaign);
+        } catch (e) {
+            res.status(400).send(e);
+        }
+    } else {
+        res.status(401).send({});
+    }
+});
+
+router.post("/campaigns/:id/invite", async (req, res) => {
+    if (req.user) {
+        const _id = req.params.id;
+        const foundUser = await User.findOne({ email: req.body.email });
+        if (!foundUser) res.status(400).send("User not in system");
+        else {
+            // user is in system so create them a character
+            try {
+                const character = new Character({
+                    name: 'My character',
+                    description: 'My character description',
+                    race: 'Human',
+                    class: 'Barbarian',
+                    externalLink: '',
+                    userId: foundUser._id,
+                    campaignId: _id,
+                    status: 'invited'
+                });
+                await character.save();
+                res.status(200).send();
+            } catch (e) {
+                res.status(500).send(e);
+            }
         }
     } else {
         res.status(401).send({});
