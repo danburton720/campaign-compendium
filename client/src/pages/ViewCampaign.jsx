@@ -66,7 +66,7 @@ const ViewCampaign = () => {
             }
             // this will run for players, as the DM will get the PlayerCard returned above
             return (
-                <Card>
+                <Card sx={{ width: '100%', maxWidth: '500px' }}>
                     <CardContent>
                         <Typography>Other characters</Typography>
                         <Box display='flex' flexDirection='column' gap={2}>
@@ -222,7 +222,7 @@ const ViewCampaign = () => {
                 <CreateCharacter character={usersCharacter} />
             ) : (
                 !isDM && !isEmpty(usersCharacter) &&
-                <Card sx={{ width: '100%', maxWidth: '350px' }}>
+                <Card sx={{ width: '100%', maxWidth: '500px' }}>
                     <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <Typography variant="h3">My character</Typography>
                         <CharacterCard character={usersCharacter} />
