@@ -4,7 +4,7 @@ import {
     SET_PLAYER_CAMPAIGNS,
     SET_CAMPAIGN_PENDING,
     SET_CAMPAIGN_DATA,
-    SET_CAMPAIGN_ERROR
+    SET_CAMPAIGN_ERROR, UPDATE_CAMPAIGN_NAME, UPDATE_CAMPAIGN_DESCRIPTION
 } from '../actions/campaignActions';
 
 const initialState = {
@@ -47,6 +47,22 @@ const campaignReducer = (state = initialState, action) => {
             return {
                 ...state,
                 campaignError: action.payload
+            }
+        case UPDATE_CAMPAIGN_NAME:
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    name: action.payload
+                }
+            }
+        case UPDATE_CAMPAIGN_DESCRIPTION:
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    description: action.payload
+                }
             }
         default:
             return state;

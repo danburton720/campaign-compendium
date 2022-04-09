@@ -10,8 +10,9 @@ const CharacterCard = ({ character }) => {
             padding='2px'
             backgroundColor={character.chosenColor || '#5A3333'}
             gap={2}
+            borderRadius='4px'
         >
-            <Box height='100%' width='50px'>
+            <Box height='50px' width='50px'>
                 <img
                     src={character.chosenImage}
                     alt='character image'
@@ -21,9 +22,10 @@ const CharacterCard = ({ character }) => {
             <Box
                 display='flex'
                 flexDirection='column'
+                marginTop='5px'
             >
-                <Typography>{character.name}</Typography>
-                <Typography>{`${character.race} | ${character.class}`}</Typography>
+                <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character.name}</Typography>
+                <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{`${character.race} | ${character.class}`}</Typography>
             </Box>
         </Box>
     )

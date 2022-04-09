@@ -113,7 +113,7 @@ const CreateCampaign = () => {
                         </Box>
                         <Box display="flex" flexDirection="column" flex={1}>
                             <Typography variant="h4">Players to be invited</Typography>
-                            <Box width='100%' height='100%' display="flex" flexWrap='wrap' gap={2} sx={{marginTop: '1rem'}}>
+                            <Box width='100%' minWidth='300px' height='100%' display="flex" flexWrap='wrap' gap={2} sx={{marginTop: '1rem'}}>
                                 {invitedPlayers.length > 0 ? invitedPlayers.map((player, key) => (
                                     <Chip color="primary" key={key} label={player} onDelete={() => handleRemovePlayer(player)} />
                                 )) : <Alert severity="info" sx={{ height: '100%', width: '100%' }}>No players have been added, try adding one!</Alert>}
