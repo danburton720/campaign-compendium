@@ -12,6 +12,8 @@ export const SET_CAMPAIGN_ERROR = 'SET_CAMPAIGN_ERROR';
 export const UPDATE_CAMPAIGN_NAME = 'UPDATE_CAMPAIGN_NAME';
 export const UPDATE_CAMPAIGN_DESCRIPTION = 'UPDATE_CAMPAIGN_DESCRIPTION';
 
+export const UPDATE_CAMPAIGN_CHARACTER = 'UPDATE_CAMPAIGN_CHARACTER';
+
 export function setCampaignsPending(pending) {
     return {
         type: SET_CAMPAIGNS_PENDING,
@@ -65,6 +67,13 @@ export function updateCampaignDescription(description) {
     return {
         type: UPDATE_CAMPAIGN_DESCRIPTION,
         payload: description
+    }
+}
+
+export function updateCampaignCharacter(id, character) {
+    return {
+        type: UPDATE_CAMPAIGN_CHARACTER,
+        payload: { id, character }
     }
 }
 

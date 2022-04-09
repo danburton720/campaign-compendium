@@ -26,6 +26,7 @@ router.post('/campaigns', async (req, res) => {
                     // create a character for this user
                     const character = new Character({
                         name: 'My character',
+                        description: 'My character description',
                         race: 'Human',
                         class: 'Barbarian',
                         externalLink: '',
@@ -137,6 +138,7 @@ router.post("/campaigns/:id/invite", async (req, res) => {
             try {
                 const character = new Character({
                     name: 'My character',
+                    description: 'My character description',
                     race: 'Human',
                     class: 'Barbarian',
                     externalLink: '',

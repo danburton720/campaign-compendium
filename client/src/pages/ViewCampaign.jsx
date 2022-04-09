@@ -9,12 +9,10 @@ import {
     CardContent,
     CircularProgress,
     IconButton,
-    TextField,
     Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
 import { isEmpty } from 'ramda';
 import { useSnackbar } from 'notistack';
@@ -27,6 +25,7 @@ import PlayerCard from '../components/PlayerCard';
 import { API } from '../config/api';
 import CharacterCard from '../components/CharacterCard';
 import EditCard from '../components/EditCard';
+import CreateCharacter from '../components/CreateCharacter';
 
 // TODO iteration - swap out pending logic for a nice debounced thing with skeletons
 
@@ -36,6 +35,10 @@ const ViewCampaign = () => {
     const campaignData = useSelector(state => state.campaigns.campaignData);
     const campaignError = useSelector(state => state.campaigns.campaignError);
 
+    const [isDM, setIsDM] = useState(campaignData?.createdBy === currentUser?._id);
+    const [usersCharacter, setUsersCharacter] = useState(() =>
+        campaignData?.characters?.find(character => character?._id === currentUser?._id) || {}
+    );
     const [editNameMode, setEditNameMode] = useState(false);
     const [editDescriptionMode, setEditDescriptionMode] = useState(false);
     const [name, setName] = useState(campaignData?.name);
@@ -50,9 +53,6 @@ const ViewCampaign = () => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    // TODO if the logged in user is the DM, show pencil icons next to campaign title and description to allow edit
-    // TODO if the logged in user is a player in the campaign, render a card containing their character information
-
     const getPlayers = () => {
         if (campaignData && campaignData.characters && campaignData.characters.length > 0) {
             if (campaignData.createdBy === currentUser._id) {
@@ -64,7 +64,7 @@ const ViewCampaign = () => {
                     </Box>
                 )
             }
-            // TODO this will run for players, as the DM will get the PlayerCard returned above
+            // this will run for players, as the DM will get the PlayerCard returned above
             return (
                 <Card>
                     <CardContent>
@@ -126,6 +126,8 @@ const ViewCampaign = () => {
         if (!campaignPending && prevCampaignPending && campaignData) {
             setName(campaignData.name);
             setDescription(campaignData.description)
+            setIsDM(campaignData?.createdBy === currentUser._id || false);
+            setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id) || {});
         }
     }, [campaignPending, prevCampaignPending])
 
@@ -145,8 +147,7 @@ const ViewCampaign = () => {
                 </Box>
             )
         }
-        const usersCharacter = campaignData.characters.find(character => character._id === currentUser._id);
-        if (campaignData.createdBy !== currentUser._id || isEmpty(usersCharacter)) {
+        if (!isDM && isEmpty(usersCharacter)) {
             return (
                 <Box minHeight='calc(100vh - 5rem - 2rem)'>
                     <Alert severity="error">Oh dear, it seems you don't have access to this campaign!</Alert>
@@ -167,58 +168,78 @@ const ViewCampaign = () => {
                 Go back
             </Button>
             {campaignData &&
-                <Box
-                    display='flex'
-                    flexDirection='column'
-                    sx={{ overflowWrap: 'break-word' }}
-                >
-                    <Box display='flex' marginBottom='1rem'>
-                        {editNameMode ? (
-                            <EditCard
-                                value={name}
-                                valueSetter={setName}
-                                modeSetter={setEditNameMode}
-                                onSave={handleSaveName}
-                                label='Campaign name'
-                                helperText='Name required'
-                            />
-                        ) : (
-                            <>
-                                <Typography variant="h1" sx={{ color: extraPalette.WHITE }}>{campaignData.name}</Typography>
-                                {campaignData.createdBy === currentUser._id &&
-                                    <IconButton sx={{ marginTop: '-.5rem' }} onClick={() => setEditNameMode(true)}>
-                                        <EditIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                }
-                            </>
-                        )}
-                    </Box>
-                    <Box display='flex' marginBottom='1rem'>
-                        {editDescriptionMode ? (
-                            <EditCard
-                                value={description}
-                                valueSetter={setDescription}
-                                modeSetter={setEditDescriptionMode}
-                                onSave={handleSaveDescription}
-                                label='Campaign description'
-                                helperText='Description required'
-                                multiline
-                            />
-                        ) : (
-                            <>
-                                <Typography sx={{ color: extraPalette.WHITE }}>{campaignData.description}</Typography>
-                                {campaignData.createdBy === currentUser._id &&
-                                    <IconButton sx={{ marginTop: '-.5rem' }} onClick={() => setEditDescriptionMode(true)}>
-                                        <EditIcon sx={{ color: '#fff' }}/>
-                                    </IconButton>
-                                }
-                            </>
-                        )}
-                    </Box>
+            <Box
+                display='flex'
+                flexDirection='column'
+                sx={{ overflowWrap: 'break-word' }}
+            >
+                <Box display='flex' marginBottom='1rem'>
+                    {editNameMode ? (
+                        <EditCard
+                            value={name}
+                            valueSetter={setName}
+                            modeSetter={setEditNameMode}
+                            onSave={handleSaveName}
+                            label='Campaign name'
+                            helperText='Name required'
+                        />
+                    ) : (
+                        <>
+                            <Typography variant="h1" sx={{ color: extraPalette.WHITE }}>{campaignData.name}</Typography>
+                            {isDM &&
+                            <IconButton sx={{ marginTop: '-.5rem' }} onClick={() => setEditNameMode(true)}>
+                                <EditIcon sx={{ color: '#fff' }} />
+                            </IconButton>
+                            }
+                        </>
+                    )}
                 </Box>
+                <Box display='flex' marginBottom='1rem'>
+                    {editDescriptionMode ? (
+                        <EditCard
+                            value={description}
+                            valueSetter={setDescription}
+                            modeSetter={setEditDescriptionMode}
+                            onSave={handleSaveDescription}
+                            label='Campaign description'
+                            helperText='Description required'
+                            multiline
+                        />
+                    ) : (
+                        <>
+                            <Typography sx={{ color: extraPalette.WHITE }}>{campaignData.description}</Typography>
+                            {isDM &&
+                            <IconButton sx={{ marginTop: '-.5rem' }} onClick={() => setEditDescriptionMode(true)}>
+                                <EditIcon sx={{ color: '#fff' }}/>
+                            </IconButton>
+                            }
+                        </>
+                    )}
+                </Box>
+            </Box>
             }
-            <Typography variant="h3" sx={{ marginBottom: '1rem', color: extraPalette.WHITE }}>Players</Typography>
-            {getPlayers()}
+            {!isDM && !isEmpty(usersCharacter) && usersCharacter.status === "invited" ? (
+                <CreateCharacter character={usersCharacter} />
+            ) : (
+                !isDM && !isEmpty(usersCharacter) &&
+                <Card sx={{ width: '100%', maxWidth: '350px' }}>
+                    <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Typography variant="h3">My character</Typography>
+                        <CharacterCard character={usersCharacter} />
+                        <Button
+                            variant="contained"
+                        >
+                            View / Edit character
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
+            {(isDM || (!isEmpty(usersCharacter) && usersCharacter.status !== "invited")) &&
+            <>
+                <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Players</Typography>
+                {getPlayers()}
+            </>
+            }
         </Box>
     )
 }

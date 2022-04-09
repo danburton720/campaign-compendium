@@ -11,6 +11,8 @@ const CharacterCard = ({ character }) => {
             backgroundColor={character.chosenColor || '#5A3333'}
             gap={2}
             borderRadius='4px'
+            width='100%'
+            maxWidth='400px'
         >
             <Box height='50px' width='50px'>
                 <img
@@ -23,6 +25,7 @@ const CharacterCard = ({ character }) => {
                 display='flex'
                 flexDirection='column'
                 marginTop='5px'
+                width='78%'
             >
                 <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character.name}</Typography>
                 <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{`${character.race} | ${character.class}`}</Typography>

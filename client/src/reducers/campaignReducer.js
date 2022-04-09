@@ -4,7 +4,10 @@ import {
     SET_PLAYER_CAMPAIGNS,
     SET_CAMPAIGN_PENDING,
     SET_CAMPAIGN_DATA,
-    SET_CAMPAIGN_ERROR, UPDATE_CAMPAIGN_NAME, UPDATE_CAMPAIGN_DESCRIPTION
+    SET_CAMPAIGN_ERROR,
+    UPDATE_CAMPAIGN_NAME,
+    UPDATE_CAMPAIGN_DESCRIPTION,
+    UPDATE_CAMPAIGN_CHARACTER
 } from '../actions/campaignActions';
 
 const initialState = {
@@ -62,6 +65,20 @@ const campaignReducer = (state = initialState, action) => {
                 campaignData: {
                     ...state.campaignData,
                     description: action.payload
+                }
+            }
+        case UPDATE_CAMPAIGN_CHARACTER:
+            const characterToUpdateIndex = state.campaignData?.characters?.findIndex(character => character._id === action.payload.id) || -1;
+            const newCharacters = state.campaignData?.characters || [];
+            if (characterToUpdateIndex !== -1 && newCharacters.length > 0) {
+                newCharacters[characterToUpdateIndex] = action.payload.character;
+            }
+
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    characters: newCharacters
                 }
             }
         default:

@@ -26,9 +26,11 @@ router.patch("/characters/:id", async (req, res) => {
             const _id = req.params.id;
             const character = await Character.findById(_id);
             if (req.body.hasOwnProperty('name')) character.name = req.body.name;
+            if (req.body.hasOwnProperty('description')) character.name = req.body.description;
             if (req.body.hasOwnProperty('race')) character.race = req.body.race;
             if (req.body.hasOwnProperty('class')) character.class = req.body.class;
             if (req.body.hasOwnProperty('externalLink')) character.externalLink = req.body.externalLink;
+            if (req.body.hasOwnProperty('status')) character.status = req.body.status;
             await character.save();
             res.send(character);
         } catch (e) {

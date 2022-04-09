@@ -176,7 +176,13 @@ const Campaigns = () => {
                                         <Typography variant="body2">{campaign.description}</Typography>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" sx={{ justifySelf: 'flex-end' }}>Join campaign</Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{ justifySelf: 'flex-end' }}
+                                    onClick={() => navigate(`/campaigns/${campaign._id}`)}
+                                >
+                                    Join campaign
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
