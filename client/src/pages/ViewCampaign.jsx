@@ -62,7 +62,7 @@ const ViewCampaign = () => {
                     <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
                         {campaignData.characters.map(character => (
                             <React.Fragment key={character._id}>
-                                <PlayerCard player={character} />
+                                <PlayerCard player={character} campaignId={campaignData._id} />
                             </React.Fragment>
                         ))}
                     </Box>
