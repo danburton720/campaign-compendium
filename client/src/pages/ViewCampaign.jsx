@@ -8,13 +8,14 @@ import {
     Card,
     CardContent,
     CircularProgress,
-    IconButton,
+    IconButton, Paper, TextField,
     Typography
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
 import { isEmpty } from 'ramda';
+import isEmail from 'validator/lib/isEmail';
 import { useSnackbar } from 'notistack';
 
 import { ROUTES } from '../constants';
@@ -43,6 +44,7 @@ const ViewCampaign = () => {
     const [name, setName] = useState(campaignData?.name);
     const [description, setDescription] = useState(campaignData?.name);
     const [pending, setPending] = useState(true);
+    const [inviteEmail, setInviteEmail] = useState('');
 
     const prevCampaignPending = usePrevious(campaignPending);
 
@@ -120,6 +122,18 @@ const ViewCampaign = () => {
             enqueueSnackbar(err.response.data, { variant: 'error' });
             // reset description to name from server
             // setDescription(campaignData?.description);
+        }
+    }
+
+    const handleInviteUser = async () => {
+        const endpoint = API.campaigns.invite.replaceAll('{campaignId}', id);
+        try {
+            await axios.post(endpoint, { email: inviteEmail }, { withCredentials: true });
+            dispatch(getCampaign(id));
+            enqueueSnackbar('User successfully invited to join the campaign', { variant: 'success' });
+            setInviteEmail('');
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' });
         }
     }
 
@@ -250,6 +264,27 @@ const ViewCampaign = () => {
                 <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Players</Typography>
                 {getPlayers()}
             </>
+            }
+            {isDM &&
+            <Paper sx={{ marginTop: '2rem', padding: '1rem', width: '100%', maxWidth: '350px' }}>
+                <Box display='flex' flexDirection='column' gap={2}>
+                    <Typography variant="h4" sx={{ fontWeight: 500 }}>Invite another player</Typography>
+                    <TextField
+                        label='Invite player'
+                        value={inviteEmail}
+                        onChange={e => setInviteEmail(e.target.value)}
+                        error={inviteEmail && !isEmail(inviteEmail)}
+                        helperText={inviteEmail && !isEmail(inviteEmail) ? 'Must be a valid email': ' '}
+                    />
+                    <Button
+                        variant="contained"
+                        disabled={!inviteEmail || !isEmail(inviteEmail)}
+                        onClick={() => handleInviteUser()}
+                    >
+                        Invite player
+                    </Button>
+                </Box>
+            </Paper>
             }
         </Box>
     )

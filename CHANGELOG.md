@@ -1,6 +1,7 @@
 ## [0.0.2] - 2022-04-10
 ### Added
 - Add helper text to campaign `name` and `description` fields to show required error message when creating a campaign
+- Added ability to invite a player to join an existing campaign
 
 ### Changed
 
@@ -12,6 +13,7 @@
 - Restrict `PATCH` `/characters/:id` to only set `status` from `invited` to `active`
 - Restrict `POST` `/characters/:id/kill` to only the `creator` of that campaign to which that character relates
 - Restrict `POST` `/characters/:id/revive` to only the `creator` of that campaign to which that character relates
+- Prevent the DM from inviting themselves to join the campaign as a player
 - Return `404` responses to any endpoints that receive an `:id` with a corrupt object ID format
 - Made `email` field case-insensitive when adding a player to a campaign
 - No longer reset campaign `name` or `description` fields to server values when editing an existing campaign fails.

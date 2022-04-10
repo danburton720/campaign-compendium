@@ -153,8 +153,11 @@ router.post("/campaigns/:id/invite", async (req, res) => {
         if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to invite users to this campaign');
 
         // check if the user is already in this campaign
-        const existingCharacter = await Character.findOne({ campaignId: _id });
-        if (existingCharacter) return res.status(400).send('The specified user already exists in the campaign for the given ID')
+        const existingCharacter = await Character.findOne({ campaignId: _id, userId: foundUser._id });
+        if (existingCharacter) return res.status(400).send('The specified user already exists in the campaign for the given ID');
+
+        // check that the invited user isn't the DM
+        if (campaign.createdBy.equals(foundUser._id)) return res.status(400).send('You are the DM, you cannot invite yourself to join as a player');
 
         // user is in system so create them a character
         try {

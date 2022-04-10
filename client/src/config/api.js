@@ -14,7 +14,8 @@ export const API = {
         campaigns: `${API_ROOT}/campaigns`,
         created: `${API_ROOT}/campaigns/created`,
         player: `${API_ROOT}/campaigns/player`,
-        campaign: `${API_ROOT}/campaigns/{campaignId}`
+        campaign: `${API_ROOT}/campaigns/{campaignId}`,
+        invite: `${API_ROOT}/campaigns/{campaignId}/invite`
     },
     characters: {
         character: `${API_ROOT}/characters/{characterId}`
