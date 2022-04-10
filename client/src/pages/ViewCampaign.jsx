@@ -103,9 +103,9 @@ const ViewCampaign = () => {
             enqueueSnackbar('Campaign name successfully changed', { variant: 'success' });
             setEditNameMode(false);
         } catch (err) {
-            enqueueSnackbar('Oops, something went wrong when trying to update the campaign name', { variant: 'error' });
+            enqueueSnackbar(err.response.data, { variant: 'error' });
             // reset name to name from server
-            setName(campaignData?.name);
+            // setName(campaignData?.name);
         }
     }
 
@@ -117,9 +117,9 @@ const ViewCampaign = () => {
             enqueueSnackbar('Campaign description successfully changed', { variant: 'success' });
             setEditDescriptionMode(false);
         } catch (err) {
-            enqueueSnackbar('Oops, something went wrong when trying to update the campaign description', { variant: 'error' });
+            enqueueSnackbar(err.response.data, { variant: 'error' });
             // reset description to name from server
-            setDescription(campaignData?.description);
+            // setDescription(campaignData?.description);
         }
     }
 
@@ -191,6 +191,7 @@ const ViewCampaign = () => {
                             onSave={handleSaveName}
                             label='Campaign name'
                             helperText='Name required'
+                            limit={100}
                         />
                     ) : (
                         <>
@@ -212,6 +213,7 @@ const ViewCampaign = () => {
                             onSave={handleSaveDescription}
                             label='Campaign description'
                             helperText='Description required'
+                            limit={10000}
                             multiline
                         />
                     ) : (

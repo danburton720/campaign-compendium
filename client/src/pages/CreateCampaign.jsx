@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Box, Button, Card, CardContent, Chip, TextField, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -8,14 +8,17 @@ import axios from 'axios';
 import { extraPalette } from '../themes/mui';
 import { ROUTES } from '../constants';
 import { API } from '../config/api';
+import { useSnackbar } from 'notistack';
 
 const CreateCampaign = () => {
     const navigate = useNavigate();
 
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [name, setName] = useState('My campaign');
+    const [description, setDescription] = useState('An epic tale of heroism awaits...');
     const [email, setEmail] = useState('');
     const [invitedPlayers, setInvitedPlayers] = useState([]);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleAddPlayer = () => {
         setInvitedPlayers([ ...invitedPlayers, email ]);
@@ -33,10 +36,10 @@ const CreateCampaign = () => {
                 description,
                 invitedUsers: invitedPlayers
             }, { withCredentials: true });
-            // TODO snackbar success
+            enqueueSnackbar('Campaign successfully created', { variant: 'success' });
             navigate(ROUTES.CAMPAIGNS);
         } catch (err) {
-            // TODO snackbar error
+            enqueueSnackbar(err.response.data, { variant: 'error' });
         }
     }
 
@@ -62,24 +65,34 @@ const CreateCampaign = () => {
                         <TextField
                             required
                             id='campaign-name'
-                            label='Campaign name'
+                            label={`Campaign name (${name.length}/100)`}
                             value={name}
                             onChange={e => setName(e.target.value)}
+                            error={!name}
+                            helperText={!name ? 'Name is required' : ' '}
                             sx={{
                                 width: '100%',
                                 maxWidth: '340px',
                                 marginBottom: '1rem'
                             }}
+                            inputProps={{
+                                maxLimit: '100'
+                            }}
                         />
                         <TextField
                             required
                             id='campaign-description'
-                            label='Campaign description'
+                            label={`Campaign description (${description.length}/10000)`}
                             multiline
                             fullWidth
                             rows={8}
                             value={description}
                             onChange={e => setDescription(e.target.value)}
+                            error={!description}
+                            helperText={!description ? 'Description is required' : ' '}
+                            inputProps={{
+                                maxLimit: '10000'
+                            }}
                         />
                     </CardContent>
                 </Card>
