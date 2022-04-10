@@ -33,7 +33,7 @@ const CreateCharacter = ({ character }) => {
             dispatch(getCampaign(id));
             enqueueSnackbar('Character successfully created!', { variant: 'success' });
         } catch (err) {
-            enqueueSnackbar('Oops, something went wrong when trying to create your character', { variant: 'error' });
+            enqueueSnackbar(err.response.data, { variant: 'error' });
         }
     }
 
@@ -58,7 +58,7 @@ const CreateCharacter = ({ character }) => {
                     <Box display='flex' flexDirection='column' gap={2}>
                         <TextField
                             required
-                            label='Character name'
+                            label={`Character name (${name.length}/35)`}
                             value={name}
                             onChange={e => setName(e.target.value)}
                             error={!name}
@@ -67,20 +67,26 @@ const CreateCharacter = ({ character }) => {
                                 width: '100%',
                                 maxWidth: '340px',
                             }}
+                            inputProps={{
+                                maxLength: 35
+                            }}
                         />
                         <TextField
                             required
-                            label='Character description'
+                            label={`Character description (${description.length}/1000)`}
                             value={description}
                             onChange={e => setDescription(e.target.value)}
                             error={!description}
                             helperText={!description ? 'Description is required' : ' '}
                             multiline
                             rows={6}
+                            inputProps={{
+                                maxLength: 1000
+                            }}
                         />
                         <TextField
                             required
-                            label='Character race'
+                            label={`Character race (${race.length}/20)`}
                             value={race}
                             onChange={e => setRace(e.target.value)}
                             error={!race}
@@ -89,10 +95,13 @@ const CreateCharacter = ({ character }) => {
                                 width: '100%',
                                 maxWidth: '340px',
                             }}
+                            inputProps={{
+                                maxLength: 20
+                            }}
                         />
                         <TextField
                             required
-                            label='Character class'
+                            label={`Character class (${characterClass.length}/20)`}
                             value={characterClass}
                             onChange={e => setCharacterClass(e.target.value)}
                             error={!characterClass}
@@ -100,6 +109,9 @@ const CreateCharacter = ({ character }) => {
                             sx={{
                                 width: '100%',
                                 maxWidth: '340px',
+                            }}
+                            inputProps={{
+                                maxLength: 20
                             }}
                         />
                         <TextField
@@ -110,6 +122,9 @@ const CreateCharacter = ({ character }) => {
                             sx={{
                                 width: '100%',
                                 maxWidth: '340px',
+                            }}
+                            inputProps={{
+                                maxLength: 100
                             }}
                         />
                     </Box>

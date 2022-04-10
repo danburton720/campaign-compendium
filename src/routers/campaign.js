@@ -21,7 +21,8 @@ router.post('/campaigns', async (req, res) => {
         const characters = [];
         if (invitedUsers && invitedUsers.length > 0) {
             for (const user of invitedUsers) {
-                const foundUser = await User.findOne({ email: user });
+
+                const foundUser = await User.findOne({ email: user.toLowerCase() });
                 if (foundUser) {
                     // create a character for this user
                     const character = new Character({
@@ -86,8 +87,9 @@ router.get("/campaigns/:id", async (req, res) => {
     if (req.user) {
         const _id = req.params.id;
         try {
+            if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A campaign could not be found for the given ID');
             const campaign = await Campaign.findById(_id).lean();
-            if (!campaign) return res.status(404).send();
+            if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
             // we've found a campaign so we need to get associated player and character info
             // first get all characters in this campaign
             const newCampaign = campaign;
@@ -115,7 +117,13 @@ router.patch("/campaigns/:id", async (req, res) => {
     if (req.user) {
         const _id = req.params.id;
         try {
+            if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A campaign could not be found for the given ID');
+
             const campaign = await Campaign.findById(_id);
+
+            if (!campaign) return res.status(404).send('A campaign could not be found for the given id')
+            if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to edit this campaign');
+
             if (req.body.hasOwnProperty('name')) campaign.name = req.body.name;
             if (req.body.hasOwnProperty('description')) campaign.description = req.body.description;
             await campaign.save();
@@ -131,26 +139,42 @@ router.patch("/campaigns/:id", async (req, res) => {
 router.post("/campaigns/:id/invite", async (req, res) => {
     if (req.user) {
         const _id = req.params.id;
-        const foundUser = await User.findOne({ email: req.body.email });
-        if (!foundUser) res.status(400).send("User not in system");
-        else {
-            // user is in system so create them a character
-            try {
-                const character = new Character({
-                    name: 'My character',
-                    description: 'My character description',
-                    race: 'Human',
-                    class: 'Barbarian',
-                    externalLink: '',
-                    userId: foundUser._id,
-                    campaignId: _id,
-                    status: 'invited'
-                });
-                await character.save();
-                res.status(200).send();
-            } catch (e) {
-                res.status(500).send(e);
-            }
+        if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A campaign could not be found for the given ID');
+        if (!req.body.email) return res.status(400).send('No email address provided');
+
+        const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
+        if (!foundUser) return res.status(400).send("User not in system");
+
+        // get campaign to which this invite relates
+        const campaign = await Campaign.findById(_id);
+        if (!campaign) return res.status(500).send('A campaign could not be found for the given ID');
+
+        // check if the campaign to which this user is being invited to has been created by the requesting user
+        if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to invite users to this campaign');
+
+        // check if the user is already in this campaign
+        const existingCharacter = await Character.findOne({ campaignId: _id, userId: foundUser._id });
+        if (existingCharacter) return res.status(400).send('The specified user already exists in the campaign for the given ID');
+
+        // check that the invited user isn't the DM
+        if (campaign.createdBy.equals(foundUser._id)) return res.status(400).send('You are the DM, you cannot invite yourself to join as a player');
+
+        // user is in system so create them a character
+        try {
+            const character = new Character({
+                name: 'My character',
+                description: 'My character description',
+                race: 'Human',
+                class: 'Barbarian',
+                externalLink: '',
+                userId: foundUser._id,
+                campaignId: _id,
+                status: 'invited'
+            });
+            await character.save();
+            res.status(200).send();
+        } catch (e) {
+            res.status(500).send(e);
         }
     } else {
         res.status(401).send({});
