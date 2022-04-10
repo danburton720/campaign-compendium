@@ -26,8 +26,7 @@ import { API } from '../config/api';
 import CharacterCard from '../components/CharacterCard';
 import EditCard from '../components/EditCard';
 import CreateCharacter from '../components/CreateCharacter';
-
-// TODO iteration - swap out pending logic for a nice debounced thing with skeletons
+import useDebouncedPending from '../hooks/useDebouncedPending';
 
 const ViewCampaign = () => {
     const currentUser = useSelector(state => state.auth.currentUser);
@@ -43,6 +42,7 @@ const ViewCampaign = () => {
     const [editDescriptionMode, setEditDescriptionMode] = useState(false);
     const [name, setName] = useState(campaignData?.name);
     const [description, setDescription] = useState(campaignData?.name);
+    const [pending, setPending] = useState(true);
 
     const prevCampaignPending = usePrevious(campaignPending);
 
@@ -59,7 +59,9 @@ const ViewCampaign = () => {
                 return (
                     <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
                         {campaignData.characters.map(character => (
-                            <PlayerCard player={character} />
+                            <React.Fragment key={character._id}>
+                                <PlayerCard player={character} />
+                            </React.Fragment>
                         ))}
                     </Box>
                 )
@@ -134,9 +136,11 @@ const ViewCampaign = () => {
             setIsDM(campaignData?.createdBy === currentUser._id || false);
             setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id) || {});
         }
-    }, [campaignPending, prevCampaignPending])
+    }, [campaignPending, prevCampaignPending]);
 
-    if (campaignPending) {
+    useDebouncedPending(setPending, [campaignPending]);
+
+    if (pending) {
         return (
             <Box minHeight='calc(100vh - 5rem - 2rem)' display='flex' justifyContent='center' alignItems='center'>
                 <CircularProgress />

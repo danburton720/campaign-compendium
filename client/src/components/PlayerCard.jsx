@@ -22,7 +22,7 @@ const PlayerCard = ({ player }) => {
                         {`${player.user.firstName?.charAt(0).toUpperCase()}${player.user.lastName?.charAt(0).toUpperCase()}`}
                     </Avatar>
                     <Box display='flex' flexDirection='column' marginLeft='1rem' justifyContent='center' maxWidth='210px'>
-                        <Typography noWrap sx={{ fontWeight: 500, lineHeight: '14px' }}>{player.user.displayName}</Typography>
+                        <Typography noWrap sx={{ fontWeight: 500, lineHeight: '16px' }}>{player.user.displayName}</Typography>
                         <Typography noWrap variant="subtitle2" sx={{ color: extraPalette.GREY6 }}>{player.user.email}</Typography>
                     </Box>
                     <IconButton sx={{ marginLeft: 'auto' }}>
