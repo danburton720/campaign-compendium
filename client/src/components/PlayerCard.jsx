@@ -26,13 +26,14 @@ import { extraPalette } from '../themes/mui';
 import CharacterCard from './CharacterCard';
 import ConfirmDelete from './Modals/ConfirmDelete';
 import { API } from '../config/api';
-import { getCampaign } from '../actions/campaignActions';
+import {
+    getCampaign,
+    removeCampaignCharacter,
+} from '../actions/campaignActions';
 
 const PlayerCard = ({ player, campaignId }) => {
     const theme = useTheme();
 
-    const [selectedPlayerId, setSelectedPlayerId] = useState('');
-    const [selectedPlayerName, setSelectedPlayerName] = useState('');
     const [showCharacterModal, setShowCharacterModal] = useState(false);
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -52,20 +53,35 @@ const PlayerCard = ({ player, campaignId }) => {
     };
 
     const handleRemovePlayer = async () => {
-        console.log('delete player id', selectedPlayerId);
-        const endpoint = API.characters.character.replaceAll('{characterId}',selectedPlayerId);
+        const endpoint = API.characters.character.replaceAll('{characterId}', player._id);
         try {
             await axios.delete(endpoint, { withCredentials: true });
-            dispatch(getCampaign(campaignId));
-            enqueueSnackbar(`${selectedPlayerName} has been removed from the campaign`, { variant: 'success' });
+            dispatch(removeCampaignCharacter(player._id));
+            enqueueSnackbar(`${player.user.displayName} has been removed from the campaign`, { variant: 'success' });
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
         }
         setShowConfirmDeleteModal(false);
     }
 
-    const handleKillOrReviveCharacter = () => {
-        console.log('kill or revive the character');
+    const handleKillOrReviveCharacter = async (id) => {
+        try {
+            if (player.status === "active") {
+                const endpoint = API.characters.kill.replaceAll('{characterId}', id);
+                await axios.post(endpoint, {}, { withCredentials: true });
+                // dispatch(killCampaignCharacter(id));
+                dispatch(getCampaign(campaignId));
+                enqueueSnackbar(`${player.name} has been killed`, { variant: 'success' });
+            } else if (player.status === "dead") {
+                const endpoint = API.characters.revive.replaceAll('{characterId}', id);
+                await axios.post(endpoint, {}, { withCredentials: true });
+                // dispatch(reviveCampaignCharacter(id));
+                dispatch(getCampaign(campaignId));
+                enqueueSnackbar(`${player.name} has been revived`, { variant: 'success' });
+            }
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' })
+        }
     }
 
     return (
@@ -101,25 +117,25 @@ const PlayerCard = ({ player, campaignId }) => {
                     onClick={handleClose}
                 >
                     <MenuList>
-                        <MenuItem onClick={() => setShowCharacterModal(true)}>
-                            <ListItemIcon>
-                                <PreviewIcon />
-                            </ListItemIcon>
-                            <ListItemText>View character</ListItemText>
-                        </MenuItem>
-                        <MenuItem onClick={() => handleKillOrReviveCharacter()}>
-                            <ListItemIcon>
-                                {player.status === 'active' ? <CancelIcon /> : <AutoFixNormalIcon /> }
-                            </ListItemIcon>
-                            <ListItemText>{`${player.status === 'active' ? 'Kill' : 'Revive'} character`}</ListItemText>
-                        </MenuItem>
-                        <Divider />
+                        {player.status !== 'invited' &&
+                            <MenuItem onClick={() => setShowCharacterModal(true)}>
+                                <ListItemIcon>
+                                    <PreviewIcon/>
+                                </ListItemIcon>
+                                <ListItemText>View character</ListItemText>
+                            </MenuItem>
+                        }
+                        {player.status !== 'invited' &&
+                            <MenuItem onClick={() => handleKillOrReviveCharacter(player._id)}>
+                                <ListItemIcon>
+                                    {player.status === 'active' ? <CancelIcon/> : <AutoFixNormalIcon/>}
+                                </ListItemIcon>
+                                <ListItemText>{`${player.status === 'active' ? 'Kill' : 'Revive'} character`}</ListItemText>
+                            </MenuItem>
+                        }
+                        {player.status !== 'invited' && <Divider/>}
                         <MenuItem
-                            onClick={() => {
-                                setSelectedPlayerId(player._id);
-                                setSelectedPlayerName(player.user.displayName);
-                                setShowConfirmDeleteModal(true);
-                            }}
+                            onClick={() => setShowConfirmDeleteModal(true)}
                         >
                             <ListItemIcon>
                                 <DeleteIcon sx={{ color: theme.palette.error.main }} />
@@ -133,7 +149,7 @@ const PlayerCard = ({ player, campaignId }) => {
                 open={showConfirmDeleteModal}
                 onClose={() => setShowConfirmDeleteModal(false)}
                 onConfirm={() => handleRemovePlayer()}
-                modalTitle={`Remove ${selectedPlayerName} from the campaign?`}
+                modalTitle={`Remove ${player.user.displayName} from the campaign?`}
                 modalSubheading={`This will delete any character information set by the player and remove them from the campaign. This action cannot be reversed.`}
             />
         </Card>

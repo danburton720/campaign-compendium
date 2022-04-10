@@ -45,6 +45,8 @@ const ViewCampaign = () => {
     const [description, setDescription] = useState(campaignData?.name);
     const [pending, setPending] = useState(true);
     const [inviteEmail, setInviteEmail] = useState('');
+    const [players, setPlayers] = useState(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
+    const [deadPlayers, setDeadPlayers] = useState(campaignData?.characters?.filter(character => character.status === 'dead') || []);
 
     const prevCampaignPending = usePrevious(campaignPending);
 
@@ -56,11 +58,11 @@ const ViewCampaign = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const getPlayers = () => {
-        if (campaignData && campaignData.characters && campaignData.characters.length > 0) {
-            if (campaignData.createdBy === currentUser._id) {
+        if (players.length > 0) {
+            if (isDM) {
                 return (
                     <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
-                        {campaignData.characters.map(character => (
+                        {players.map(character => (
                             <React.Fragment key={character._id}>
                                 <PlayerCard player={character} campaignId={campaignData._id} />
                             </React.Fragment>
@@ -69,14 +71,14 @@ const ViewCampaign = () => {
                 )
             }
             // this will run for players, as the DM will get the PlayerCard returned above
-            const charactersOtherThanCurrentUser = campaignData.characters.filter(character => character.userId !== currentUser._id);
+            const charactersOtherThanCurrentUser = players.filter(character => character.userId !== currentUser._id);
             return (
                 <Card sx={{ width: '100%', maxWidth: '400px' }}>
                     <CardContent>
                         <Typography>Other characters</Typography>
                         {charactersOtherThanCurrentUser.length > 0 ? (
                             <Box display='flex' flexDirection='column' gap={2}>
-                                {campaignData.characters.filter(character => character.userId !== currentUser._id).map(character => (
+                                {charactersOtherThanCurrentUser.map(character => (
                                     <React.Fragment key={character._id}>
                                         <CharacterCard character={character}/>
                                     </React.Fragment>
@@ -92,6 +94,45 @@ const ViewCampaign = () => {
             return (
                 <Box>
                     <Alert severity="info">No players have been invited to join this campaign</Alert>
+                </Box>
+            )
+        }
+    }
+
+    const getDeadPlayers = () => {
+        if (deadPlayers.length > 0) {
+            if (isDM) {
+                return (
+                    <Box display='flex' flexDirection='column'>
+                        <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
+                        <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
+                            {deadPlayers.map(character => (
+                                <React.Fragment key={character._id}>
+                                    <PlayerCard player={character} campaignId={campaignData._id} />
+                                </React.Fragment>
+                            ))}
+                        </Box>
+                    </Box>
+                )
+            }
+            // this will run for players, as the DM will get the PlayerCard returned above
+            const charactersOtherThanCurrentUser = deadPlayers.filter(character => character.userId !== currentUser._id);
+            return (
+                <Box display='flex' flexDirection='column'>
+                    <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
+                    <Card sx={{ width: '100%', maxWidth: '400px' }}>
+                        <CardContent>
+                            {charactersOtherThanCurrentUser.length > 0 && (
+                                <Box display='flex' flexDirection='column' gap={2}>
+                                    {charactersOtherThanCurrentUser.map(character => (
+                                        <React.Fragment key={character._id}>
+                                            <CharacterCard character={character}/>
+                                        </React.Fragment>
+                                    ))}
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
                 </Box>
             )
         }
@@ -149,8 +190,12 @@ const ViewCampaign = () => {
             setDescription(campaignData.description)
             setIsDM(campaignData?.createdBy === currentUser._id || false);
             setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id) || {});
+            setPlayers(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
+            console.log('campaignData', campaignData)
+            setDeadPlayers(campaignData?.characters?.filter(character => character.status === 'dead') || []);
         }
     }, [campaignPending, prevCampaignPending]);
+
 
     useDebouncedPending(setPending, [campaignPending]);
 
@@ -260,31 +305,36 @@ const ViewCampaign = () => {
                 </Card>
             )}
             {(isDM || (!isEmpty(usersCharacter) && usersCharacter.status !== "invited")) &&
-            <>
-                <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Players</Typography>
-                {getPlayers()}
-            </>
+                <>
+                    <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Players</Typography>
+                    {getPlayers()}
+                </>
             }
             {isDM &&
-            <Paper sx={{ marginTop: '2rem', padding: '1rem', width: '100%', maxWidth: '350px' }}>
-                <Box display='flex' flexDirection='column' gap={2}>
-                    <Typography variant="h4" sx={{ fontWeight: 500 }}>Invite another player</Typography>
-                    <TextField
-                        label='Invite player'
-                        value={inviteEmail}
-                        onChange={e => setInviteEmail(e.target.value)}
-                        error={inviteEmail && !isEmail(inviteEmail)}
-                        helperText={inviteEmail && !isEmail(inviteEmail) ? 'Must be a valid email': ' '}
-                    />
-                    <Button
-                        variant="contained"
-                        disabled={!inviteEmail || !isEmail(inviteEmail)}
-                        onClick={() => handleInviteUser()}
-                    >
-                        Invite player
-                    </Button>
-                </Box>
-            </Paper>
+                <Paper sx={{ marginTop: '2rem', padding: '1rem', width: '100%', maxWidth: '350px' }}>
+                    <Box display='flex' flexDirection='column' gap={2}>
+                        <Typography variant="h4" sx={{ fontWeight: 500 }}>Invite another player</Typography>
+                        <TextField
+                            label='Invite player'
+                            value={inviteEmail}
+                            onChange={e => setInviteEmail(e.target.value)}
+                            error={inviteEmail && !isEmail(inviteEmail)}
+                            helperText={inviteEmail && !isEmail(inviteEmail) ? 'Must be a valid email': ' '}
+                        />
+                        <Button
+                            variant="contained"
+                            disabled={!inviteEmail || !isEmail(inviteEmail)}
+                            onClick={() => handleInviteUser()}
+                        >
+                            Invite player
+                        </Button>
+                    </Box>
+                </Paper>
+            }
+            {(isDM || (!isEmpty(usersCharacter) && usersCharacter.status !== "invited")) &&
+                <>
+                    {getDeadPlayers()}
+                </>
             }
         </Box>
     )

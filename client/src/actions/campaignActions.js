@@ -14,6 +14,11 @@ export const UPDATE_CAMPAIGN_DESCRIPTION = 'UPDATE_CAMPAIGN_DESCRIPTION';
 
 export const UPDATE_CAMPAIGN_CHARACTER = 'UPDATE_CAMPAIGN_CHARACTER';
 
+export const REMOVE_CAMPAIGN_CHARACTER = 'REMOVE_CAMPAIGN_CHARACTER';
+
+export const KILL_CAMPAIGN_CHARACTER = 'KILL_CAMPAIGN_CHARACTER';
+export const REVIVE_CAMPAIGN_CHARACTER = 'REVIVE_CAMPAIGN_CHARACTER';
+
 export function setCampaignsPending(pending) {
     return {
         type: SET_CAMPAIGNS_PENDING,
@@ -74,6 +79,27 @@ export function updateCampaignCharacter(id, character) {
     return {
         type: UPDATE_CAMPAIGN_CHARACTER,
         payload: { id, character }
+    }
+}
+
+export function removeCampaignCharacter(id) {
+    return {
+        type: REMOVE_CAMPAIGN_CHARACTER,
+        payload: id
+    }
+}
+
+export function killCampaignCharacter(id) {
+    return {
+        type: KILL_CAMPAIGN_CHARACTER,
+        payload: id
+    }
+}
+
+export function reviveCampaignCharacter(id) {
+    return {
+        type: REVIVE_CAMPAIGN_CHARACTER,
+        payload: id
     }
 }
 

@@ -7,7 +7,10 @@ import {
     SET_CAMPAIGN_ERROR,
     UPDATE_CAMPAIGN_NAME,
     UPDATE_CAMPAIGN_DESCRIPTION,
-    UPDATE_CAMPAIGN_CHARACTER
+    UPDATE_CAMPAIGN_CHARACTER,
+    REMOVE_CAMPAIGN_CHARACTER,
+    KILL_CAMPAIGN_CHARACTER,
+    REVIVE_CAMPAIGN_CHARACTER
 } from '../actions/campaignActions';
 
 const initialState = {
@@ -79,6 +82,43 @@ const campaignReducer = (state = initialState, action) => {
                 campaignData: {
                     ...state.campaignData,
                     characters: newCharacters
+                }
+            }
+        case REMOVE_CAMPAIGN_CHARACTER:
+            const allOtherCharacters = state.campaignData?.characters?.filter(character => character._id !== action.payload) || [];
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    characters: allOtherCharacters
+                }
+            }
+        case KILL_CAMPAIGN_CHARACTER:
+            const characterToKillIndex = state.campaignData?.characters?.findIndex(character => character._id === action.payload.id) || -1;
+            const newCharacters2 = state.campaignData?.characters || [];
+            if (characterToKillIndex !== -1 && newCharacters2.length > 0) {
+                newCharacters2[characterToKillIndex].status = 'dead';
+            }
+
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    characters: newCharacters2
+                }
+            }
+        case REVIVE_CAMPAIGN_CHARACTER:
+            const characterToReviveIndex = state.campaignData?.characters?.findIndex(character => character._id === action.payload.id) || -1;
+            const newCharacters3 = state.campaignData?.characters || [];
+            if (characterToReviveIndex !== -1 && newCharacters3.length > 0) {
+                newCharacters3[characterToReviveIndex].status = 'active';
+            }
+
+            return {
+                ...state,
+                campaignData: {
+                    ...state.campaignData,
+                    characters: newCharacters3
                 }
             }
         default:

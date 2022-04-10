@@ -18,6 +18,8 @@ export const API = {
         invite: `${API_ROOT}/campaigns/{campaignId}/invite`
     },
     characters: {
-        character: `${API_ROOT}/characters/{characterId}`
+        character: `${API_ROOT}/characters/{characterId}`,
+        kill: `${API_ROOT}/characters/{characterId}/kill`,
+        revive: `${API_ROOT}/characters/{characterId}/revive`
     }
 };

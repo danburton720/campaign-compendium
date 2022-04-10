@@ -93,7 +93,7 @@ router.post("/characters/:id/kill", async (req, res) => {
             character.status = "dead"
             await character.save();
             res.send(character);
-    } catch (e) {
+        } catch (e) {
             res.status(404).send(e);
         }
     } else {
