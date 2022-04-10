@@ -65,17 +65,22 @@ const ViewCampaign = () => {
                 )
             }
             // this will run for players, as the DM will get the PlayerCard returned above
+            const charactersOtherThanCurrentUser = campaignData.characters.filter(character => character.userId !== currentUser._id);
             return (
                 <Card sx={{ width: '100%', maxWidth: '400px' }}>
                     <CardContent>
                         <Typography>Other characters</Typography>
-                        <Box display='flex' flexDirection='column' gap={2}>
-                            {campaignData.characters.map(character => (
-                                <React.Fragment key={character._id}>
-                                    <CharacterCard character={character} />
-                                </React.Fragment>
-                            ))}
-                        </Box>
+                        {charactersOtherThanCurrentUser.length > 0 ? (
+                            <Box display='flex' flexDirection='column' gap={2}>
+                                {campaignData.characters.filter(character => character.userId !== currentUser._id).map(character => (
+                                    <React.Fragment key={character._id}>
+                                        <CharacterCard character={character}/>
+                                    </React.Fragment>
+                                ))}
+                            </Box>
+                        ) : (
+                            <Alert severity="info">There are currently no other players in this campaign</Alert>
+                        )}
                     </CardContent>
                 </Card>
             )
