@@ -91,9 +91,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.use(authRouter);
-app.use(userRouter);
-app.use(campaignRouter);
-app.use(characterRouter);
+app.use('/api', userRouter);
+app.use('/api', campaignRouter);
+app.use('/api', characterRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{

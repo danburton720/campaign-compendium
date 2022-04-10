@@ -110,7 +110,7 @@ export function getCampaign(id) {
             dispatch(setCampaignPending(false));
         } catch (err) {
             dispatch(setCampaignError(err.message));
-            dispatch(setCampaignPending(true));
+            dispatch(setCampaignPending(false));
         }
     }
 }

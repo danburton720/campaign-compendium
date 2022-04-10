@@ -1,10 +1,11 @@
 const hostname = process.env.NODE_ENV;
-const API_ROOT = hostname === 'development' ? 'http://localhost:4000' : `//${window.location.host}`;
+const AUTH_ROOT = hostname === 'development' ? 'http://localhost:4000' : `//${window.location.host}`;
+const API_ROOT = `${AUTH_ROOT}/api`;
 
 export const API = {
     auth: {
-        google: `${API_ROOT}/auth/google`,
-        logout: `${API_ROOT}/auth/logout`
+        google: `${AUTH_ROOT}/auth/google`,
+        logout: `${AUTH_ROOT}/auth/logout`
     },
     user: {
         user: `${API_ROOT}/user`

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
 
@@ -6,6 +6,11 @@ import backgroundImage from '../assets/bg.png';
 import AccountMenu from '../components/AccountMenu';
 
 const PageWrapper = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, []);
+
     return (
         <Box display="flex">
             <Container

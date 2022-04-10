@@ -19,6 +19,7 @@ import { API } from '../config/api';
 import { clearAllStorage } from '../actions/rootActions';
 import { useTheme } from '@mui/material/styles';
 import { ROUTES } from '../constants';
+import { extraPalette } from '../themes/mui';
 
 const AccountMenu = () => {
     const theme = useTheme();
@@ -80,7 +81,8 @@ const AccountMenu = () => {
                     elevation: 0,
                     sx: {
                         minWidth: 200,
-                        maxWidth: 300,
+                        maxWidth: 400,
+                        width: 'fit-content',
                         overflow: 'visible',
                         filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         mt: 1.5,
@@ -107,9 +109,10 @@ const AccountMenu = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <Box padding="6px 16px">
+                <Box padding="6px 16px" display='flex' flexDirection='column'>
                     <Typography variant="subtitle2"
-                                fontWeight={700}>{`${currentUser?.firstName} ${currentUser?.lastName}`}</Typography>
+                                fontWeight={700}>{currentUser?.displayName || 'No name'}</Typography>
+                    <Typography noWrap variant="subtitle2" sx={{ color: extraPalette.GREY6 }}>{currentUser?.email || 'No email'}</Typography>
                 </Box>
                 <Divider sx={{ margin: '8px 0' }} />
                 <MenuItem onClick={handleLogout}>

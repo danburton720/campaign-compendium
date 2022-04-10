@@ -33,17 +33,12 @@ const CreateCampaign = () => {
                 description,
                 invitedUsers: invitedPlayers
             }, { withCredentials: true });
-            console.log('post successful')
-            console.log('send a notification')
+            // TODO snackbar success
             navigate(ROUTES.CAMPAIGNS);
         } catch (err) {
-            console.log('send a notification that the post was unsuccessful')
+            // TODO snackbar error
         }
     }
-
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, []);
 
     return (
         <Box minHeight='calc(100vh - 5rem - 2rem)'>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Typography } from '@mui/material';
@@ -6,6 +6,7 @@ import { Alert, Box, Button, Card, CardContent, CircularProgress, Typography } f
 import { ROUTES } from '../constants';
 import { extraPalette } from '../themes/mui';
 import { getAllCampaigns } from '../actions/campaignActions';
+import useDebouncedPending from '../hooks/useDebouncedPending';
 
 const Campaigns = () => {
     const currentUser = useSelector(state => state.auth.currentUser);
@@ -23,6 +24,8 @@ const Campaigns = () => {
         )
     );
 
+    const [pending, setPending] = useState(false);
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -31,9 +34,11 @@ const Campaigns = () => {
         dispatch(getAllCampaigns());
     }, []);
 
-    if (currentUserPending || campaignsPending) {
+    useDebouncedPending(setPending, [campaignsPending, currentUserPending]);
+
+    if (pending) {
         return (
-            <Box display='flex' width='100%' height='100vh'>
+            <Box display='flex' width='100%' height='calc(100vh - 5rem - 2rem)' alignItems='center' justifyContent='center'>
                 <CircularProgress/>
             </Box>
         );
