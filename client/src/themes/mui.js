@@ -52,10 +52,10 @@ export const mui_theme = {
             main: '#0D7288',
         },
         success: {
-            main: '#31B886',
+            main: '#167556',
         },
         info: {
-            main: '#00A098'
+            main: '#0053d3'
         },
         error: {
             main: '#9b0a11'
