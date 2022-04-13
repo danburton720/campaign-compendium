@@ -1,0 +1,64 @@
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
+import CampaignCard from './CampaignCard';
+import useDebouncedPending from '../hooks/useDebouncedPending';
+import { extraPalette } from '../themes/mui';
+
+const InvitedCampaigns = () => {
+    const campaignsPending = useSelector(state => state.campaigns.campaignsPending);
+    const playerCampaigns = useSelector(state => state.campaigns.playerCampaigns);
+
+    const [pending, setPending] = useState(false);
+    const [campaigns, setCampaigns] = useState([]);
+
+    const navigate = useNavigate();
+
+    useDebouncedPending(setPending, [campaignsPending]);
+
+    useEffect(() => {
+        if (playerCampaigns) {
+            const campaignList = [];
+
+            playerCampaigns.forEach(campaign => {
+                const invitedCharacters = campaign.characters.filter(character => character.status === "invited");
+                if (invitedCharacters.length > 0) return;
+                campaignList.push(campaign);
+            });
+
+            setCampaigns(campaignList);
+        }
+    }, [playerCampaigns]);
+
+    return (
+        <>
+            <Typography variant="h3" sx={{ marginBottom: '1rem', marginTop: '2rem', color: extraPalette.WHITE }}>
+                Campaigns I'm playing
+            </Typography>
+            {pending ? (
+                <Box display='flex' height='200px' width='100%' justifyContent='center' alignItems='center'>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <Box display="flex" flexWrap='wrap' gap={3}>
+                    {campaigns.map(campaign => (
+                        <React.Fragment key={campaign._id}>
+                            <CampaignCard
+                                campaign={campaign}
+                                buttonText='Continue campaign'
+                                onButtonClick={() => navigate(`/campaigns/${campaign._id}`)}
+                            />
+                        </React.Fragment>
+                    ))}
+                    {campaigns.length === 0 &&
+                    <Alert severity="info">Looks like you aren't playing in any campaigns right now</Alert>
+                    }
+                </Box>
+            )}
+        </>
+    );
+};
+
+export default InvitedCampaigns;

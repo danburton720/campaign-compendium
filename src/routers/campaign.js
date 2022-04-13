@@ -75,7 +75,9 @@ router.get("/campaigns/player", async (req, res) => {
         const characters = await Character.find({ 'userId': req.user._id, 'deletedAt': "" }).lean();
         for (const character of characters) {
             const campaign = await Campaign.findById(character.campaignId).lean();
-            campaign.character = character;
+
+            // now get all characters in this campaign for that user
+            campaign.characters = await Character.find({ 'campaignId': campaign._id, 'userId': req.user._id });
             campaigns.push(campaign);
         }
         res.status(200).send(campaigns)
@@ -153,7 +155,7 @@ router.post("/campaigns/:id/invite", async (req, res) => {
         // check if the campaign to which this user is being invited to has been created by the requesting user
         if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to invite users to this campaign');
 
-        // check if the user is already in this campaign with an active or invited character
+        // check if the user is already in this campaign with an active or invited character (as long as they aren't deleted)
         const existingCharacter = await Character.findOne(
             {
                 $or: [
@@ -170,6 +172,9 @@ router.post("/campaigns/:id/invite", async (req, res) => {
                     },
                     {
                         userId: foundUser._id,
+                    },
+                    {
+                        deletedAt: ""
                     }
                 ]
             }
@@ -207,16 +212,12 @@ router.delete("/campaigns/:campaignId/users/:userId", async (req, res) => {
         const campaignId = req.params.campaignId;
         const userId = req.params.userId;
 
-        console.log('campaignId', campaignId)
-        console.log('userId', userId)
-
         if (!mongoose.Types.ObjectId.isValid(campaignId)) return res.status(404).send('A campaign could not be found for the given ID');
         if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).send('A user could not be found for the given ID');
 
         try {
             // get this campaign
             const campaign = await Campaign.findById(campaignId);
-            console.log('campaign', campaign)
             if (!campaign) return res.status(500).send('A campaign could not be found for the given ID');
 
             // check if the campaign was created by the same user who is sending this request
@@ -224,7 +225,6 @@ router.delete("/campaigns/:campaignId/users/:userId", async (req, res) => {
 
             // we need to get all non-deleted characters relating to this campaign for this user
             const characters = await Character.find({ 'campaignId': campaignId, 'userId': userId, 'deletedAt': "" }).lean();
-            console.log('characters', characters)
             if (!characters || characters.length === 0) return res.status(404).send('A character could not be found for the given campaign and user ID');
 
             const deletedCharacters = await Character.updateMany({ 'campaignId': campaignId, 'userId': userId, 'deletedAt': '' }, { 'deletedAt': new Date().toISOString() });
