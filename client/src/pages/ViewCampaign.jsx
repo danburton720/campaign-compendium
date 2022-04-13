@@ -22,7 +22,7 @@ const ViewCampaign = () => {
 
     const [isDM, setIsDM] = useState(campaignData?.createdBy === currentUser?._id);
     const [usersCharacter, setUsersCharacter] = useState(() =>
-        campaignData?.characters?.find(character => character?._id === currentUser?._id) || {}
+        campaignData?.characters?.find(character => character?._id === currentUser?._id && character?.status === "active") || {}
     );
     const [pending, setPending] = useState(true);
     const [players, setPlayers] = useState(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
@@ -43,7 +43,7 @@ const ViewCampaign = () => {
     useEffect(() => {
         if (!campaignPending && prevCampaignPending && campaignData) {
             setIsDM(campaignData?.createdBy === currentUser._id || false);
-            setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id) || {});
+            setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id && character?.status === "active") || {});
             setPlayers(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
             setDeadPlayers(campaignData?.characters?.filter(character => character.status === 'dead') || []);
         }

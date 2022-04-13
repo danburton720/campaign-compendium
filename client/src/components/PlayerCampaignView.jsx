@@ -48,15 +48,14 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
 
     const renderDeadPlayers = () => {
         if (deadPlayers.length > 0) {
-            const charactersOtherThanCurrentUser = deadPlayers.filter(character => character.userId !== currentUser._id);
             return (
                 <Box display='flex' flexDirection='column'>
                     <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
                     <Card sx={{ width: '100%', maxWidth: '400px' }}>
                         <CardContent>
-                            {charactersOtherThanCurrentUser.length > 0 && (
+                            {deadPlayers.length > 0 && (
                                 <Box display='flex' flexDirection='column' gap={2}>
-                                    {charactersOtherThanCurrentUser.map(character => (
+                                    {deadPlayers.map(character => (
                                         <React.Fragment key={character._id}>
                                             <CharacterCard character={character}/>
                                         </React.Fragment>
@@ -98,18 +97,24 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
             {createCharacterMode ? (
                 <CreateCharacter character={usersCharacter} />
             ) : (
-                !isEmpty(usersCharacter) &&
-                <Card sx={{ width: '100%', maxWidth: '400px' }}>
-                    <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Typography variant="h3">My character</Typography>
-                        <CharacterCard character={usersCharacter} />
-                        <Button
-                            variant="contained"
-                        >
-                            View / Edit character
-                        </Button>
-                    </CardContent>
-                </Card>
+                !isEmpty(usersCharacter) ? (
+                    <Card sx={{ width: '100%', maxWidth: '400px' }}>
+                        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Typography variant="h3">My character</Typography>
+                            <CharacterCard character={usersCharacter} />
+                            <Button
+                                variant="contained"
+                            >
+                                View / Edit character
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <Card>
+                        Create character?
+                    </Card>
+                )
+
             )}
             {!createCharacterMode &&
                 <>
