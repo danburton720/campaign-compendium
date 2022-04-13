@@ -21,6 +21,7 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 
@@ -37,7 +38,8 @@ const PlayerCard = ({ player, campaignId }) => {
     const theme = useTheme();
 
     const [showCharacterModal, setShowCharacterModal] = useState(false);
-    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+    const [showConfirmDeleteCharacterModal, setShowConfirmDeleteCharacterModal] = useState(false);
+    const [showConfirmRemovePlayerModal, setShowConfirmRemovePlayerModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
     const dispatch = useDispatch();
@@ -54,6 +56,20 @@ const PlayerCard = ({ player, campaignId }) => {
         setAnchorEl(null);
     };
 
+
+    // TODO make sure delete character and remove player use the correct endpoints
+    const handleDeleteCharacter = async () => {
+        const endpoint = API.characters.character.replaceAll('{characterId}', player._id);
+        try {
+            await axios.delete(endpoint, { withCredentials: true });
+            dispatch(removeCampaignCharacter(player._id));
+            enqueueSnackbar(`${player.user.displayName} has been removed from the campaign`, { variant: 'success' });
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' });
+        }
+        setShowConfirmDeleteCharacterModal(false);
+    }
+
     const handleRemovePlayer = async () => {
         const endpoint = API.characters.character.replaceAll('{characterId}', player._id);
         try {
@@ -63,7 +79,7 @@ const PlayerCard = ({ player, campaignId }) => {
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
         }
-        setShowConfirmDeleteModal(false);
+        setShowConfirmRemovePlayerModal(false);
     }
 
     const handleKillOrReviveCharacter = async (id) => {
@@ -137,10 +153,18 @@ const PlayerCard = ({ player, campaignId }) => {
                         }
                         {player.status !== 'invited' && <Divider/>}
                         <MenuItem
-                            onClick={() => setShowConfirmDeleteModal(true)}
+                            onClick={() => setShowConfirmDeleteCharacterModal(true)}
                         >
                             <ListItemIcon>
                                 <DeleteIcon sx={{ color: theme.palette.error.main }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: theme.palette.error.main }}>Delete character</ListItemText>
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => setShowConfirmRemovePlayerModal(true)}
+                        >
+                            <ListItemIcon>
+                                <DoDisturbIcon sx={{ color: theme.palette.error.main }} />
                             </ListItemIcon>
                             <ListItemText sx={{ color: theme.palette.error.main }}>Remove player from campaign</ListItemText>
                         </MenuItem>
@@ -148,11 +172,18 @@ const PlayerCard = ({ player, campaignId }) => {
                 </Menu>
             </CardContent>
             <ConfirmDelete
-                open={showConfirmDeleteModal}
-                onClose={() => setShowConfirmDeleteModal(false)}
+                open={showConfirmDeleteCharacterModal}
+                onClose={() => setShowConfirmDeleteCharacterModal(false)}
+                onConfirm={() => handleDeleteCharacter()}
+                modalTitle={`Delete ${player.name}?`}
+                modalSubheading={`Are you sure you want to delete this character? This action cannot be reversed.`}
+            />
+            <ConfirmDelete
+                open={showConfirmRemovePlayerModal}
+                onClose={() => setShowConfirmRemovePlayerModal(false)}
                 onConfirm={() => handleRemovePlayer()}
                 modalTitle={`Remove ${player.user.displayName} from the campaign?`}
-                modalSubheading={`This will delete any character information set by the player and remove them from the campaign. This action cannot be reversed.`}
+                modalSubheading={`This action will delete any characters created by this player within this campaign and will remove them from the campaign. This action cannot be reversed.`}
             />
         </Card>
     )

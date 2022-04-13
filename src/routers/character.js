@@ -136,6 +136,9 @@ router.post("/characters/:id/revive", async (req, res) => {
                         },
                         {
                             userId: character.userId,
+                        },
+                        {
+                            deletedAt: ""
                         }
                     ]
                 }

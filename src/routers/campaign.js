@@ -73,8 +73,10 @@ router.get("/campaigns/player", async (req, res) => {
         // get all campaigns the user is a player in
         const campaigns = [];
         const characters = await Character.find({ 'userId': req.user._id, 'deletedAt': "" }).lean();
-        for (const character of characters) {
-            const campaign = await Campaign.findById(character.campaignId).lean();
+        const uniqueCampaignIds = [ ...new Set(characters.map(character => character.campaignId.toString()))];
+        console.log('uniqueCampaignIds', uniqueCampaignIds)
+        for (const campaignId of uniqueCampaignIds) {
+            const campaign = await Campaign.findById(campaignId).lean();
 
             // now get all characters in this campaign for that user
             campaign.characters = await Character.find({ 'campaignId': campaign._id, 'userId': req.user._id, 'deletedAt': "" }).lean();

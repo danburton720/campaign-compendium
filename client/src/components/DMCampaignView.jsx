@@ -89,7 +89,7 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     const getDeadPlayers = () => {
         if (deadPlayers.length > 0) {
             return (
-                <Box display='flex' flexDirection='column'>
+                <Box display='flex' flexDirection='column' marginTop='1rem'>
                     <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
                     <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
                         {deadPlayers.map(character => (

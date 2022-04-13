@@ -23,8 +23,10 @@ const InvitedCampaigns = () => {
             const campaignList = [];
 
             playerCampaigns.forEach(campaign => {
+                const activeCharacters = campaign.characters.filter(character => character.status === "active");
+                const deadCharacters = campaign.characters.filter(character => character.status === "dead");
                 const invitedCharacters = campaign.characters.filter(character => character.status === "invited");
-                if (invitedCharacters.length > 0) campaignList.push(campaign);
+                if (invitedCharacters.length === 1 && activeCharacters.length === 0 && deadCharacters.length === 0) campaignList.push(campaign);
             });
 
             setCampaigns(campaignList);
