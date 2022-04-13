@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Skeleton, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 import { extraPalette } from '../themes/mui';
 import { getAllCampaigns } from '../actions/campaignActions';
@@ -11,10 +11,9 @@ import InvitedCampaigns from '../components/InvitedCampaigns';
 
 const Campaigns = () => {
     const currentUser = useSelector(state => state.auth.currentUser);
-    const campaignsPending = useSelector(state => state.campaigns.campaignsPending);
     const currentUserPending = useSelector(state => state.auth.currentUserPending);
 
-    const [pending, setPending] = useState(false);
+    const [loginPending, setLoginPending] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -22,7 +21,20 @@ const Campaigns = () => {
         dispatch(getAllCampaigns());
     }, []);
 
-    useDebouncedPending(setPending, [currentUserPending, campaignsPending]);
+    useDebouncedPending(setLoginPending, [currentUserPending]);
+
+    if (loginPending) {
+        return (
+            <Box
+                minHeight='calc(100vh - 5rem - 2rem)'
+                display='flex'
+                alignItems='center'
+                justifyContent='center'
+            >
+                <CircularProgress />
+            </Box>
+        )
+    }
 
     return (
         <Box minHeight='calc(100vh - 5rem - 2rem)'>
@@ -33,7 +45,7 @@ const Campaigns = () => {
                     color: extraPalette.WHITE
                 }}
             >
-                {pending ? <Skeleton width='70vw' sx={{ bgcolor: '#166260' }} /> :  <span>Hello, <strong>{currentUser.firstName}</strong></span>}
+                <span>Hello, <strong>{currentUser.firstName}</strong></span>
             </Typography>
             <Box display="flex" flexDirection="column" marginTop='2rem'>
                 <CreatedCampaigns />

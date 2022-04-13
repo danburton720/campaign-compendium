@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 
 import CampaignCard from './CampaignCard';
 import useDebouncedPending from '../hooks/useDebouncedPending';
@@ -30,7 +30,9 @@ const CreatedCampaigns = () => {
                     invitedCharacters.length > 0 &&
                     deadCharacters.length === 0 &&
                     activeCharacters.length === 0
-                ) campaignList.push(campaign);
+                ) return;
+
+                campaignList.push(campaign);
             });
 
             setCampaigns(campaignList);

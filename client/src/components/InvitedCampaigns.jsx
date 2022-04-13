@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 
 import CampaignCard from './CampaignCard';
 import useDebouncedPending from '../hooks/useDebouncedPending';
@@ -24,8 +24,7 @@ const InvitedCampaigns = () => {
 
             playerCampaigns.forEach(campaign => {
                 const invitedCharacters = campaign.characters.filter(character => character.status === "invited");
-                if (invitedCharacters.length > 0) return;
-                campaignList.push(campaign);
+                if (invitedCharacters.length > 0) campaignList.push(campaign);
             });
 
             setCampaigns(campaignList);
@@ -35,7 +34,7 @@ const InvitedCampaigns = () => {
     return (
         <>
             <Typography variant="h3" sx={{ marginBottom: '1rem', marginTop: '2rem', color: extraPalette.WHITE }}>
-                Campaigns I'm playing
+                Campaigns I'm invited to
             </Typography>
             {pending ? (
                 <Box display='flex' height='200px' width='100%' justifyContent='center' alignItems='center'>
@@ -47,7 +46,7 @@ const InvitedCampaigns = () => {
                         <React.Fragment key={campaign._id}>
                             <CampaignCard
                                 campaign={campaign}
-                                buttonText='Continue campaign'
+                                buttonText='Join campaign'
                                 onButtonClick={() => navigate(`/campaigns/${campaign._id}`)}
                             />
                         </React.Fragment>

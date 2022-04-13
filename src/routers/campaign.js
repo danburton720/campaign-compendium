@@ -77,7 +77,7 @@ router.get("/campaigns/player", async (req, res) => {
             const campaign = await Campaign.findById(character.campaignId).lean();
 
             // now get all characters in this campaign for that user
-            campaign.characters = await Character.find({ 'campaignId': campaign._id, 'userId': req.user._id });
+            campaign.characters = await Character.find({ 'campaignId': campaign._id, 'userId': req.user._id, 'deletedAt': "" }).lean();
             campaigns.push(campaign);
         }
         res.status(200).send(campaigns)
