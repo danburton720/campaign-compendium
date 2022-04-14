@@ -26,9 +26,6 @@ const InvitedCampaigns = () => {
                 const activeCharacters = campaign.characters.filter(character => character.status === "active");
                 const deadCharacters = campaign.characters.filter(character => character.status === "dead");
                 const invitedCharacters = campaign.characters.filter(character => character.status === "invited");
-                console.log('activeCharacters', activeCharacters)
-                console.log('deadCharacters', deadCharacters)
-                console.log('invitedCharacters', invitedCharacters)
                 if (invitedCharacters.length === 1 && activeCharacters.length === 0 && deadCharacters.length === 0) campaignList.push(campaign);
             });
 

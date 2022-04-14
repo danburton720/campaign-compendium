@@ -1,23 +1,46 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle, Box, Button, Card, CardContent, Collapse, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { isEmpty } from 'ramda';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
 
 import { ROUTES } from '../constants';
 import { extraPalette } from '../themes/mui';
 import CreateCharacter from './CreateCharacter';
 import CharacterCard from './CharacterCard';
+import ViewEditCharacter from './Modals/ViewEditCharacter';
+import { getCampaign } from '../actions/campaignActions';
+import { API } from '../config/api';
 
 const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
     const [createCharacterMode, setCreateCharacterMode] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && isEmpty(usersDeadCharacters));
     const [showReinviteAlert, setShowReinviteAlert] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && !isEmpty(usersDeadCharacters));
-
-    console.log('showReinviteAlert', showReinviteAlert)
+    const [showViewEditCharacterModal, setShowViewEditCharacterModal] = useState(false);
 
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    const handleUpdateCharacter = async (character) => {
+        if (!isEmpty(character)) {
+            try {
+                console.log('character', character)
+                const endpoint = API.characters.character.replaceAll('{characterId}', usersCharacter._id);
+                await axios.patch(endpoint, { ...character }, { withCredentials: true });
+                dispatch(getCampaign(campaignData._id));
+                enqueueSnackbar(`Character ${character.name} has been updated`, { variant: 'success' });
+            } catch (err) {
+                enqueueSnackbar(err.response.data, { variant: 'error' });
+            }
+        }
+        setShowViewEditCharacterModal(false);
+    }
 
     const renderPlayers = () => {
         if (players.length > 0) {
@@ -107,6 +130,7 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
                             <CharacterCard character={usersCharacter} />
                             <Button
                                 variant="contained"
+                                onClick={() => setShowViewEditCharacterModal(true)}
                             >
                                 View / Edit character
                             </Button>
@@ -135,6 +159,13 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
                     {renderDeadPlayers()}
                 </>
             }
+            <ViewEditCharacter
+                open={showViewEditCharacterModal}
+                onClose={() => setShowViewEditCharacterModal(false)}
+                character={usersCharacter}
+                onSave={character => handleUpdateCharacter(character)}
+                editMode={true}
+            />
         </Box>
     )
 }
