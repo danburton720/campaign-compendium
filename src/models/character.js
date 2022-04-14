@@ -31,6 +31,9 @@ const CharacterSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true
+    },
+    deletedAt: {
+        type: String,
     }
 });
 

@@ -10,7 +10,7 @@ router.delete("/characters/:id", async (req, res) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A character could not be found for the given ID');
             const character = await Character.findById(_id);
-            if (!character) return res.status(404).send('A character could not be found for the given ID');
+            if (!character || character.deletedAt !== "") return res.status(404).send('A character could not be found for the given ID');
 
             // get the campaign this character relates to
             const campaign = await Campaign.findById(character.campaignId);
@@ -20,7 +20,9 @@ router.delete("/characters/:id", async (req, res) => {
             if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to delete this character');
 
             // delete the character
-            const characterToDelete = await Character.findOneAndDelete({ _id });
+            const characterToDelete = await Character.findById(_id);
+            characterToDelete.deletedAt = new Date().toISOString();
+            await characterToDelete.save();
             res.send(characterToDelete);
         } catch (e) {
             res.status(500).send(e);
@@ -38,7 +40,7 @@ router.patch("/characters/:id", async (req, res) => {
 
             const character = await Character.findById(_id);
 
-            if (!character) {
+            if (!character || character.deletedAt !== '') {
                 return res.status(404).send('A character could not be found for the given ID');
             }
 
@@ -77,7 +79,7 @@ router.post("/characters/:id/kill", async (req, res) => {
             if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A character could not be found for the given ID');
 
             const character = await Character.findById(_id);
-            if (!character) {
+            if (!character || character.deletedAt !== "") {
                 return res.status(404).send('A character could not be found for the given ID');
             }
 
@@ -93,7 +95,7 @@ router.post("/characters/:id/kill", async (req, res) => {
             character.status = "dead"
             await character.save();
             res.send(character);
-    } catch (e) {
+        } catch (e) {
             res.status(404).send(e);
         }
     } else {
@@ -109,13 +111,40 @@ router.post("/characters/:id/revive", async (req, res) => {
 
             const character = await Character.findById(_id);
 
-            if (!character) {
+            if (!character || character.deletedAt !== "") {
                 return res.status(404).send('A character could not be found for the given ID');
             }
 
             // get the campaign this character relates to
             const campaign = await Campaign.findById(character.campaignId);
             if (!campaign) return res.status(500).send('A campaign could not be found for this character');
+
+            // check if this campaign has any active or invited characters already for this user - if so then prevent this revival
+            const existingActiveOrInvitedCharacter = await Character.findOne(
+                {
+                    $or: [
+                        {
+                            status: 'active'
+                        },
+                        {
+                            status: 'invited'
+                        }
+                    ],
+                    $and: [
+                        {
+                            campaignId: campaign._id,
+                        },
+                        {
+                            userId: character.userId,
+                        },
+                        {
+                            deletedAt: ""
+                        }
+                    ]
+                }
+            );
+
+            if (existingActiveOrInvitedCharacter) return res.status(400).send('You cannot revive a character while the same player already has an active or invited character in this campaign')
 
             // check if the campaign this character relates to was created by the same user who is sending this request
             if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to revive this character');
