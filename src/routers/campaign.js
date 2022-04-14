@@ -74,7 +74,6 @@ router.get("/campaigns/player", async (req, res) => {
         const campaigns = [];
         const characters = await Character.find({ 'userId': req.user._id, 'deletedAt': "" }).lean();
         const uniqueCampaignIds = [ ...new Set(characters.map(character => character.campaignId.toString()))];
-        console.log('uniqueCampaignIds', uniqueCampaignIds)
         for (const campaignId of uniqueCampaignIds) {
             const campaign = await Campaign.findById(campaignId).lean();
 

@@ -176,7 +176,7 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
                         label='Invite player'
                         value={inviteEmail}
                         onChange={e => setInviteEmail(e.target.value)}
-                        error={inviteEmail && !isEmail(inviteEmail)}
+                        error={!!(inviteEmail && !isEmail(inviteEmail))}
                         helperText={inviteEmail && !isEmail(inviteEmail) ? 'Must be a valid email': ' '}
                     />
                     <Button

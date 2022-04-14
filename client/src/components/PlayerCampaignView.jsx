@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, Card, CardContent, Collapse, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { isEmpty } from 'ramda';
 
@@ -10,9 +10,12 @@ import { extraPalette } from '../themes/mui';
 import CreateCharacter from './CreateCharacter';
 import CharacterCard from './CharacterCard';
 
-const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter }) => {
+const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
-    const [createCharacterMode] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited")
+    const [createCharacterMode, setCreateCharacterMode] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && isEmpty(usersDeadCharacters));
+    const [showReinviteAlert, setShowReinviteAlert] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && !isEmpty(usersDeadCharacters));
+
+    console.log('showReinviteAlert', showReinviteAlert)
 
     const navigate = useNavigate();
 
@@ -97,7 +100,7 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
             {createCharacterMode ? (
                 <CreateCharacter character={usersCharacter} />
             ) : (
-                !isEmpty(usersCharacter) ? (
+                usersCharacter.status !== "invited" ? (
                     <Card sx={{ width: '100%', maxWidth: '400px' }}>
                         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <Typography variant="h3">My character</Typography>
@@ -110,9 +113,18 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
                         </CardContent>
                     </Card>
                 ) : (
-                    <Card>
-                        Create character?
-                    </Card>
+                    <Collapse in={showReinviteAlert}>
+                        <Alert severity="info" onClose={() => setShowReinviteAlert(false)}>
+                            <AlertTitle>Your DM has invited you to re-join this campaign</AlertTitle>
+                            <Box display='flex' flexDirection='column'>
+                                Do you want to create a new character?
+                                <Box marginTop='1rem'>
+                                    <Button onClick={() => setCreateCharacterMode(true)}>Create character</Button>
+                                    <Button onClick={() => setShowReinviteAlert(false)}>Not now</Button>
+                                </Box>
+                            </Box>
+                        </Alert>
+                    </Collapse>
                 )
 
             )}

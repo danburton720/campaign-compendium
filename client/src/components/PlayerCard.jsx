@@ -22,6 +22,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 
@@ -31,7 +32,6 @@ import ConfirmDelete from './Modals/ConfirmDelete';
 import { API } from '../config/api';
 import {
     getCampaign,
-    removeCampaignCharacter,
 } from '../actions/campaignActions';
 
 const PlayerCard = ({ player, campaignId }) => {
@@ -57,13 +57,12 @@ const PlayerCard = ({ player, campaignId }) => {
     };
 
 
-    // TODO make sure delete character and remove player use the correct endpoints
     const handleDeleteCharacter = async () => {
         const endpoint = API.characters.character.replaceAll('{characterId}', player._id);
         try {
             await axios.delete(endpoint, { withCredentials: true });
-            dispatch(removeCampaignCharacter(player._id));
-            enqueueSnackbar(`${player.user.displayName} has been removed from the campaign`, { variant: 'success' });
+            dispatch(getCampaign(campaignId));
+            enqueueSnackbar(`${player.name} has been deleted from the campaign`, { variant: 'success' });
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
         }
@@ -71,10 +70,12 @@ const PlayerCard = ({ player, campaignId }) => {
     }
 
     const handleRemovePlayer = async () => {
-        const endpoint = API.characters.character.replaceAll('{characterId}', player._id);
+        let endpoint = API.campaigns.remove_player.replaceAll('{campaignId}', campaignId);
+        endpoint = endpoint.replaceAll('{userId}', player._id);
+
         try {
             await axios.delete(endpoint, { withCredentials: true });
-            dispatch(removeCampaignCharacter(player._id));
+            dispatch(getCampaign(campaignId));
             enqueueSnackbar(`${player.user.displayName} has been removed from the campaign`, { variant: 'success' });
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
@@ -82,18 +83,27 @@ const PlayerCard = ({ player, campaignId }) => {
         setShowConfirmRemovePlayerModal(false);
     }
 
-    const handleKillOrReviveCharacter = async (id) => {
+    const handleReinvitePlayer = async () => {
+        const endpoint = API.campaigns.invite.replaceAll('{campaignId}', campaignId);
+        try {
+            await axios.post(endpoint, { email: player.user.email }, { withCredentials: true });
+            dispatch(getCampaign(campaignId));
+            enqueueSnackbar(`${player.user.displayName} successfully re-invited to join the campaign with a new character`, { variant: 'success' });
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' });
+        }
+    }
+
+    const handleKillOrReviveCharacter = async () => {
         try {
             if (player.status === "active") {
-                const endpoint = API.characters.kill.replaceAll('{characterId}', id);
+                const endpoint = API.characters.kill.replaceAll('{characterId}', player._id);
                 await axios.post(endpoint, {}, { withCredentials: true });
-                // dispatch(killCampaignCharacter(id));
                 dispatch(getCampaign(campaignId));
                 enqueueSnackbar(`${player.name} has been killed`, { variant: 'success' });
             } else if (player.status === "dead") {
-                const endpoint = API.characters.revive.replaceAll('{characterId}', id);
+                const endpoint = API.characters.revive.replaceAll('{characterId}', player._id);
                 await axios.post(endpoint, {}, { withCredentials: true });
-                // dispatch(reviveCampaignCharacter(id));
                 dispatch(getCampaign(campaignId));
                 enqueueSnackbar(`${player.name} has been revived`, { variant: 'success' });
             }
@@ -149,6 +159,14 @@ const PlayerCard = ({ player, campaignId }) => {
                                     {player.status === 'active' ? <CancelIcon/> : <AutoFixNormalIcon/>}
                                 </ListItemIcon>
                                 <ListItemText>{`${player.status === 'active' ? 'Kill' : 'Revive'} character`}</ListItemText>
+                            </MenuItem>
+                        }
+                        {player.status === 'dead' &&
+                            <MenuItem onClick={() => handleReinvitePlayer()}>
+                                <ListItemIcon>
+                                    <PersonAddAlt1Icon />
+                                </ListItemIcon>
+                                <ListItemText>Re-invite player</ListItemText>
                             </MenuItem>
                         }
                         {player.status !== 'invited' && <Divider/>}
