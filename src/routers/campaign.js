@@ -33,7 +33,8 @@ router.post('/campaigns', async (req, res) => {
                         externalLink: '',
                         userId: foundUser._id,
                         campaignId: id,
-                        status: 'invited'
+                        status: 'invited',
+                        deletedAt: ''
                     });
                     // push it to the array
                     characters.push(character);
@@ -71,10 +72,13 @@ router.get("/campaigns/player", async (req, res) => {
     if (req.user) {
         // get all campaigns the user is a player in
         const campaigns = [];
-        const characters = await Character.find({ 'userId': req.user._id }).lean();
-        for (const character of characters) {
-            const campaign = await Campaign.findById(character.campaignId).lean();
-            campaign.character = character;
+        const characters = await Character.find({ 'userId': req.user._id, 'deletedAt': "" }).lean();
+        const uniqueCampaignIds = [ ...new Set(characters.map(character => character.campaignId.toString()))];
+        for (const campaignId of uniqueCampaignIds) {
+            const campaign = await Campaign.findById(campaignId).lean();
+
+            // now get all characters in this campaign for that user
+            campaign.characters = await Character.find({ 'campaignId': campaign._id, 'userId': req.user._id, 'deletedAt': "" }).lean();
             campaigns.push(campaign);
         }
         res.status(200).send(campaigns)
@@ -93,7 +97,7 @@ router.get("/campaigns/:id", async (req, res) => {
             // we've found a campaign so we need to get associated player and character info
             // first get all characters in this campaign
             const newCampaign = campaign;
-            const characters = await Character.find({ 'campaignId': _id }).lean();
+            const characters = await Character.find({ 'campaignId': _id, 'deletedAt': "" }).lean();
             if (characters) {
                 // we have characters so we need to get the user to whom each of these characters belongs
                 const charactersAndUsers = [];
@@ -152,8 +156,30 @@ router.post("/campaigns/:id/invite", async (req, res) => {
         // check if the campaign to which this user is being invited to has been created by the requesting user
         if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to invite users to this campaign');
 
-        // check if the user is already in this campaign
-        const existingCharacter = await Character.findOne({ campaignId: _id, userId: foundUser._id });
+        // check if the user is already in this campaign with an active or invited character (as long as they aren't deleted)
+        const existingCharacter = await Character.findOne(
+            {
+                $or: [
+                    {
+                        status: 'active'
+                    },
+                    {
+                        status: 'invited'
+                    }
+                ],
+                $and: [
+                    {
+                        campaignId: _id,
+                    },
+                    {
+                        userId: foundUser._id,
+                    },
+                    {
+                        deletedAt: ""
+                    }
+                ]
+            }
+        );
         if (existingCharacter) return res.status(400).send('The specified user already exists in the campaign for the given ID');
 
         // check that the invited user isn't the DM
@@ -169,12 +195,44 @@ router.post("/campaigns/:id/invite", async (req, res) => {
                 externalLink: '',
                 userId: foundUser._id,
                 campaignId: _id,
-                status: 'invited'
+                status: 'invited',
+                deletedAt: ''
             });
             await character.save();
             res.status(200).send();
         } catch (e) {
             res.status(500).send(e);
+        }
+    } else {
+        res.status(401).send({});
+    }
+});
+
+router.delete("/campaigns/:campaignId/users/:userId", async (req, res) => {
+    if (req.user) {
+        const campaignId = req.params.campaignId;
+        const userId = req.params.userId;
+
+        if (!mongoose.Types.ObjectId.isValid(campaignId)) return res.status(404).send('A campaign could not be found for the given ID');
+        if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).send('A user could not be found for the given ID');
+
+        try {
+            // get this campaign
+            const campaign = await Campaign.findById(campaignId);
+            if (!campaign) return res.status(500).send('A campaign could not be found for the given ID');
+
+            // check if the campaign was created by the same user who is sending this request
+            if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to remove this player');
+
+            // we need to get all non-deleted characters relating to this campaign for this user
+            const characters = await Character.find({ 'campaignId': campaignId, 'userId': userId, 'deletedAt': "" }).lean();
+            if (!characters || characters.length === 0) return res.status(404).send('A character could not be found for the given campaign and user ID');
+
+            const deletedCharacters = await Character.updateMany({ 'campaignId': campaignId, 'userId': userId, 'deletedAt': '' }, { 'deletedAt': new Date().toISOString() });
+
+            res.status(200).send(deletedCharacters);
+        } catch (e) {
+            res.status(400).send(e);
         }
     } else {
         res.status(401).send({});

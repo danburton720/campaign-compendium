@@ -15,9 +15,12 @@ export const API = {
         created: `${API_ROOT}/campaigns/created`,
         player: `${API_ROOT}/campaigns/player`,
         campaign: `${API_ROOT}/campaigns/{campaignId}`,
-        invite: `${API_ROOT}/campaigns/{campaignId}/invite`
+        invite: `${API_ROOT}/campaigns/{campaignId}/invite`,
+        remove_player: `${API_ROOT}/campaigns/{campaignId}/user/{userId}`
     },
     characters: {
-        character: `${API_ROOT}/characters/{characterId}`
+        character: `${API_ROOT}/characters/{characterId}`,
+        kill: `${API_ROOT}/characters/{characterId}/kill`,
+        revive: `${API_ROOT}/characters/{characterId}/revive`
     }
 };

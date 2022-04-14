@@ -1,3 +1,29 @@
+## [0.0.3] - 2022-04-14
+### Added
+
+- Added `deletedAt` property to `characters` so they can be soft-deleted
+- Added new `POST` `/campaigns/:id/user/:id` endpoint which will soft-deleted all characters associated with that user and campaign
+- Added DM option on player kebab menu to allow a DM to delete a single character
+- Added DM option on player kebab menu to allow a DM to remove a player (deletes all characters belonging to that player in that campaign)
+- Added DM option on player kebab menu to re-invite a player to join the campaign again with a new character
+- Added prompt at the top of the player campaign view that displays when a DM has reinvited them to join the campaign
+- Added player graveyard to display dead characters
+
+### Changed
+
+- Changed `DELETE` `/characters/:id` to perform an update on a character - setting the `deletedAt` property instead of deleting the document
+- Changed `DELETE` `/characters/:id` to return a `404` if character for given ID exists but has a populated `deletedAt` property
+- Changed `POST` `/characters/:id/kill` to return a `404` if character for given ID exists but has a populated `deletedAt` property
+- Changed `POST` `/characters/:id/revive` to return a `404` if character for given ID exists but has a populated `deletedAt` property
+- Changed `POST` `/characters/:id/revive` to return a `400` if player already has an `active` or `invited` character in this campaign already
+- Changed `POST` `/campaigns/:id/invite` to return a `400` if a character with the same user ID already exists on the campaign at status `active` or `invited`
+- Changed `GET` `/campaigns/:id` to not return characters with a populated `deletedAt` property
+- Changed `GET` `/campaigns/:id/player` to not return characters with a populated `deletedAt` property
+- Only display a campaign in a player's `invited` list if they only have a single character in that campaign at status `invited`
+- Display all other campaigns a player is in, in the `active` list if they have any other configuration of characters (1 `active` 0-* `dead` characters or 1 `invited` and 1-* `dead` characters )
+
+### Fixed
+
 ## [0.0.2] - 2022-04-10
 ### Added
 - Add helper text to campaign `name` and `description` fields to show required error message when creating a campaign
