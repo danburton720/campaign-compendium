@@ -100,7 +100,7 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
             {createCharacterMode ? (
                 <CreateCharacter character={usersCharacter} />
             ) : (
-                usersCharacter.status !== "invited" ? (
+                usersCharacter.status === "active" ? (
                     <Card sx={{ width: '100%', maxWidth: '400px' }}>
                         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <Typography variant="h3">My character</Typography>

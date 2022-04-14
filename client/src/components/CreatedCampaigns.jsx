@@ -37,18 +37,19 @@ const CreatedCampaigns = () => {
                             />
                         </React.Fragment>
                     ))}
-                    <Card sx={{ height: '100px', width: '350px', backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
+                    <Card sx={{ height: '300px', width: '350px', backgroundColor: 'rgba(255, 255, 255, 0.75)' }}>
                         <CardContent sx={{
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'space-between'
                         }}>
+                            <Box />
                             <Typography variant="h3">Start a new campaign</Typography>
                             <Button
                                 variant="contained"
-                                sx={{ textTransform: 'capitalize' }}
+                                sx={{ justifySelf: 'flex-end', width: '100%' }}
                                 onClick={() => navigate(ROUTES.CREATE_CAMPAIGN)}
                             >
                                 Create campaign
