@@ -1,3 +1,15 @@
+## [1.0.0] - 2022-04-15
+### Added
+
+- Added `SVG` icons for character cards
+- Added an image picker to allow users to set and change their character image
+- Added colour picker to allow users to set and change their character colour
+- Added privacy policy and links to privacy policy from login page and user menu
+
+### Changed
+
+### Fixed
+
 ## [0.0.3] - 2022-04-14
 ### Added
 

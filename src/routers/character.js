@@ -53,6 +53,8 @@ router.patch("/characters/:id", async (req, res) => {
             if (req.body.hasOwnProperty('race')) character.race = req.body.race;
             if (req.body.hasOwnProperty('class')) character.class = req.body.class;
             if (req.body.hasOwnProperty('externalLink')) character.externalLink = req.body.externalLink;
+            if (req.body.hasOwnProperty('chosenImage')) character.chosenImage = req.body.chosenImage;
+            if (req.body.hasOwnProperty('chosenColor')) character.chosenColor = req.body.chosenColor;
             if (req.body.hasOwnProperty('status')) {
                 if (req.body.status !== 'active') {
                     return res.status(400).send('Invalid status');

@@ -13,6 +13,7 @@ import {
     Typography
 } from '@mui/material';
 import { Logout } from '@mui/icons-material';
+import PolicyIcon from '@mui/icons-material/Policy';
 import axios from 'axios';
 
 import { API } from '../config/api';
@@ -114,6 +115,13 @@ const AccountMenu = () => {
                                 fontWeight={700}>{currentUser?.displayName || 'No name'}</Typography>
                     <Typography noWrap variant="subtitle2" sx={{ color: extraPalette.GREY6 }}>{currentUser?.email || 'No email'}</Typography>
                 </Box>
+                <Divider sx={{ margin: '8px 0' }} />
+                <MenuItem onClick={() => window.open("https://www.privacypolicies.com/live/b395cb47-8727-4df3-9a6d-4ca9fc2c2341", "_blank")}>
+                    <ListItemIcon>
+                        <PolicyIcon fontSize="small" />
+                    </ListItemIcon>
+                    Privacy policy
+                </MenuItem>
                 <Divider sx={{ margin: '8px 0' }} />
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>

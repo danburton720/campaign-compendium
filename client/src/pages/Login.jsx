@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Link, Typography } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { isEmpty } from 'ramda';
 
@@ -57,6 +57,9 @@ const Login = () => {
                     Login with Google
                 </CustomButton>
                 <Box />
+                <Box marginTop='20rem' padding='2rem' textAlign='center'>
+                    <Typography variant="subtitle2" sx={{ color: extraPalette.WHITE, fontWeight: 400 }}>By continuing, you agree to Campaign Compendium's <Link underline="none" href="https://www.privacypolicies.com/live/b395cb47-8727-4df3-9a6d-4ca9fc2c2341"><strong>Privacy Policy</strong></Link></Typography>
+                </Box>
             </Box>
         </Container>
     );

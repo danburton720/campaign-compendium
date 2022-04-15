@@ -33,11 +33,12 @@ import { API } from '../config/api';
 import {
     getCampaign,
 } from '../actions/campaignActions';
+import ViewEditCharacter from './Modals/ViewEditCharacter';
 
 const PlayerCard = ({ player, campaignId }) => {
     const theme = useTheme();
 
-    const [showCharacterModal, setShowCharacterModal] = useState(false);
+    const [showViewCharacterModal, setShowViewCharacterModal] = useState(false);
     const [showConfirmDeleteCharacterModal, setShowConfirmDeleteCharacterModal] = useState(false);
     const [showConfirmRemovePlayerModal, setShowConfirmRemovePlayerModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -146,7 +147,7 @@ const PlayerCard = ({ player, campaignId }) => {
                 >
                     <MenuList>
                         {player.status !== 'invited' &&
-                            <MenuItem onClick={() => setShowCharacterModal(true)}>
+                            <MenuItem onClick={() => setShowViewCharacterModal(true)}>
                                 <ListItemIcon>
                                     <PreviewIcon/>
                                 </ListItemIcon>
@@ -202,6 +203,12 @@ const PlayerCard = ({ player, campaignId }) => {
                 onConfirm={() => handleRemovePlayer()}
                 modalTitle={`Remove ${player.user.displayName} from the campaign?`}
                 modalSubheading={`This action will delete any characters created by this player within this campaign and will remove them from the campaign. This action cannot be reversed.`}
+            />
+            <ViewEditCharacter
+                open={showViewCharacterModal}
+                onClose={() => setShowViewCharacterModal(false)}
+                character={player}
+                editMode={false}
             />
         </Card>
     )
