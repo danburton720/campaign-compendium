@@ -9,6 +9,7 @@ import { API } from '../config/api';
 import { getCampaign, updateCampaignCharacter } from '../actions/campaignActions';
 import { useParams } from 'react-router-dom';
 import SelectedCharacterImage from './SelectedCharacterImage';
+import SelectedCharacterColor from './SelectedCharacterColor';
 
 const CreateCharacter = ({ character }) => {
     const [name, setName] = useState(character.name);
@@ -130,10 +131,8 @@ const CreateCharacter = ({ character }) => {
                         />
                     </Box>
                     <Box display='flex' gap={2}>
-                        <SelectedCharacterImage chosenImage={chosenImage} onSelectImage={image => setChosenImage(image)} />
-                        <Box height='100px' width='200px' backgroundColor='yellowgreen'>
-                            Select color (TODO)
-                        </Box>
+                        <SelectedCharacterImage currentImage={chosenImage} onSelectImage={image => setChosenImage(image)} />
+                        <SelectedCharacterColor currentColor={chosenColor} onSelectColor={color => setChosenColor(color)} />
                     </Box>
                 </Box>
             </Paper>

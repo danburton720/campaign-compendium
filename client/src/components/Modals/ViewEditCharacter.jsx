@@ -12,6 +12,7 @@ import {
 import { usePrevious } from '../../hooks/usePrevious';
 import CharacterCard from '../CharacterCard';
 import SelectedCharacterImage from '../SelectedCharacterImage';
+import SelectedCharacterColor from '../SelectedCharacterColor';
 
 const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
     const theme = useTheme();
@@ -174,10 +175,8 @@ const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
                 </Box>
                 {editMode &&
                     <Box display='flex' gap={2} marginTop='2rem'>
-                        <SelectedCharacterImage chosenImage={chosenImage} onSelectImage={image => setChosenImage(image)} />
-                        <Box height='100px' width='200px' backgroundColor='yellowgreen'>
-                            Select color (TODO)
-                        </Box>
+                        <SelectedCharacterImage currentImage={chosenImage} onSelectImage={image => setChosenImage(image)} />
+                        <SelectedCharacterColor currentColor={chosenColor} onSelectColor={color => setChosenColor(color)} />
                     </Box>
                 }
                 <Box display='flex' flexDirection='column' marginTop='1rem'>

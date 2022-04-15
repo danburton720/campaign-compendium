@@ -4,10 +4,10 @@ import { Box, Button, Typography } from '@mui/material';
 import { getCharacterImage } from '../utils/images';
 import SelectImage from './Modals/SelectImage';
 
-const SelectedCharacterImage = ({ chosenImage, onSelectImage }) => {
+const SelectedCharacterImage = ({ currentImage, onSelectImage }) => {
     const [showSelectImageModal, setShowSelectImageModal] = useState(false);
 
-    const image = getCharacterImage(chosenImage);
+    const image = getCharacterImage(currentImage);
 
     const handleSetChosenImage = (image) => {
         onSelectImage(image)
@@ -15,7 +15,7 @@ const SelectedCharacterImage = ({ chosenImage, onSelectImage }) => {
     }
 
     return (
-        <Box display='flex' flexDirection='column' width='50%' maxWidth='250px' gap={2}>
+        <Box display='flex' flexDirection='column' width='50%' maxWidth='300px' gap={2}>
             <Typography variant="caption">Selected image</Typography>
             <Box height='100px' width='100%'>
                 <img
@@ -35,7 +35,7 @@ const SelectedCharacterImage = ({ chosenImage, onSelectImage }) => {
                 Change image
             </Button>
             <SelectImage
-                chosenImage={chosenImage}
+                currentImage={currentImage}
                 open={showSelectImageModal}
                 onClose={() => setShowSelectImageModal(false)}
                 onSave={image => handleSetChosenImage(image)}
