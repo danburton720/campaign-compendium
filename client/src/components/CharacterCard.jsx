@@ -1,7 +1,15 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
+import { getCharacterImage } from '../utils/images';
+
 const CharacterCard = ({ character }) => {
+    console.log('character', character)
+
+    const characterImage = getCharacterImage(character.chosenImage);
+
+    console.log('characterImage', characterImage)
+
     return (
         <Box
             height='55px'
@@ -16,7 +24,7 @@ const CharacterCard = ({ character }) => {
         >
             <Box height='50px' width='50px'>
                 <img
-                    src={character.chosenImage}
+                    src={characterImage}
                     alt='character image'
                     style={{ height: '100%', width: '100%' }}
                 />

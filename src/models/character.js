@@ -20,6 +20,12 @@ const CharacterSchema = new mongoose.Schema({
     externalLink: {
         type: String
     },
+    chosenImage: {
+        type: String
+    },
+    chosenColor: {
+        type: String
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId, ref: 'User',
         required: true
