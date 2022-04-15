@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { usePrevious } from '../../hooks/usePrevious';
 import CharacterCard from '../CharacterCard';
+import SelectedCharacterImage from '../SelectedCharacterImage';
 
 const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
     const theme = useTheme();
@@ -171,16 +172,15 @@ const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
                         }}
                     />
                 </Box>
-                <Box display='flex' gap={2} marginTop='2rem'>
-                    <Box height='100px' width='100px' backgroundColor='orangered'>
-                        Select character image (TODO)
+                {editMode &&
+                    <Box display='flex' gap={2} marginTop='2rem'>
+                        <SelectedCharacterImage chosenImage={chosenImage} onSelectImage={image => setChosenImage(image)} />
+                        <Box height='100px' width='200px' backgroundColor='yellowgreen'>
+                            Select color (TODO)
+                        </Box>
                     </Box>
-                    <Box height='100px' width='200px' backgroundColor='yellowgreen'>
-                        Select color (TODO)
-                    </Box>
-                </Box>
+                }
                 <Box display='flex' flexDirection='column' marginTop='1rem'>
-                    <Typography sx={{ color: '#fff' }}>Character preview</Typography>
                     <CharacterCard character={previewCharacter} />
                 </Box>
             </DialogContent>

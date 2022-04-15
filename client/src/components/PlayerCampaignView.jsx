@@ -30,7 +30,6 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     const handleUpdateCharacter = async (character) => {
         if (!isEmpty(character)) {
             try {
-                console.log('character', character)
                 const endpoint = API.characters.character.replaceAll('{characterId}', usersCharacter._id);
                 await axios.patch(endpoint, { ...character }, { withCredentials: true });
                 dispatch(getCampaign(campaignData._id));
@@ -159,13 +158,15 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
                     {renderDeadPlayers()}
                 </>
             }
-            <ViewEditCharacter
-                open={showViewEditCharacterModal}
-                onClose={() => setShowViewEditCharacterModal(false)}
-                character={usersCharacter}
-                onSave={character => handleUpdateCharacter(character)}
-                editMode={true}
-            />
+            {!isEmpty(usersCharacter) &&
+                <ViewEditCharacter
+                    open={showViewEditCharacterModal}
+                    onClose={() => setShowViewEditCharacterModal(false)}
+                    character={usersCharacter}
+                    onSave={character => handleUpdateCharacter(character)}
+                    editMode={true}
+                />
+            }
         </Box>
     )
 }

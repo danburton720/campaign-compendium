@@ -4,11 +4,7 @@ import { Box, Typography } from '@mui/material';
 import { getCharacterImage } from '../utils/images';
 
 const CharacterCard = ({ character }) => {
-    console.log('character', character)
-
     const characterImage = getCharacterImage(character.chosenImage);
-
-    console.log('characterImage', characterImage)
 
     return (
         <Box
@@ -25,7 +21,7 @@ const CharacterCard = ({ character }) => {
             <Box height='50px' width='50px'>
                 <img
                     src={characterImage}
-                    alt='character image'
+                    alt='character'
                     style={{ height: '100%', width: '100%' }}
                 />
             </Box>
