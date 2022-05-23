@@ -26,7 +26,7 @@ const Campaigns = () => {
     if (loginPending) {
         return (
             <Box
-                minHeight='calc(100vh - 5rem - 2rem)'
+                minHeight='calc(100vh - 7rem)'
                 display='flex'
                 alignItems='center'
                 justifyContent='center'
@@ -37,7 +37,7 @@ const Campaigns = () => {
     }
 
     return (
-        <Box minHeight='calc(100vh - 5rem - 2rem)'>
+        <Box minHeight='calc(100vh - 7rem)'>
             <Typography
                 variant="h1"
                 sx={{

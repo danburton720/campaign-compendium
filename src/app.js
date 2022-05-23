@@ -80,13 +80,11 @@ passport.use(new GoogleStrategy({
                 done(null, newUser);
             }
         } catch (err) {
-            console.log('err', err)
             done('There was a problem logging you in. Try again later.', null);
         }
     }));
 
 if (process.env.NODE_ENV === "production") {
-    console.log('')
     app.use(express.static(path.resolve("client", "build")));
 }
 

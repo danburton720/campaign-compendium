@@ -33,9 +33,9 @@ const SelectImage = ({ currentImage, open, onClose, onSave }) => {
             maxWidth={'sm'}
             open={open}
             onClose={() => onClose()}
-            aria-labelledby="confirm-delete"
+            aria-labelledby="select-image"
         >
-            <DialogTitle id="confirm-delete-title">
+            <DialogTitle id="select-image-title">
                 Select image
             </DialogTitle>
             <DialogContent sx={{ padding: '1rem' }}>

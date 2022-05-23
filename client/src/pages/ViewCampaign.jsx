@@ -55,7 +55,7 @@ const ViewCampaign = () => {
 
     if (pending) {
         return (
-            <Box minHeight='calc(100vh - 5rem - 2rem)' display='flex' justifyContent='center' alignItems='center'>
+            <Box minHeight='calc(100vh - 7rem)' display='flex' justifyContent='center' alignItems='center'>
                 <CircularProgress />
             </Box>
         )
@@ -64,14 +64,14 @@ const ViewCampaign = () => {
     if (!campaignPending && prevCampaignPending) {
         if (campaignError || isEmpty(campaignData)) {
             return (
-                <Box minHeight='calc(100vh - 5rem - 2rem)'>
+                <Box minHeight='calc(100vh - 7rem)'>
                     <Alert severity="error">There was an issue fetching information for this campaign</Alert>
                 </Box>
             )
         }
         if (!isDM && isEmpty(usersCharacter)) {
             return (
-                <Box minHeight='calc(100vh - 5rem - 2rem)'>
+                <Box minHeight='calc(100vh - 7rem)'>
                     <Alert severity="error">Oh dear, it seems you don't have access to this campaign!</Alert>
                 </Box>
             )
@@ -79,7 +79,7 @@ const ViewCampaign = () => {
     }
 
     return (
-        <Box minHeight='calc(100vh - 5rem - 2rem)'>
+        <Box minHeight='calc(100vh - 7rem)'>
             {isDM ? (
                 <DMCampaignView
                     campaignData={campaignData}

@@ -126,7 +126,9 @@ router.patch("/campaigns/:id", async (req, res) => {
             const campaign = await Campaign.findById(_id);
 
             if (!campaign) return res.status(404).send('A campaign could not be found for the given id')
-            if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to edit this campaign');
+            if (!campaign.createdBy.equals(req.user._id)) {
+                return res.status(401).send('You are not authorised to edit this campaign');
+            }
 
             if (req.body.hasOwnProperty('name')) campaign.name = req.body.name;
             if (req.body.hasOwnProperty('description')) campaign.description = req.body.description;
