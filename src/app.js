@@ -11,6 +11,7 @@ const authRouter = require('./routers/auth');
 const userRouter = require('./routers/user');
 const campaignRouter = require('./routers/campaign');
 const characterRouter = require('./routers/character');
+const sessionUpdateRouter = require('./routers/sessionUpdate');
 
 const app = express();
 
@@ -92,6 +93,7 @@ app.use(authRouter);
 app.use('/api', userRouter);
 app.use('/api', campaignRouter);
 app.use('/api', characterRouter);
+app.use('/api', sessionUpdateRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{
