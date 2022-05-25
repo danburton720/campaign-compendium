@@ -112,7 +112,7 @@ router.delete("/session-updates/:id", async (req, res) => {
 
             if (!campaign) return res.status(404).send('A campaign could not be found for the session update for the given id')
             if (!campaign.createdBy.equals(req.user._id)) {
-                return res.status(401).send('You are not authorised to edit this session update');
+                return res.status(401).send('You are not authorised to delete this session update');
             }
 
             const deletedSessionUpdate = await SessionUpdate.deleteOne({ _id });
