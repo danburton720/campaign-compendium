@@ -21,15 +21,23 @@ router.post("/campaigns/:id/notes", async (req, res) => {
             // check if the user sending the request is the creator of this campaign OR has a non-deleted character on the given campaign
             if (!campaign.createdBy.equals(req.user._id) && (!character || character.length === 0)) return res.status(401).send('You are not authorised to add notes to this campaign');
 
-            const { content, relatedCharacter } = req.body;
+            const { content } = req.body;
 
             if (!content) return res.status(400).send('Note content is required');
-            const newRelatedCharacter = relatedCharacter || "DM";
+
+            // get the related character from the request
+            let newRelatedCharacter = req.body.hasOwnProperty('relatedCharacter') ? req.body.relatedCharacter : undefined;
+
+            // if no related character param exists and the message has not come from the requestor, return an error
+            if (!newRelatedCharacter && !campaign.createdBy.equals(req.user._id)) return res.status(400).send('You must specify a related character');
+
+            // since no error was returned, if there's no related character this must be the DM so set the value to "DM"
+            if (!newRelatedCharacter) newRelatedCharacter = "DM";
 
             // if the related character is not the DM, check that this character exists on the campaign
             if (newRelatedCharacter !== "DM") {
                 const campaignCharacter = await Character.find({ 'campaignId': _id, 'userId': req.user._id, 'deletedAt': '', '_id': newRelatedCharacter });
-                if (!campaignCharacter || campaignCharacter.length === 0) return res.status(404).send('There is no character on this campaign for the given related character ID');
+                if (!campaignCharacter || campaignCharacter.length === 0) return res.status(404).send('You do not have a character on this campaign for the given related character ID');
                 if (campaignCharacter.status === 'invited') return res.status(400).send('Notes cannot be related to an invited character');
             }
 
@@ -76,12 +84,12 @@ router.get("/campaigns/:id/notes", async (req, res) => {
             const relatedCharactersParam = req.query.relatedCharacter; // will be a string or array of strings of character IDs potentially with "DM" in the mix | undefined
             const fromParam = req.query.from; // will be string of date ISO string | undefined
             const toParam = req.query.to; // will be string of date ISO string | undefined
-            const page = parseInt(req.query.page, 10) || 1;
+            const page = parseInt(req.query.page, 10);
             const limit = 25;
 
             if (!page) return res.status(400).send('Param page is required');
-            if (!fromParam) return res.status(400).send('Param fromParam is required');
-            if (!toParam) return res.status(400).send('Param toParam is required');
+            if (!fromParam) return res.status(400).send('Param from is required');
+            if (!toParam) return res.status(400).send('Param to is required');
 
             // if the param is already an array, use it, otherwise create an array
             let filterCharactersArray = [];
@@ -117,7 +125,6 @@ router.get("/campaigns/:id/notes", async (req, res) => {
                     notesWithCharacters.push(newNote);
                 }
             }
-            res.send(notesWithCharacters);
 
             res.status(200).send(notesWithCharacters);
         } catch (e) {
@@ -145,7 +152,7 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
             if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
 
             const character = await Character.find({ 'campaignId': _id, 'userId': req.user._id, 'deletedAt': '' });
-            if (!character || character.length === 0) return res.status(401).send('You do not have a character on this campaign');
+            if (!character || character.length === 0) return res.status(400).send('You do not have a character on this campaign');
 
             // access query params
             const page = parseInt(req.query.page, 10) || 1;
@@ -172,7 +179,6 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
                     notesWithCharacters.push(newNote);
                 }
             }
-            res.send(notesWithCharacters);
 
             res.status(200).send(notesWithCharacters);
         } catch (e) {
@@ -186,6 +192,7 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
 // PATCH
 // PATCH endpoint so that the creator of a note can edit it - /notes/:id
 // only the creator of the note can edit it
+// the related character cannot be changed to DM or away from DM
 router.patch("/notes/:id", async (req, res) => {
     if (req.user) {
         const _id = req.params.id;
@@ -194,13 +201,17 @@ router.patch("/notes/:id", async (req, res) => {
 
             const note = await Note.findById(_id);
 
-            if (!note) return res.status(404).send('A note could not be found for the given id')
+            if (!note) return res.status(404).send('A note could not be found for the given id');
 
             if (!note.createdBy.equals(req.user._id)) {
                 return res.status(401).send('You are not authorised to edit this note');
             }
 
-            if (req.body.hasOwnProperty('relatedCharacter')) note.relatedCharacter = req.body.relatedCharacter;
+            const newRelatedCharacter = req.body.hasOwnProperty('relatedCharacter') ? req.body.relatedCharacter : undefined;
+            if (newRelatedCharacter === "DM" && note.relatedCharacter !== "DM") return res.status(400).send('You cannot move this note to being related to the DM');
+            if (newRelatedCharacter !== "DM" && note.relatedCharacter === "DM") return res.status(400).send('You cannot move this note from being related to the DM');
+
+            if (newRelatedCharacter) note.relatedCharacter = req.body.relatedCharacter;
             if (req.body.hasOwnProperty('content')) note.content = req.body.content;
             await note.save();
             res.send(note);
