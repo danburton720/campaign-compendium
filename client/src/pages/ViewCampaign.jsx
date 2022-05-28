@@ -1,102 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-    Alert,
-    Box,
-    CircularProgress,
-} from '@mui/material';
-import { isEmpty } from 'ramda';
-
-import { getCampaign } from '../actions/campaignActions';
-import { usePrevious } from '../hooks/usePrevious';
-import useDebouncedPending from '../hooks/useDebouncedPending';
-import DMCampaignView from '../components/DMCampaignView';
-import PlayerCampaignView from '../components/PlayerCampaignView';
+import React, { useState } from 'react';
+import { BottomNavigation, BottomNavigationAction, Box, Paper } from '@mui/material';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import FeedIcon from '@mui/icons-material/Feed';
+import NotesIcon from '@mui/icons-material/Notes';
+import CampaignOverview from '../components/CampaignOverview';
+import SessionUpdates from '../components/SessionUpdates';
 
 const ViewCampaign = () => {
-    const currentUser = useSelector(state => state.auth.currentUser);
-    const campaignPending = useSelector(state => state.campaigns.campaignPending);
-    const campaignData = useSelector(state => state.campaigns.campaignData);
-    const campaignError = useSelector(state => state.campaigns.campaignError);
-
-    const [isDM, setIsDM] = useState(campaignData?.createdBy === currentUser?._id);
-    const [usersCharacter, setUsersCharacter] = useState(() =>
-        campaignData?.characters?.find(character => character?._id === currentUser?._id && (character?.status === "active" || character?.status === "invited")) || {}
-    );
-    const [usersDeadCharacters, setUsersDeadCharacters] = useState(campaignData?.characters?.filter(character => character?.userId === currentUser?._id && character?.status === "dead"));
-    const [pending, setPending] = useState(true);
-    const [players, setPlayers] = useState(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
-    const [deadPlayers, setDeadPlayers] = useState(campaignData?.characters?.filter(character => character.status === 'dead') || []);
-
-    const prevCampaignPending = usePrevious(campaignPending);
-
-    const { id } = useParams();
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (id) {
-            dispatch(getCampaign(id));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!campaignPending && prevCampaignPending && campaignData) {
-            setIsDM(campaignData?.createdBy === currentUser._id || false);
-            setUsersCharacter(campaignData?.characters?.find(character => character?.userId === currentUser?._id && (character?.status === "active" || character?.status === "invited")) || {});
-            setUsersDeadCharacters(campaignData?.characters?.filter(character => character?.userId === currentUser?._id && character?.status === "dead"));
-            setPlayers(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
-            setDeadPlayers(campaignData?.characters?.filter(character => character.status === 'dead') || []);
-        }
-    }, [campaignPending, prevCampaignPending]);
-
-    useDebouncedPending(setPending, [campaignPending]);
-
-    if (pending) {
-        return (
-            <Box minHeight='calc(100vh - 7rem)' display='flex' justifyContent='center' alignItems='center'>
-                <CircularProgress />
-            </Box>
-        )
-    }
-
-    if (!campaignPending && prevCampaignPending) {
-        if (campaignError || isEmpty(campaignData)) {
-            return (
-                <Box minHeight='calc(100vh - 7rem)'>
-                    <Alert severity="error">There was an issue fetching information for this campaign</Alert>
-                </Box>
-            )
-        }
-        if (!isDM && isEmpty(usersCharacter)) {
-            return (
-                <Box minHeight='calc(100vh - 7rem)'>
-                    <Alert severity="error">Oh dear, it seems you don't have access to this campaign!</Alert>
-                </Box>
-            )
-        }
-    }
+    const [tab, setTab] = useState(0);
 
     return (
         <Box minHeight='calc(100vh - 7rem)'>
-            {isDM ? (
-                <DMCampaignView
-                    campaignData={campaignData}
-                    players={players}
-                    deadPlayers={deadPlayers}
-                />
-            ) : (
-                <PlayerCampaignView
-                    campaignData={campaignData}
-                    players={players}
-                    deadPlayers={deadPlayers}
-                    usersCharacter={usersCharacter}
-                    usersDeadCharacters={usersDeadCharacters}
-                />
-            )}
+            {tab === 0 && <CampaignOverview />}
+            {tab === 1 && <SessionUpdates />}
+            <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={4}>
+                <BottomNavigation
+                    showLabels
+                    value={tab}
+                    onChange={(_event, newValue) => setTab(newValue)}
+                >
+                    <BottomNavigationAction label="Overview" icon={<ImportContactsIcon />} />
+                    <BottomNavigationAction label="Session updates" icon={<FeedIcon />} />
+                    <BottomNavigationAction label="Notes" icon={<NotesIcon />} />
+                </BottomNavigation>
+            </Paper>
         </Box>
-    )
+    );
 }
 
 export default ViewCampaign;

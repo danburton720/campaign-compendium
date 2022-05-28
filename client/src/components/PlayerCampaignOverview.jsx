@@ -15,7 +15,7 @@ import ViewEditCharacter from './Modals/ViewEditCharacter';
 import { getCampaign } from '../actions/campaignActions';
 import { API } from '../config/api';
 
-const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
+const PlayerCampaignOverview = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
     const [createCharacterMode, setCreateCharacterMode] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && isEmpty(usersDeadCharacters));
     const [showReinviteAlert, setShowReinviteAlert] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && !isEmpty(usersDeadCharacters));
@@ -171,4 +171,4 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     )
 }
 
-export default PlayerCampaignView;
+export default PlayerCampaignOverview;
