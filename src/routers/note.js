@@ -155,7 +155,7 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
             if (!character || character.length === 0) return res.status(400).send('You do not have a character on this campaign');
 
             // access query params
-            const page = parseInt(req.query.page, 10) || 1;
+            const page = parseInt(req.query.page, 10);
             const limit = 25;
 
             if (!page) return res.status(400).send('Param page is required');
