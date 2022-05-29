@@ -28,15 +28,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllSessionUpdates } from '../actions/sessionUpdateActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
 import { useTheme } from '@mui/material/styles';
+import ConfirmDelete from './Modals/ConfirmDelete';
 
 const SessionUpdates = () => {
     const [showAddEditSessionUpdate, setShowAddEditSessionUpdate] = useState(false);
     const [sessionUpdateId, setSessionUpdateId] = useState('');
+    const [sessionUpdateDate, setSessionUpdateDate] = useState('');
     const [mode, setMode] = useState('add');
     const [currentContent, setCurrentContent] = useState(undefined);
     const [pending, setPending] = useState(false);
     const [index, setIndex] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
     const sessionUpdatesPending = useSelector(state => state.sessionUpdates.pending);
     const sessionUpdatesData = useSelector(state => state.sessionUpdates.data);
@@ -67,6 +70,7 @@ const SessionUpdates = () => {
                 content
             }, { withCredentials: true });
             enqueueSnackbar('Session update successfully published', { variant: 'success' });
+            dispatch(getAllSessionUpdates(id));
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
         }
@@ -74,8 +78,6 @@ const SessionUpdates = () => {
     }
 
     const handleEditSessionUpdate = async (sessionDate, content) => {
-        console.log('update content for id', sessionUpdateId);
-        console.log('new content', content);
         try {
             const endpoint = API.session_updates.session_update.replaceAll('{sessionUpdateId}', sessionUpdateId);
             await axios.patch(endpoint, {
@@ -83,10 +85,23 @@ const SessionUpdates = () => {
                 content
             }, { withCredentials: true });
             enqueueSnackbar('Session update successfully edited', { variant: 'success' });
+            dispatch(getAllSessionUpdates(id));
         } catch (err) {
             enqueueSnackbar(err.response.data, { variant: 'error' });
         }
         setShowAddEditSessionUpdate(false);
+    }
+
+    const handleDeleteSessionUpdate = async () => {
+        try {
+            const endpoint = API.session_updates.session_update.replaceAll('{sessionUpdateId}', sessionUpdateId);
+            await axios.delete(endpoint, { withCredentials: true });
+            enqueueSnackbar('Session update successfully deleted', { variant: 'success' });
+            dispatch(getAllSessionUpdates(id));
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' });
+        }
+        setShowConfirmDeleteModal(false);
     }
 
     useEffect(() => {
@@ -204,7 +219,11 @@ const SessionUpdates = () => {
                             Edit
                         </MenuItem>
                         <MenuItem
-                            onClick={() => console.log('show confirm delete modal')}
+                            onClick={() => {
+                                setSessionUpdateId(sessionUpdate._id);
+                                setSessionUpdateDate(sessionUpdate.sessionDate);
+                                setShowConfirmDeleteModal(true);
+                            }}
                             sx={{
                                 color: theme.palette.error.main,
                                 '& .MuiListItemIcon-root': {
@@ -242,6 +261,13 @@ const SessionUpdates = () => {
                 onClose={() => setShowAddEditSessionUpdate(false)}
                 onSave={(sessionDate, content) => mode === 'add' ? handleCreateSessionUpdate(sessionDate, content) : handleEditSessionUpdate(sessionDate, content)}
                 currentContent={currentContent}
+            />
+            <ConfirmDelete
+                open={showConfirmDeleteModal}
+                onClose={() => setShowConfirmDeleteModal(false)}
+                onConfirm={() => handleDeleteSessionUpdate()}
+                modalTitle={`Delete session update for ${dayjs(sessionUpdateDate).format('DD/MM/YYYY')}?`}
+                modalSubheading={`Are you sure you want to delete this session update? This action cannot be reversed.`}
             />
         </>
     )
