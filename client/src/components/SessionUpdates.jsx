@@ -31,6 +31,11 @@ import { useTheme } from '@mui/material/styles';
 import ConfirmDelete from './Modals/ConfirmDelete';
 
 const SessionUpdates = () => {
+    const sessionUpdatesPending = useSelector(state => state.sessionUpdates.pending);
+    const sessionUpdatesData = useSelector(state => state.sessionUpdates.data);
+    const currentUser = useSelector(state => state.auth.currentUser);
+    const campaignData = useSelector(state => state.campaigns.campaignData);
+
     const [showAddEditSessionUpdate, setShowAddEditSessionUpdate] = useState(false);
     const [sessionUpdateId, setSessionUpdateId] = useState('');
     const [sessionUpdateDate, setSessionUpdateDate] = useState('');
@@ -41,8 +46,7 @@ const SessionUpdates = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
-    const sessionUpdatesPending = useSelector(state => state.sessionUpdates.pending);
-    const sessionUpdatesData = useSelector(state => state.sessionUpdates.data);
+    const isDM = campaignData?.createdBy === currentUser?._id;
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -137,13 +141,15 @@ const SessionUpdates = () => {
                     <Card key={sessionUpdate._id} height='62vh'>
                         <CardContent sx={{ height: '62vh', overflow: 'auto' }}>
                             <Stack>
-                                <Box
-                                    display='flex'
-                                >
-                                    <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                </Box>
+                                {isDM &&
+                                    <Box
+                                        display='flex'
+                                    >
+                                        <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
+                                            <MoreVertIcon/>
+                                        </IconButton>
+                                    </Box>
+                                }
                                 <Editor
                                     editorState={editorState}
                                     onChange={x => x}
@@ -247,12 +253,14 @@ const SessionUpdates = () => {
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
                 <Stack gap={2}>
                     {renderSessionUpdate()}
-                    <Button
-                        variant="contained"
-                        onClick={() => setShowAddEditSessionUpdate(true)}
-                    >
-                        Post update
-                    </Button>
+                    {isDM &&
+                        <Button
+                            variant="contained"
+                            onClick={() => setShowAddEditSessionUpdate(true)}
+                        >
+                            Publish a new update
+                        </Button>
+                    }
                 </Stack>
             </Box>
             <AddEditSessionUpdate
