@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, Stack, Typography } from '@mui/material';
+import {
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CircularProgress,
+    IconButton,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Stack,
+    Typography
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import dayjs from 'dayjs';
@@ -11,28 +27,43 @@ import { API } from '../config/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllSessionUpdates } from '../actions/sessionUpdateActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
+import { useTheme } from '@mui/material/styles';
 
 const SessionUpdates = () => {
     const [showAddEditSessionUpdate, setShowAddEditSessionUpdate] = useState(false);
     const [sessionUpdateId, setSessionUpdateId] = useState('');
     const [mode, setMode] = useState('add');
+    const [currentContent, setCurrentContent] = useState(undefined);
     const [pending, setPending] = useState(false);
     const [index, setIndex] = useState(0);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const sessionUpdatesPending = useSelector(state => state.sessionUpdates.pending);
     const sessionUpdatesData = useSelector(state => state.sessionUpdates.data);
 
     const { enqueueSnackbar } = useSnackbar();
 
+    const theme = useTheme();
+
     const { id } = useParams();
 
     const dispatch = useDispatch();
 
-    const handleCreateSessionUpdate = async (content) => {
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
+
+    const handleCreateSessionUpdate = async (sessionDate, content) => {
         try {
             const endpoint = API.campaigns.session_updates.replaceAll('{campaignId}', id);
             await axios.post(endpoint, {
-                sessionDate: new Date().toISOString(),
+                sessionDate,
                 content
             }, { withCredentials: true });
             enqueueSnackbar('Session update successfully published', { variant: 'success' });
@@ -42,9 +73,19 @@ const SessionUpdates = () => {
         setShowAddEditSessionUpdate(false);
     }
 
-    const handleEditSessionUpdate = (content) => {
+    const handleEditSessionUpdate = async (sessionDate, content) => {
         console.log('update content for id', sessionUpdateId);
         console.log('new content', content);
+        try {
+            const endpoint = API.session_updates.session_update.replaceAll('{sessionUpdateId}', sessionUpdateId);
+            await axios.patch(endpoint, {
+                sessionDate,
+                content
+            }, { withCredentials: true });
+            enqueueSnackbar('Session update successfully edited', { variant: 'success' });
+        } catch (err) {
+            enqueueSnackbar(err.response.data, { variant: 'error' });
+        }
         setShowAddEditSessionUpdate(false);
     }
 
@@ -73,14 +114,21 @@ const SessionUpdates = () => {
             const sessionUpdate = sessionUpdatesData[index];
             const editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(sessionUpdate.content)));
             return (
-                <Stack>
+                <>
                     <Stack marginBottom='.5rem' sx={{ color: '#fff' }}>
                         <Typography variant="subtitle2" sx={{ fontSize: '13px', fontWeight: 700 }}>SESSION DATE</Typography>
                         <Typography variant="subtitle2">{dayjs(sessionUpdate.sessionDate).format('DD/MM/YYYY')}</Typography>
                     </Stack>
-                    <Card key={sessionUpdate._id} height='450px'>
-                        <CardContent sx={{ height: '450px', overflow: 'auto' }}>
+                    <Card key={sessionUpdate._id} height='62vh'>
+                        <CardContent sx={{ height: '62vh', overflow: 'auto' }}>
                             <Stack>
+                                <Box
+                                    display='flex'
+                                >
+                                    <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                </Box>
                                 <Editor
                                     editorState={editorState}
                                     onChange={x => x}
@@ -105,7 +153,72 @@ const SessionUpdates = () => {
                             Next update
                         </Button>
                     </Box>
-                </Stack>
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="session-update-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                minWidth: 200,
+                                maxWidth: 300,
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                mt: 1.5,
+                                '& .MuiAvatar-root': {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                '&:before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 14,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
+                            },
+                        }}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    >
+                        <MenuItem
+                            onClick={() => {
+                                setCurrentContent(sessionUpdate.content);
+                                setSessionUpdateId(sessionUpdate._id);
+                                setMode('edit');
+                                setShowAddEditSessionUpdate(true);
+                            }}
+                        >
+                            <ListItemIcon>
+                                <EditIcon />
+                            </ListItemIcon>
+                            Edit
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => console.log('show confirm delete modal')}
+                            sx={{
+                                color: theme.palette.error.main,
+                                '& .MuiListItemIcon-root': {
+                                    color: 'inherit'
+                                }
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DeleteIcon />
+                            </ListItemIcon>
+                            Delete
+                        </MenuItem>
+                    </Menu>
+                </>
             )
         }
     }
@@ -127,7 +240,8 @@ const SessionUpdates = () => {
                 open={showAddEditSessionUpdate}
                 mode={mode}
                 onClose={() => setShowAddEditSessionUpdate(false)}
-                onSave={(content) => mode === 'add' ? handleCreateSessionUpdate(content) : handleEditSessionUpdate(content)}
+                onSave={(sessionDate, content) => mode === 'add' ? handleCreateSessionUpdate(sessionDate, content) : handleEditSessionUpdate(sessionDate, content)}
+                currentContent={currentContent}
             />
         </>
     )

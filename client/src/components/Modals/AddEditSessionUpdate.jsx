@@ -20,7 +20,7 @@ import { usePrevious } from '../../hooks/usePrevious';
 import WysiwygButtonGroup from '../UI/WysiwygButtonGroup';
 
 const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) => {
-    const [editorState, setEditorState] = useState(currentContent ? convertFromRaw(currentContent) : EditorState.createEmpty());
+    const [editorState, setEditorState] = useState(currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty());
     const [sessionDate, setSessionDate] = useState(dayjs());
     const [maxLengthError, setMaxLengthError] = useState(false);
 
@@ -60,7 +60,7 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
     useEffect(() => {
         if (open && !prevOpen) {
             setSessionDate(dayjs());
-            setEditorState(currentContent ? convertFromRaw(currentContent) : EditorState.createEmpty());
+            setEditorState(currentContent ? currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty() : EditorState.createEmpty());
             setMaxLengthError(false);
         }
     }, [open, prevOpen]);
@@ -127,7 +127,7 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
                     const contentState = editorState.getCurrentContent();
                     const rawState = convertToRaw(contentState);
                     const rawStateString = JSON.stringify(rawState);
-                    onSave(rawStateString);
+                    onSave(sessionDate, rawStateString);
                 }}>
                     {mode === 'add' ? 'Publish' : 'Save'}
                 </Button>
