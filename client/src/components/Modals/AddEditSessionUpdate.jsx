@@ -1,39 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import {
+    Alert,
     Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Paper,
+    Paper, Stack, TextField,
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
-import axios from 'axios';
-import { useSnackbar } from 'notistack';
+import { DatePicker } from '@mui/x-date-pickers';
+import { Editor, EditorState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
+import dayjs from 'dayjs';
 import 'draft-js/dist/Draft.css';
 
 import { usePrevious } from '../../hooks/usePrevious';
 import WysiwygButtonGroup from '../UI/WysiwygButtonGroup';
-import { API } from '../../config/api';
-import { useParams } from 'react-router-dom';
 
 const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) => {
-    const [editorState, setEditorState] = useState(currentContent ? convertFromRaw(JSON.parse(currentContent)) : EditorState.createEmpty());
+    const [editorState, setEditorState] = useState(currentContent ? convertFromRaw(currentContent) : EditorState.createEmpty());
+    const [sessionDate, setSessionDate] = useState(dayjs());
+    const [maxLengthError, setMaxLengthError] = useState(false);
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     const prevOpen = usePrevious(open);
 
-    const { enqueueSnackbar } = useSnackbar();
-
-    const { id } = useParams();
-
     const handleKeyCommand = (command, editorState) => {
         let newState = RichUtils.handleKeyCommand(editorState, command);
+
+        if (command === 'backspace') setMaxLengthError(false);
 
         if (['bold', 'underline', 'italic'].includes(command)) {
             newState = RichUtils.toggleInlineStyle(editorState, command.toUpperCase());
@@ -47,33 +46,24 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
         return 'not-handled';
     }
 
-    const handleCreateSessionUpdate = async () => {
-        try {
-            const contentState = editorState.getCurrentContent();
-            const endpoint = API.campaigns.session_updates.replaceAll('{campaignId}', id);
-            await axios.post(endpoint, {
-                sessionDate: new Date().toISOString(),
-                content: convertToRaw(contentState)
-            }, { withCredentials: true });
-            enqueueSnackbar('Campaign successfully created', { variant: 'success' });
-            onSave();
-        } catch (err) {
-            enqueueSnackbar(err.response.data, { variant: 'error' });
-            onSave();
+    const handleBeforeInput = () => {
+        const currentContent = editorState.getCurrentContent();
+        const currentContentLength = currentContent.getPlainText('').length;
+
+        if (currentContentLength > 10000) {
+            console.warn('Editor length maximum character limit reached');
+            setMaxLengthError(true);
+            return 'handled';
         }
     }
 
     useEffect(() => {
         if (open && !prevOpen) {
-            setEditorState(currentContent ? convertFromRaw(JSON.parse(currentContent)) : EditorState.createEmpty());
+            setSessionDate(dayjs());
+            setEditorState(currentContent ? convertFromRaw(currentContent) : EditorState.createEmpty());
+            setMaxLengthError(false);
         }
     }, [open, prevOpen]);
-
-    useEffect(() => {
-        const contentState = editorState.getCurrentContent();
-        console.log('editorState', editorState);
-        console.log('editorState to raw', convertToRaw(contentState))
-    }, [editorState]);
 
     return (
         <Dialog
@@ -87,40 +77,58 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
             <DialogTitle id="select-image-title">
                 {mode === 'add' ? 'NEW SESSION UPDATE' : 'EDIT SESSION UPDATE'}
             </DialogTitle>
-            <DialogContent sx={{ padding: '1rem' }}>
-                <Paper sx={{ height: '100%', minHeight: '550px' }}>
-                    <WysiwygButtonGroup
-                        editorState={editorState}
-                        richUtils={RichUtils}
-                        onChangeEditorState={setEditorState}
+            <DialogContent sx={{ padding: '1rem', marginTop: '1rem' }}>
+                <Stack paddingTop='1rem' gap={2}>
+                    <DatePicker
+                        label="Session date"
+                        value={sessionDate}
+                        onChange={(newValue) => setSessionDate(newValue)}
+                        inputFormat="DD/MM/YYYY"
+                        renderInput={(params) => <TextField {...params} />}
+                        sx={{ marginTop: '1rem' }}
                     />
-                    <Box
-                        display='flex'
-                        flexDirection='column'
-                        height='100%'
-                        gap={2}
-                        padding={2}
-                        sx={{
-                            '& .DraftEditor-root': {
-                                height: '500px'
-                            }
-                        }}
-                    >
-                        <Editor
+                    {maxLengthError && <Alert severity="warning">Maximum number of characters reached</Alert>}
+                    <Paper sx={{ height: '100%', minHeight: '550px' }}>
+                        <WysiwygButtonGroup
                             editorState={editorState}
-                            onChange={setEditorState}
-                            handleKeyCommand={handleKeyCommand}
-                            spellCheck
-                            preserveSelectionOnBlur
+                            richUtils={RichUtils}
+                            onChangeEditorState={setEditorState}
                         />
-                    </Box>
-                </Paper>
+                        <Box
+                            display='flex'
+                            flexDirection='column'
+                            height='100%'
+                            gap={2}
+                            padding={2}
+                            sx={{
+                                '& .DraftEditor-root': {
+                                    height: '500px'
+                                }
+                            }}
+                            overflow='auto'
+                        >
+                            <Editor
+                                editorState={editorState}
+                                onChange={setEditorState}
+                                handleKeyCommand={handleKeyCommand}
+                                spellCheck
+                                preserveSelectionOnBlur
+                                handleBeforeInput={handleBeforeInput}
+                            />
+                        </Box>
+                    </Paper>
+                </Stack>
             </DialogContent>
             <DialogActions>
                 <Button autoFocus onClick={() => onClose()}>
                     Cancel
                 </Button>
-                <Button onClick={() => mode === 'add' ? handleCreateSessionUpdate() : console.log('edit')} autoFocus>
+                <Button onClick={() => {
+                    const contentState = editorState.getCurrentContent();
+                    const rawState = convertToRaw(contentState);
+                    const rawStateString = JSON.stringify(rawState);
+                    onSave(rawStateString);
+                }}>
                     {mode === 'add' ? 'Publish' : 'Save'}
                 </Button>
             </DialogActions>
