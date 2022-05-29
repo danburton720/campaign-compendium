@@ -43,7 +43,6 @@ const WysiwygButtonGroup = ({ editorState, onChangeEditorState, richUtils }) => 
         setIsUnderlined(currentStyle.has('UNDERLINE'));
     }, [editorState]);
 
-
     return (
         <div>
             <Paper
@@ -52,6 +51,8 @@ const WysiwygButtonGroup = ({ editorState, onChangeEditorState, richUtils }) => 
                     display: 'flex',
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                     flexWrap: 'wrap',
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0
                 }}
             >
                 <StyledToggleButtonGroup

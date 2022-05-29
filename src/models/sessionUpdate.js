@@ -6,7 +6,7 @@ const SessionUpdateSchema = new mongoose.Schema({
         required: true
     },
     content: {
-        type: String,
+        type: Object,
         required: true
     },
     campaignId: {
