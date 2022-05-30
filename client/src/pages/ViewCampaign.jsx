@@ -7,6 +7,7 @@ import NotesIcon from '@mui/icons-material/Notes';
 
 import CampaignOverview from '../components/CampaignOverview';
 import SessionUpdates from '../components/SessionUpdates';
+import Notes from '../components/Notes';
 
 const getTabIndex = (tab) => {
     if (tab === null) return 0;
@@ -21,7 +22,6 @@ const getTabString = (id) => {
     if (id === 2) return '?tab=notes';
 }
 
-
 const ViewCampaign = () => {
     const { search } = useLocation();
     const tab = new URLSearchParams(search).get('tab');
@@ -34,6 +34,7 @@ const ViewCampaign = () => {
         <Box minHeight='calc(100vh - 7rem)'>
             {campaignTab === 0 && <CampaignOverview />}
             {campaignTab === 1 && <SessionUpdates />}
+            {campaignTab === 2 && <Notes />}
             <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={4}>
                 <BottomNavigation
                     showLabels

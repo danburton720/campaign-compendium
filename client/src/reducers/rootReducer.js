@@ -4,11 +4,13 @@ import authReducer from './authReducer';
 import { CLEAR_ALL_STORAGE } from '../actions/rootActions';
 import campaignReducer from './campaignReducer';
 import sessionUpdateReducer from './sessionUpdateReducer';
+import noteReducer from './noteReducer';
 
 const appReducer = combineReducers({
     auth: authReducer,
     campaigns: campaignReducer,
-    sessionUpdates: sessionUpdateReducer
+    sessionUpdates: sessionUpdateReducer,
+    notes: noteReducer
 });
 
 const rootReducer = (state, action) => {

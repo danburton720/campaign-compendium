@@ -85,7 +85,7 @@ router.get("/campaigns/:id/session-updates", async (req, res) => {
             const campaign = await Campaign.findById(_id);
             if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
 
-            const sessionUpdates = await SessionUpdate.find({ 'campaignId': _id }).lean();
+            const sessionUpdates = await SessionUpdate.find({ 'campaignId': _id }).sort({ sessionDate: 'desc' }).lean();
             res.status(200).send(sessionUpdates);
         } catch (e) {
             res.status(404).send(e);
