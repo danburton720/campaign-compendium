@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
     Box,
-    Card,
-    CardContent, Checkbox,
+    Checkbox,
     CircularProgress,
     FormControl,
     InputLabel, ListItemText,
@@ -13,11 +12,11 @@ import {
     Select,
     Stack, TextField, Typography
 } from '@mui/material';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers';
 
 import { getAllNotes } from '../actions/noteActions';
-import dayjs from 'dayjs';
 import useDebouncedPending from '../hooks/useDebouncedPending';
-import { DatePicker } from '@mui/x-date-pickers';
 import NoteCard from './NoteCard';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
@@ -92,6 +91,7 @@ const Notes = () => {
     }
 
     useEffect(() => {
+        // TODO only get all notes if you're the DM - otherwise all the player get notes endpoint
         dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString() }));
     }, []);
 

@@ -1,12 +1,38 @@
-import React from 'react';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Box, Card, CardContent, IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { getCharacterImage } from '../utils/images';
 import DM from '../assets/dm.svg';
 
+
 const NoteCard = ({ note }) => {
+    const currentUser = useSelector((state) => state.auth?.currentUser);
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    console.log('note', note)
     const character =  note.hasOwnProperty('character') ? note.character : 'DM';
     const characterImage = character !== 'DM' ? getCharacterImage(character.chosenImage) : DM;
+
+    dayjs.extend(relativeTime);
+
+    const theme = useTheme();
+
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
 
     return (
         <Card
@@ -15,7 +41,23 @@ const NoteCard = ({ note }) => {
                 color: '#fff'
             }}
         >
-            <CardContent>
+            <CardContent
+                sx={{
+                    position: 'relative'
+                }}
+            >
+                {note.createdBy === currentUser._id &&
+                    <Box
+                        display='flex'
+                        position='absolute'
+                        top='1rem'
+                        right='5px'
+                    >
+                        <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
+                            <MoreVertIcon sx={{ color: 'white' }}/>
+                        </IconButton>
+                    </Box>
+                }
                 <Box display='flex' alignItems='center'>
                     <Box height='50px' width='50px' marginRight='1rem'>
                         <img
@@ -34,11 +76,72 @@ const NoteCard = ({ note }) => {
                         <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{character !== 'DM' ? `${character.race} | ${character.class}` : 'Dungeon Master'}</Typography>
                     </Box>
                 </Box>
-                <Box
+                <Stack
                     marginTop='1rem'
                 >
+                    <Typography variant="caption" sx={{ marginBottom: '2px' }}>{dayjs(note.createdAt).fromNow()}</Typography>
                     {note.content}
-                </Box>
+                </Stack>
+                <Menu
+                    anchorEl={anchorEl}
+                    id="session-update-menu"
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                        elevation: 0,
+                        sx: {
+                            minWidth: 200,
+                            maxWidth: 300,
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&:before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem
+                        onClick={() => console.log('open add/edit note modal')}
+                    >
+                        <ListItemIcon>
+                            <EditIcon />
+                        </ListItemIcon>
+                        Edit
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => console.log('show delete modal for this note')}
+                        sx={{
+                            color: theme.palette.error.main,
+                            '& .MuiListItemIcon-root': {
+                                color: 'inherit'
+                            }
+                        }}
+                    >
+                        <ListItemIcon>
+                            <DeleteIcon />
+                        </ListItemIcon>
+                        Delete
+                    </MenuItem>
+                </Menu>
             </CardContent>
         </Card>
     );
