@@ -11,12 +11,14 @@ import {
     MenuItem, OutlinedInput,
     Paper,
     Select,
-    Stack
+    Stack, TextField, Typography
 } from '@mui/material';
 
 import { getAllNotes } from '../actions/noteActions';
 import dayjs from 'dayjs';
 import useDebouncedPending from '../hooks/useDebouncedPending';
+import { DatePicker } from '@mui/x-date-pickers';
+import NoteCard from './NoteCard';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
 
@@ -54,8 +56,8 @@ const Notes = () => {
 
     const [pending, setPending] = useState(false);
     const [page, setPage] = useState(1);
-    const [from, setFrom] = useState(dayjs().year(2022).month(0).date(1).hour(0).minute(0).second(0).millisecond(0));
-    const [to, setTo] = useState(dayjs());
+    const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
+    const [to, setTo] = useState(dayjs().add(1, 'hour',));
     const [filterCharacters, setFilterCharacter] = useState(() => getCharacters(characters))
 
     const dispatch = useDispatch();
@@ -81,16 +83,9 @@ const Notes = () => {
         return (
             <>
                 {notesData.map(note => (
-                    <Card id={note._id}
-                          sx={{
-                              backgroundColor: note.hasOwnProperty('character') ? note.character.chosenColor : 'gray',
-                              color: '#fff'
-                          }}
-                    >
-                        <CardContent>
-                            {note.content}
-                        </CardContent>
-                    </Card>
+                    <React.Fragment key={note._id}>
+                        <NoteCard note={note} />
+                    </React.Fragment>
                 ))}
             </>
         )
@@ -101,12 +96,10 @@ const Notes = () => {
     }, []);
 
     useEffect(() => {
-        console.log('filterCharacters', filterCharacters)
         const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
         if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
-        console.log('relatedCharacterParams', relatedCharacterParams)
         dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
-    }, [filterCharacters]);
+    }, [filterCharacters, from, to]);
 
     useDebouncedPending(setPending, [notesPending]);
 
@@ -114,27 +107,58 @@ const Notes = () => {
         <>
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
                 <Stack gap={2} marginTop='2rem'>
-                    <Paper>
-                        <FormControl sx={{ m: 1, width: 300 }}>
-                            <InputLabel id="filter-characters-label">Characters</InputLabel>
-                            <Select
-                                labelId="filter-characters-label"
-                                id="filter-characters"
-                                multiple
-                                value={filterCharacters}
-                                onChange={handleChange}
-                                input={<OutlinedInput label="Characters" />}
-                                renderValue={(selected) => selected.join(', ')}
-                                MenuProps={MenuProps}
-                            >
-                                {[{ _id: 0, name: 'DM' }].concat(characters).map((character) => (
-                                    <MenuItem key={character._id} value={character.name}>
-                                        <Checkbox checked={filterCharacters.indexOf(character.name) > -1} />
-                                        <ListItemText primary={character.name} />
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                    <Paper
+                        sx={{
+                            padding: '1rem'
+                        }}
+                    >
+                        <Stack gap={2} width="100%">
+                            <Typography variant="h4">Filters</Typography>
+                            <FormControl sx={{ width: '100%' }}>
+                                <InputLabel id="filter-characters-label">Characters</InputLabel>
+                                <Select
+                                    labelId="filter-characters-label"
+                                    id="filter-characters"
+                                    multiple
+                                    value={filterCharacters}
+                                    onChange={handleChange}
+                                    input={<OutlinedInput label="Characters" />}
+                                    renderValue={(selected) => selected.join(', ')}
+                                    MenuProps={MenuProps}
+                                >
+                                    {[{ _id: 0, name: 'DM' }].concat(characters).map((character) => (
+                                        <MenuItem key={character._id} value={character.name}>
+                                            <Checkbox checked={filterCharacters.indexOf(character.name) > -1} />
+                                            <ListItemText primary={character.name} />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <Box display='flex' gap={2} flexWrap='wrap'>
+                                <DatePicker
+                                    label="From"
+                                    value={from}
+                                    onChange={(newValue) => {
+                                        const newValueEarliestTime = dayjs(newValue).startOf('date');
+                                        setFrom(newValueEarliestTime);
+                                    }}
+                                    inputFormat="DD/MM/YYYY"
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    sx={{ marginTop: '1rem' }}
+                                />
+                                <DatePicker
+                                    label="To"
+                                    value={to}
+                                    onChange={(newValue) => {
+                                        const newValueLatestTime = dayjs(newValue).endOf('date').hour(24);
+                                        setTo(newValueLatestTime);
+                                    }}
+                                    inputFormat="DD/MM/YYYY"
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    sx={{ marginTop: '1rem' }}
+                                />
+                            </Box>
+                        </Stack>
                     </Paper>
                     {renderNotes()}
                 </Stack>

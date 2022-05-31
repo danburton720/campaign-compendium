@@ -14,7 +14,7 @@ const PageWrapper = () => {
     return (
         <Box display="flex" sx={{ background: 'black' }}>
             <Container
-                maxWidth="xl"
+                maxWidth={false}
                 disableGutters
                 sx={{
                     position: 'relative',
