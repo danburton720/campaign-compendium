@@ -85,9 +85,10 @@ router.get("/campaigns/:id/notes", async (req, res) => {
             const fromParam = req.query.from; // will be string of date ISO string | undefined
             const toParam = req.query.to; // will be string of date ISO string | undefined
             const page = parseInt(req.query.page, 10);
-            const limit = 25;
+            const pageSize = parseInt(req.query.pageSize, 10);
 
             if (!page) return res.status(400).send('Param page is required');
+            if (!pageSize) return res.status(400).send('Param pageSize is required');
             if (!fromParam) return res.status(400).send('Param from is required');
             if (!toParam) return res.status(400).send('Param to is required');
 
@@ -108,9 +109,11 @@ router.get("/campaigns/:id/notes", async (req, res) => {
 
             const notes = await Note.find({ $and: conditions })
                 .sort({ createdAt: 'desc' })
-                .skip((page - 1) * limit)
-                .limit(limit)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
                 .lean();
+
+            const notesCount = await Note.find({ $and: conditions }).count();
 
             const notesWithCharacters = [];
 
@@ -126,7 +129,7 @@ router.get("/campaigns/:id/notes", async (req, res) => {
                 }
             }
 
-            res.status(200).send(notesWithCharacters);
+            res.status(200).send({ data: notesWithCharacters, count: notesCount });
         } catch (e) {
             res.status(404).send(e);
         }
@@ -156,15 +159,18 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
 
             // access query params
             const page = parseInt(req.query.page, 10);
-            const limit = 25;
+            const pageSize = parseInt(req.query.pageSize, 10);
 
             if (!page) return res.status(400).send('Param page is required');
+            if (!pageSize) return res.status(400).send('Param pageSize is required');
 
             const notes = await Note.find({ 'campaignId': _id, 'createdBy': req.user._id })
                 .sort({ createdAt: 'desc' })
-                .skip((page - 1) * limit)
-                .limit(limit)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
                 .lean();
+
+            const notesCount = await Note.find({ 'campaignId': _id, 'createdBy': req.user._id }).count();
 
             const notesWithCharacters = [];
 
@@ -180,7 +186,7 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
                 }
             }
 
-            res.status(200).send(notesWithCharacters);
+            res.status(200).send({ data: notesWithCharacters, count: notesCount });
         } catch (e) {
             res.status(404).send(e);
         }

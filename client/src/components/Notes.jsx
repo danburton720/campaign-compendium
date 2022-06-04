@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
-    Box, Button,
+    Box,
+    Button,
     Checkbox,
     CircularProgress,
     FormControl,
@@ -10,6 +11,7 @@ import {
     ListItemText,
     MenuItem,
     OutlinedInput,
+    Pagination,
     Paper,
     Select,
     Stack,
@@ -49,6 +51,7 @@ const getCharacters = (characters) => {
 const Notes = () => {
     const notesPending = useSelector(state => state.notes.pending);
     const notesData = useSelector(state => state.notes.data);
+    const notesTotal = useSelector(state => state.notes.total);
     const characters = useSelector(state => state.campaigns.campaignData.characters || []);
     const updateNotePending = useSelector(state => state.notes.updatePending);
     const updateNoteSuccess = useSelector(state => state.notes.updateSuccess);
@@ -108,18 +111,14 @@ const Notes = () => {
 
     const fetchData = () => {
         // TODO only get all notes if you're the DM - otherwise all the player get notes endpoint
-        dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString() }));
+        const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
+        if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
+        dispatch(getAllNotes(id, { page, pageSize: 10, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
     }
 
     useEffect(() => {
         fetchData();
-    }, []);
-
-    useEffect(() => {
-        const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
-        if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
-        dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
-    }, [filterCharacters, from, to]);
+    }, [page, filterCharacters, from, to]);
 
     useEffect(() => {
         if (!addNotePending && prevAddNotePending) {
@@ -208,6 +207,13 @@ const Notes = () => {
                         </Stack>
                     </Paper>
                     {renderNotes()}
+                    <Paper
+                        sx={{
+                            padding: '1rem 0',
+                        }}
+                    >
+                        <Pagination count={Math.ceil(notesTotal / 10)} color="primary" page={page} onChange={(_, value) => setPage(value)} />
+                    </Paper>
                 </Stack>
             </Box>
             <AddEditNote

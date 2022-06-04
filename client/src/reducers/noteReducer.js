@@ -1,6 +1,7 @@
 import {
     SET_NOTES_PENDING,
     SET_NOTES_DATA,
+    SET_NOTES_TOTAL,
     SET_NOTES_ERROR,
     SET_UPDATE_NOTE_PENDING,
     SET_UPDATE_NOTE_SUCCESS,
@@ -19,6 +20,7 @@ import {
 const initialState = {
     pending: false,
     data: [],
+    total: 0,
     error: null,
     updatePending: false,
     updateSuccess: false,
@@ -43,6 +45,11 @@ const sessionUpdateReducer = (state = initialState, action) => {
                 ...state,
                 data: action.payload
             };
+        case SET_NOTES_TOTAL:
+            return {
+                ...state,
+                total: action.payload
+            }
         case SET_NOTES_ERROR:
             return {
                 ...state,

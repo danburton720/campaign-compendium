@@ -3,6 +3,7 @@ import { API } from '../config/api';
 
 export const SET_NOTES_PENDING = 'SET_NOTES_PENDING';
 export const SET_NOTES_DATA = 'SET_NOTES_DATA';
+export const SET_NOTES_TOTAL = 'SET_NOTES_TOTAL';
 export const SET_NOTES_ERROR = 'SET_NOTES_ERROR';
 export const SET_UPDATE_NOTE_PENDING = 'SET_UPDATE_NOTE_PENDING';
 export const SET_UPDATE_NOTE_SUCCESS = 'SET_UPDATE_NOTE_SUCCESS';
@@ -28,6 +29,13 @@ export function setNotesData(data) {
     return {
         type: SET_NOTES_DATA,
         payload: data
+    }
+}
+
+export function setNotesTotal(total) {
+    return {
+        type: SET_NOTES_TOTAL,
+        payload: total
     }
 }
 
@@ -130,7 +138,8 @@ export function getAllNotes(campaignId, params) {
         try {
             const endpoint = API.campaigns.notes.replaceAll('{campaignId}', campaignId);
             const response = await axios.get(endpoint, { params, withCredentials: true });
-            dispatch(setNotesData(response.data));
+            dispatch(setNotesData(response.data.data));
+            dispatch(setNotesTotal(response.data.count));
             dispatch(setNotesPending(false));
         } catch (err) {
             dispatch(setNotesError(err.response.data));
