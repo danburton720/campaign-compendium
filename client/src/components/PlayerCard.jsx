@@ -144,6 +144,7 @@ const PlayerCard = ({ player, campaignId }) => {
                     open={open}
                     onClose={handleClose}
                     onClick={handleClose}
+                    disableScrollLock
                 >
                     <MenuList>
                         {player.status !== 'invited' &&

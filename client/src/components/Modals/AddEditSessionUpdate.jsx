@@ -74,6 +74,7 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent, cur
             open={open}
             onClose={() => onClose()}
             aria-labelledby="add-edit-session-update"
+            disableScrollLock
         >
             <DialogTitle id="add-edit-session-update-title">
                 {mode === 'add' ? 'NEW SESSION UPDATE' : 'EDIT SESSION UPDATE'}

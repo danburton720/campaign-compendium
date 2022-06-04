@@ -20,6 +20,7 @@ const ConfirmDelete = ({ open, onClose, onConfirm, modalTitle, modalSubheading }
             open={open}
             onClose={() => onClose()}
             aria-labelledby="confirm-delete"
+            disableScrollLock
         >
             <DialogTitle id="confirm-delete-title">
                 {modalTitle || 'Confirm delete'}

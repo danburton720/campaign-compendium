@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+    Alert,
     Box,
     Button,
     Checkbox,
-    CircularProgress,
-    FormControl,
+    CircularProgress, Collapse,
+    FormControl, IconButton,
     InputLabel,
     ListItemText,
     MenuItem,
@@ -18,8 +19,11 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import dayjs from 'dayjs';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 
 import { addNote, getAllNotes } from '../actions/noteActions';
@@ -27,8 +31,10 @@ import useDebouncedPending from '../hooks/useDebouncedPending';
 import NoteCard from './NoteCard';
 import AddEditNote from './Modals/AddEditNote';
 import { usePrevious } from '../hooks/usePrevious';
+import { ROUTES } from '../constants';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
+// TODO provide option to reset filters - only display when filters are different to initial values
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -69,8 +75,11 @@ const Notes = () => {
     const [to, setTo] = useState(dayjs().add(1, 'hour',));
     const [filterCharacters, setFilterCharacter] = useState(() => getCharacters(characters));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+    const [showFilters, setShowFilters] = useState(false);
 
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -91,21 +100,27 @@ const Notes = () => {
     };
 
     const renderNotes = () => {
+        if (!pending && notesData.length === 0) {
+            return (
+                <Alert severity="info" sx={{ marginTop: '1rem' }}>No notes have been added to this campaign</Alert>
+            )
+        }
+
         if (pending) {
             return (
-                <Box height='25vh' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                <Box height='100%' width='100%' display='flex' alignItems='center' justifyContent='center'>
                     <CircularProgress />
                 </Box>
             )
         }
         return (
-            <>
+            <Box height='100%' overflow='auto' display='flex' flexDirection='column' gap={2}>
                 {notesData.map(note => (
                     <React.Fragment key={note._id}>
                         <NoteCard note={note} characters={characters} onAddOrDelete={() => fetchData()} />
                     </React.Fragment>
                 ))}
-            </>
+            </Box>
         )
     }
 
@@ -118,7 +133,7 @@ const Notes = () => {
 
     useEffect(() => {
         fetchData();
-    }, [page, filterCharacters, from, to]);
+    }, [page]);
 
     useEffect(() => {
         if (!addNotePending && prevAddNotePending) {
@@ -146,74 +161,145 @@ const Notes = () => {
     return (
         <>
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
+                <Button
+                    startIcon={<ArrowBackIcon />}
+                    variant="contained"
+                    size="small"
+                    sx={{ marginBottom: '1rem' }}
+                    onClick={() => navigate(ROUTES.CAMPAIGNS)}
+                >
+                    Go back
+                </Button>
                 <Stack gap={2} marginTop='2rem'>
                     <Button
                         variant="contained"
                         onClick={() => setShowAddNoteModal(true)}
+                        startIcon={<AddIcon />}
+                        sx={{
+                            width: 'fit-content',
+                            alignSelf: 'flex-end'
+                        }}
                     >
                         Add note
                     </Button>
-                    <Paper
-                        sx={{
-                            padding: '1rem'
-                        }}
+                    <Box
+                        height='30px'
+                        width='30px'
+                        borderRadius='4px'
+                        bgcolor='white'
+                        display='flex'
+                        justifyContent='center'
+                        alignItems='center'
+                        alignSelf='flex-end'
                     >
-                        <Stack gap={2} width="100%">
-                            <Typography variant="h4">Filters</Typography>
-                            <FormControl sx={{ width: '100%' }}>
-                                <InputLabel id="filter-characters-label">Characters</InputLabel>
-                                <Select
-                                    labelId="filter-characters-label"
-                                    id="filter-characters"
-                                    multiple
-                                    value={filterCharacters}
-                                    onChange={handleChange}
-                                    input={<OutlinedInput label="Characters" />}
-                                    renderValue={(selected) => selected.join(', ')}
-                                    MenuProps={MenuProps}
-                                >
-                                    {[{ _id: 0, name: 'DM' }].concat(characters).map((character) => (
-                                        <MenuItem key={character._id} value={character.name}>
-                                            <Checkbox checked={filterCharacters.indexOf(character.name) > -1} />
-                                            <ListItemText primary={character.name} />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <Box display='flex' gap={2} flexWrap='wrap'>
-                                <DatePicker
-                                    label="From"
-                                    value={from}
-                                    onChange={(newValue) => {
-                                        const newValueEarliestTime = dayjs(newValue).startOf('date');
-                                        setFrom(newValueEarliestTime);
-                                    }}
-                                    inputFormat="DD/MM/YYYY"
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
-                                    sx={{ marginTop: '1rem' }}
-                                />
-                                <DatePicker
-                                    label="To"
-                                    value={to}
-                                    onChange={(newValue) => {
-                                        const newValueLatestTime = dayjs(newValue).endOf('date').hour(24);
-                                        setTo(newValueLatestTime);
-                                    }}
-                                    inputFormat="DD/MM/YYYY"
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
-                                    sx={{ marginTop: '1rem' }}
-                                />
-                            </Box>
-                        </Stack>
-                    </Paper>
-                    {renderNotes()}
-                    <Paper
-                        sx={{
-                            padding: '1rem 0',
-                        }}
+                        <IconButton onClick={() => setShowFilters(!showFilters)} disabled={pending}>
+                            <FilterAltIcon />
+                        </IconButton>
+                    </Box>
+                    <Collapse in={showFilters}>
+                        <Paper
+                            sx={{
+                                padding: '1rem'
+                            }}
+                        >
+                            <Stack gap={2} width="100%">
+                                <Typography variant="h4">Filters</Typography>
+                                <FormControl sx={{ width: '100%' }}>
+                                    <InputLabel id="filter-characters-label">Characters</InputLabel>
+                                    <Select
+                                        labelId="filter-characters-label"
+                                        id="filter-characters"
+                                        multiple
+                                        value={filterCharacters}
+                                        onChange={handleChange}
+                                        input={<OutlinedInput label="Characters" />}
+                                        renderValue={(selected) => selected.join(', ')}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {[{ _id: 0, name: 'DM' }].concat(characters).map((character) => (
+                                            <MenuItem key={character._id} value={character.name}>
+                                                <Checkbox checked={filterCharacters.indexOf(character.name) > -1} />
+                                                <ListItemText primary={character.name} />
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <Box display='flex' gap={2} flexWrap='wrap'>
+                                    <DatePicker
+                                        label="From"
+                                        value={from}
+                                        onChange={(newValue) => {
+                                            const newValueEarliestTime = dayjs(newValue).startOf('date');
+                                            setFrom(newValueEarliestTime);
+                                        }}
+                                        inputFormat="DD/MM/YYYY"
+                                        renderInput={(params) => <TextField {...params} fullWidth />}
+                                        sx={{ marginTop: '1rem' }}
+                                    />
+                                    <DatePicker
+                                        label="To"
+                                        value={to}
+                                        onChange={(newValue) => {
+                                            const newValueLatestTime = dayjs(newValue).endOf('date').hour(24);
+                                            setTo(newValueLatestTime);
+                                        }}
+                                        inputFormat="DD/MM/YYYY"
+                                        renderInput={(params) => <TextField {...params} fullWidth />}
+                                        sx={{ marginTop: '1rem' }}
+                                    />
+                                </Box>
+                                <Box display='flex' gap={2} width='400px' alignSelf='flex-end'>
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            width: '50%'
+                                        }}
+                                        onClick={() => setShowFilters(false)}
+                                    >
+                                        Close
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            width: '50%'
+                                        }}
+                                        onClick={() => {
+                                            fetchData();
+                                            setShowFilters(false);
+                                        }}
+                                    >
+                                        Apply filters
+                                    </Button>
+                                </Box>
+                            </Stack>
+                        </Paper>
+                    </Collapse>
+                    <Box
+                        display='flex'
+                        height='100%'
+                        flexDirection='column'
+                        gap={2}
                     >
-                        <Pagination count={Math.ceil(notesTotal / 10)} color="primary" page={page} onChange={(_, value) => setPage(value)} />
-                    </Paper>
+                        {renderNotes()}
+                        {notesData.length > 0 &&
+                            <Paper
+                                sx={{
+                                    padding: '1rem 0',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    justifySelf: 'flex-end'
+                                }}
+                            >
+                                <Pagination
+                                    count={Math.ceil(notesTotal / 10)}
+                                    color="primary"
+                                    page={page}
+                                    onChange={(_, value) => setPage(value)}
+                                    disabled={pending}
+                                />
+                            </Paper>
+                        }
+                    </Box>
                 </Stack>
             </Box>
             <AddEditNote

@@ -48,7 +48,8 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
             <Card
                 sx={{
                     backgroundColor: character !== 'DM' ? note.character.chosenColor : 'gray',
-                    color: '#fff'
+                    color: '#fff',
+                    minHeight: '150px'
                 }}
             >
                 <CardContent
@@ -98,6 +99,7 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                         open={open}
                         onClose={handleClose}
                         onClick={handleClose}
+                        disableScrollLock
                         PaperProps={{
                             elevation: 0,
                             sx: {

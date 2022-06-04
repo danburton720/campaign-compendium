@@ -34,6 +34,7 @@ const SelectImage = ({ currentImage, open, onClose, onSave }) => {
             open={open}
             onClose={() => onClose()}
             aria-labelledby="select-image"
+            disableScrollLock
         >
             <DialogTitle id="select-image-title">
                 Select image

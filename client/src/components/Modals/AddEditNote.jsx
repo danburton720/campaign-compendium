@@ -30,6 +30,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
     const [userCharacters, setUserCharacters] = useState(() => characters.filter(character => character.userId === currentUser._id && character.status !== "invited"));
     const [relatedCharacter, setRelatedCharacter] = useState(() => {
         if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
+        if (campaignData?.createdBy === currentUser?._id) return 'DM';
         const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
         if (userCharacters.length === 1) return userCharacters[0]._id;
     });
@@ -46,6 +47,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
         if (open && !prevOpen) {
             setRelatedCharacter(() => {
                 if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
+                if (campaignData?.createdBy === currentUser?._id) return 'DM';
                 const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
                 if (userCharacters.length === 1) return userCharacters[0]._id;
             });
@@ -62,6 +64,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
             open={open}
             onClose={() => onClose()}
             aria-labelledby="add-edit-note"
+            disableScrollLock
         >
             <DialogTitle id="add-edit-note-title">
                 {mode === 'add' ? 'NEW SESSION UPDATE' : 'EDIT SESSION UPDATE'}

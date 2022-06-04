@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     Alert,
     Box,
@@ -17,6 +17,7 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import dayjs from 'dayjs';
@@ -29,6 +30,7 @@ import { getAllSessionUpdates } from '../actions/sessionUpdateActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
 import { useTheme } from '@mui/material/styles';
 import ConfirmDelete from './Modals/ConfirmDelete';
+import { ROUTES } from '../constants';
 
 const SessionUpdates = () => {
     const sessionUpdatesPending = useSelector(state => state.sessionUpdates.pending);
@@ -56,6 +58,8 @@ const SessionUpdates = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const open = Boolean(anchorEl);
 
@@ -181,6 +185,7 @@ const SessionUpdates = () => {
                         open={open}
                         onClose={handleClose}
                         onClick={handleClose}
+                        disableScrollLock
                         PaperProps={{
                             elevation: 0,
                             sx: {
@@ -253,6 +258,15 @@ const SessionUpdates = () => {
     return (
         <>
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
+                <Button
+                    startIcon={<ArrowBackIcon />}
+                    variant="contained"
+                    size="small"
+                    sx={{ marginBottom: '1rem' }}
+                    onClick={() => navigate(ROUTES.CAMPAIGNS)}
+                >
+                    Go back
+                </Button>
                 <Stack gap={2}>
                     {renderSessionUpdate()}
                     {isDM &&
