@@ -165,7 +165,7 @@ export function deleteNote(noteId) {
         try {
             const endpoint = API.notes.note.replaceAll('{noteId}', noteId);
             await axios.delete(endpoint, { withCredentials: true });
-            dispatch(deleteNoteInStore(noteId));
+            // dispatch(deleteNoteInStore(noteId));
             dispatch(setDeleteNoteSuccess(true));
             dispatch(setDeleteNotePending(false));
         } catch (err) {
@@ -183,7 +183,7 @@ export function addNote(campaignId, relatedCharacter, content) {
         try {
             const endpoint = API.campaigns.notes.replaceAll('{campaignId}', campaignId);
             const response = await axios.post(endpoint, { relatedCharacter, content }, { withCredentials: true });
-            dispatch(addNoteToStore(response.data));
+            // dispatch(addNoteToStore(response.data));
             dispatch(setAddNoteSuccess(true));
             dispatch(setAddNotePending(false));
         } catch (err) {

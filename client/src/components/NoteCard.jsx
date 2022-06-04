@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Card, CardContent, IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -12,14 +11,16 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { getCharacterImage } from '../utils/images';
 import DM from '../assets/dm.svg';
 import AddEditNote from './Modals/AddEditNote';
-import { addNote, updateNote } from '../actions/noteActions';
+import { deleteNote, updateNote } from '../actions/noteActions';
+import ConfirmDelete from './Modals/ConfirmDelete';
 
 // TODO make it so the note cannot be edited if it's for a deleted character
 
-const NoteCard = ({ note, characters }) => {
+const NoteCard = ({ note, characters, onAddOrDelete }) => {
     const currentUser = useSelector((state) => state.auth?.currentUser);
 
     const [showAddEditNoteModal, setShowAddEditNoteModal] = useState(false);
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
     const [currentNote, setCurrentNote] = useState('');
     const [currentRelatedCharacter, setCurrentRelatedCharacter] = useState('');
     const [anchorEl, setAnchorEl] = useState(null);
@@ -141,7 +142,9 @@ const NoteCard = ({ note, characters }) => {
                             Edit
                         </MenuItem>
                         <MenuItem
-                            onClick={() => console.log('show delete modal for this note')}
+                            onClick={() => {
+                                setShowConfirmDeleteModal(true);
+                            }}
                             sx={{
                                 color: theme.palette.error.main,
                                 '& .MuiListItemIcon-root': {
@@ -167,6 +170,17 @@ const NoteCard = ({ note, characters }) => {
                 }}
                 characters={characters}
                 currentNote={{ content: currentNote, relatedCharacter: currentRelatedCharacter }}
+            />
+            <ConfirmDelete
+                open={showConfirmDeleteModal}
+                onClose={() => setShowConfirmDeleteModal(false)}
+                onConfirm={() => {
+                    dispatch(deleteNote(note._id));
+                    onAddOrDelete();
+                    setShowConfirmDeleteModal(false);
+                }}
+                modalTitle={`Delete note?`}
+                modalSubheading={`Are you sure you want to delete this note? This action cannot be reversed.`}
             />
         </>
     );

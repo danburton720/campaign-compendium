@@ -6,11 +6,15 @@ import {
     Checkbox,
     CircularProgress,
     FormControl,
-    InputLabel, ListItemText,
-    MenuItem, OutlinedInput,
+    InputLabel,
+    ListItemText,
+    MenuItem,
+    OutlinedInput,
     Paper,
     Select,
-    Stack, TextField, Typography
+    Stack,
+    TextField,
+    Typography
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -86,23 +90,29 @@ const Notes = () => {
     const renderNotes = () => {
         if (pending) {
             return (
-                <CircularProgress />
+                <Box height='25vh' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                    <CircularProgress />
+                </Box>
             )
         }
         return (
             <>
                 {notesData.map(note => (
                     <React.Fragment key={note._id}>
-                        <NoteCard note={note} characters={characters} />
+                        <NoteCard note={note} characters={characters} onAddOrDelete={() => fetchData()} />
                     </React.Fragment>
                 ))}
             </>
         )
     }
 
-    useEffect(() => {
+    const fetchData = () => {
         // TODO only get all notes if you're the DM - otherwise all the player get notes endpoint
         dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString() }));
+    }
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -117,6 +127,20 @@ const Notes = () => {
             if (addNoteError) enqueueSnackbar(addNoteError, { variant: 'error' });
         }
     }, [addNotePending, prevAddNotePending, addNoteSuccess, addNoteError]);
+
+    useEffect(() => {
+        if (!updateNotePending && prevUpdateNotePending) {
+            if (updateNoteSuccess) enqueueSnackbar('Note successfully updated', { variant: 'success' });
+            if (updateNoteError) enqueueSnackbar(addNoteError, { variant: 'error' });
+        }
+    }, [updateNotePending, prevUpdateNotePending, updateNoteSuccess, updateNoteError]);
+
+    useEffect(() => {
+        if (!deleteNotePending && prevDeleteNotePending) {
+            if (deleteNoteSuccess) enqueueSnackbar('Note successfully deleted', { variant: 'success' });
+            if (deleteNoteError) enqueueSnackbar(addNoteError, { variant: 'error' });
+        }
+    }, [deleteNotePending, prevDeleteNotePending, deleteNoteSuccess, deleteNoteError]);
 
     useDebouncedPending(setPending, [notesPending]);
 
@@ -192,6 +216,7 @@ const Notes = () => {
                 onClose={() => setShowAddNoteModal(false)}
                 onSave={(relatedCharacter, content) => {
                     dispatch(addNote(id, relatedCharacter, content));
+                    fetchData();
                     setShowAddNoteModal(false);
                 }}
                 characters={characters}
