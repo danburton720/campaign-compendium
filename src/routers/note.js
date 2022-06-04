@@ -194,15 +194,12 @@ router.get("/campaigns/:id/notes/created-by-me", async (req, res) => {
 // only the creator of the note can edit it
 // the related character cannot be changed to DM or away from DM
 router.patch("/notes/:id", async (req, res) => {
-    console.log('updating note')
-
     if (req.user) {
         const _id = req.params.id;
         try {
             if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A note could not be found for the given ID');
 
             const note = await Note.findById(_id);
-            console.log('note', note)
 
             if (!note) return res.status(404).send('A note could not be found for the given id');
 
