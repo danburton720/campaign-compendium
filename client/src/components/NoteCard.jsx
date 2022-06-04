@@ -176,8 +176,8 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
             <ConfirmDelete
                 open={showConfirmDeleteModal}
                 onClose={() => setShowConfirmDeleteModal(false)}
-                onConfirm={() => {
-                    dispatch(deleteNote(note._id));
+                onConfirm={async () => {
+                    await dispatch(deleteNote(note._id));
                     onAddOrDelete();
                     setShowConfirmDeleteModal(false);
                 }}

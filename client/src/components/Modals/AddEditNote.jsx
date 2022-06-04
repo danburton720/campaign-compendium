@@ -35,6 +35,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
         if (userCharacters.length === 1) return userCharacters[0]._id;
     });
     const [noteContent, setNoteContent] = useState(currentNote ? currentNote.content : '');
+    const [noteError, setNoteError] = useState(false);
 
     const isDM = campaignData?.createdBy === currentUser?._id;
 
@@ -53,6 +54,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
             });
             setUserCharacters(() => characters.filter(character => character.userId === currentUser._id && character.status !== "invited"));
             setNoteContent(currentNote ? currentNote.content : '');
+            setNoteError(false);
         }
     }, [open, prevOpen]);
 
@@ -67,7 +69,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
             disableScrollLock
         >
             <DialogTitle id="add-edit-note-title">
-                {mode === 'add' ? 'NEW SESSION UPDATE' : 'EDIT SESSION UPDATE'}
+                {mode === 'add' ? 'NEW NOTE' : 'EDIT NOTE'}
             </DialogTitle>
             <DialogContent sx={{ padding: '1rem', marginTop: '1rem' }}>
                 <Stack paddingTop='1rem' gap={2}>
@@ -95,10 +97,22 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                     }
                     <TextField
                         id='note-content'
-                        label='Content'
+                        label={`Content (${noteContent.length}/280)`}
                         variant='outlined'
                         value={noteContent}
-                        onChange={(e) => setNoteContent(e.target.value)}
+                        onChange={(e) => {
+                            setNoteError(!e.target.value);
+                            setNoteContent(e.target.value);
+                        }}
+                        multiline
+                        rows={3}
+                        required
+                        error={noteError}
+                        helperText={noteError ? 'Note cannot be empty' : ' '}
+                        autofocus
+                        inputProps={{
+                            maxLength: 280
+                        }}
                     />
                 </Stack>
             </DialogContent>

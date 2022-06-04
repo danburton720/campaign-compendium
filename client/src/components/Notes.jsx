@@ -306,8 +306,8 @@ const Notes = () => {
                 open={showAddNoteModal}
                 mode='add'
                 onClose={() => setShowAddNoteModal(false)}
-                onSave={(relatedCharacter, content) => {
-                    dispatch(addNote(id, relatedCharacter, content));
+                onSave={async (relatedCharacter, content) => {
+                    await dispatch(addNote(id, relatedCharacter, content));
                     fetchData();
                     setShowAddNoteModal(false);
                 }}
