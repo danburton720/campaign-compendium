@@ -19,9 +19,10 @@ import 'draft-js/dist/Draft.css';
 import { usePrevious } from '../../hooks/usePrevious';
 import WysiwygButtonGroup from '../UI/WysiwygButtonGroup';
 
-const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) => {
+const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent, currentDate }) => {
+    console.log('currentDate', currentDate)
     const [editorState, setEditorState] = useState(currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty());
-    const [sessionDate, setSessionDate] = useState(dayjs());
+    const [sessionDate, setSessionDate] = useState(currentDate ? dayjs(currentDate) : dayjs());
     const [maxLengthError, setMaxLengthError] = useState(false);
 
     const theme = useTheme();
@@ -59,7 +60,7 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
 
     useEffect(() => {
         if (open && !prevOpen) {
-            setSessionDate(dayjs());
+            setSessionDate(currentDate ? dayjs(currentDate) : dayjs());
             setEditorState(currentContent ? currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty() : EditorState.createEmpty());
             setMaxLengthError(false);
         }
@@ -72,9 +73,9 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent }) =
             maxWidth={'sm'}
             open={open}
             onClose={() => onClose()}
-            aria-labelledby="select-image"
+            aria-labelledby="add-edit-session-update"
         >
-            <DialogTitle id="select-image-title">
+            <DialogTitle id="add-edit-session-update-title">
                 {mode === 'add' ? 'NEW SESSION UPDATE' : 'EDIT SESSION UPDATE'}
             </DialogTitle>
             <DialogContent sx={{ padding: '1rem', marginTop: '1rem' }}>

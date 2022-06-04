@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Card, CardContent, IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -10,17 +11,24 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { getCharacterImage } from '../utils/images';
 import DM from '../assets/dm.svg';
+import AddEditNote from './Modals/AddEditNote';
+import { addNote, updateNote } from '../actions/noteActions';
 
+// TODO make it so the note cannot be edited if it's for a deleted character
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note, characters }) => {
     const currentUser = useSelector((state) => state.auth?.currentUser);
 
+    const [showAddEditNoteModal, setShowAddEditNoteModal] = useState(false);
+    const [currentNote, setCurrentNote] = useState('');
+    const [currentRelatedCharacter, setCurrentRelatedCharacter] = useState('');
     const [anchorEl, setAnchorEl] = useState(null);
-    console.log('note', note)
     const character =  note.hasOwnProperty('character') ? note.character : 'DM';
     const characterImage = character !== 'DM' ? getCharacterImage(character.chosenImage) : DM;
 
     dayjs.extend(relativeTime);
+
+    const dispatch = useDispatch();
 
     const theme = useTheme();
 
@@ -35,115 +43,132 @@ const NoteCard = ({ note }) => {
     }
 
     return (
-        <Card
-            sx={{
-                backgroundColor: character !== 'DM' ? note.character.chosenColor : 'gray',
-                color: '#fff'
-            }}
-        >
-            <CardContent
+        <>
+            <Card
                 sx={{
-                    position: 'relative'
+                    backgroundColor: character !== 'DM' ? note.character.chosenColor : 'gray',
+                    color: '#fff'
                 }}
             >
-                {note.createdBy === currentUser._id &&
-                    <Box
-                        display='flex'
-                        position='absolute'
-                        top='1rem'
-                        right='5px'
-                    >
-                        <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
-                            <MoreVertIcon sx={{ color: 'white' }}/>
-                        </IconButton>
-                    </Box>
-                }
-                <Box display='flex' alignItems='center'>
-                    <Box height='50px' width='50px' marginRight='1rem'>
-                        <img
-                            src={characterImage}
-                            alt='character'
-                            style={{ height: '100%', width: '100%' }}
-                        />
-                    </Box>
-                    <Box
-                        display='flex'
-                        flexDirection='column'
-                        marginTop='5px'
-                        width='78%'
-                    >
-                        <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
-                        <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{character !== 'DM' ? `${character.race} | ${character.class}` : 'Dungeon Master'}</Typography>
-                    </Box>
-                </Box>
-                <Stack
-                    marginTop='1rem'
-                >
-                    <Typography variant="caption" sx={{ marginBottom: '2px' }}>{dayjs(note.createdAt).fromNow()}</Typography>
-                    {note.content}
-                </Stack>
-                <Menu
-                    anchorEl={anchorEl}
-                    id="session-update-menu"
-                    open={open}
-                    onClose={handleClose}
-                    onClick={handleClose}
-                    PaperProps={{
-                        elevation: 0,
-                        sx: {
-                            minWidth: 200,
-                            maxWidth: 300,
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                            mt: 1.5,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
-                            },
-                            '&:before': {
-                                content: '""',
-                                display: 'block',
-                                position: 'absolute',
-                                top: 0,
-                                right: 14,
-                                width: 10,
-                                height: 10,
-                                bgcolor: 'background.paper',
-                                transform: 'translateY(-50%) rotate(45deg)',
-                                zIndex: 0,
-                            },
-                        },
+                <CardContent
+                    sx={{
+                        position: 'relative'
                     }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem
-                        onClick={() => console.log('open add/edit note modal')}
+                    {note.createdBy === currentUser._id &&
+                        <Box
+                            display='flex'
+                            position='absolute'
+                            top='1rem'
+                            right='5px'
+                        >
+                            <IconButton aria-label="options" onClick={handleClick} sx={{ marginLeft: 'auto' }}>
+                                <MoreVertIcon sx={{ color: 'white' }}/>
+                            </IconButton>
+                        </Box>
+                    }
+                    <Box display='flex' alignItems='center'>
+                        <Box height='50px' width='50px' marginRight='1rem'>
+                            <img
+                                src={characterImage}
+                                alt='character'
+                                style={{ height: '100%', width: '100%' }}
+                            />
+                        </Box>
+                        <Box
+                            display='flex'
+                            flexDirection='column'
+                            marginTop='5px'
+                            width='78%'
+                        >
+                            <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
+                            <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{character !== 'DM' ? `${character.race} | ${character.class}` : 'Dungeon Master'}</Typography>
+                        </Box>
+                    </Box>
+                    <Stack
+                        marginTop='1rem'
                     >
-                        <ListItemIcon>
-                            <EditIcon />
-                        </ListItemIcon>
-                        Edit
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => console.log('show delete modal for this note')}
-                        sx={{
-                            color: theme.palette.error.main,
-                            '& .MuiListItemIcon-root': {
-                                color: 'inherit'
-                            }
+                        <Typography variant="caption" sx={{ marginBottom: '2px' }}>{dayjs(note.createdAt).fromNow()}</Typography>
+                        {note.content}
+                    </Stack>
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="session-update-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                minWidth: 200,
+                                maxWidth: 300,
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                mt: 1.5,
+                                '& .MuiAvatar-root': {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                '&:before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 14,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
+                            },
                         }}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                     >
-                        <ListItemIcon>
-                            <DeleteIcon />
-                        </ListItemIcon>
-                        Delete
-                    </MenuItem>
-                </Menu>
-            </CardContent>
-        </Card>
+                        <MenuItem
+                            onClick={() => {
+                                setCurrentNote(note.content);
+                                setCurrentRelatedCharacter(note.relatedCharacter);
+                                setShowAddEditNoteModal(true);
+                            }}
+                        >
+                            <ListItemIcon>
+                                <EditIcon />
+                            </ListItemIcon>
+                            Edit
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => console.log('show delete modal for this note')}
+                            sx={{
+                                color: theme.palette.error.main,
+                                '& .MuiListItemIcon-root': {
+                                    color: 'inherit'
+                                }
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DeleteIcon />
+                            </ListItemIcon>
+                            Delete
+                        </MenuItem>
+                    </Menu>
+                </CardContent>
+            </Card>
+            <AddEditNote
+                open={showAddEditNoteModal}
+                mode='edit'
+                onClose={() => setShowAddEditNoteModal(false)}
+                onSave={(relatedCharacter, content) => {
+                    dispatch(updateNote(note._id, relatedCharacter, content));
+                    setShowAddEditNoteModal(false);
+                }}
+                characters={characters}
+                currentNote={{ content: currentNote, relatedCharacter: currentRelatedCharacter }}
+            />
+        </>
     );
 }
 

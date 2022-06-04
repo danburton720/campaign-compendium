@@ -115,10 +115,11 @@ const sessionUpdateReducer = (state = initialState, action) => {
         case ADD_NOTE_TO_STORE:
             const newNotesToAddTo = state.data;
             newNotesToAddTo.push(action.payload);
+            const newNotesToAddToSorted = newNotesToAddTo.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             return {
                 ...state,
-                data: newNotesToAddTo
+                data: newNotesToAddToSorted
             }
         default:
             return state;

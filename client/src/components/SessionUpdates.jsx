@@ -41,6 +41,7 @@ const SessionUpdates = () => {
     const [sessionUpdateDate, setSessionUpdateDate] = useState('');
     const [mode, setMode] = useState('add');
     const [currentContent, setCurrentContent] = useState(undefined);
+    const [currentDate, setCurrentDate] = useState(undefined);
     const [pending, setPending] = useState(false);
     const [index, setIndex] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -214,6 +215,7 @@ const SessionUpdates = () => {
                         <MenuItem
                             onClick={() => {
                                 setCurrentContent(sessionUpdate.content);
+                                setCurrentDate(sessionUpdate.sessionDate)
                                 setSessionUpdateId(sessionUpdate._id);
                                 setMode('edit');
                                 setShowAddEditSessionUpdate(true);
@@ -269,6 +271,7 @@ const SessionUpdates = () => {
                 onClose={() => setShowAddEditSessionUpdate(false)}
                 onSave={(sessionDate, content) => mode === 'add' ? handleCreateSessionUpdate(sessionDate, content) : handleEditSessionUpdate(sessionDate, content)}
                 currentContent={currentContent}
+                currentDate={currentDate}
             />
             <ConfirmDelete
                 open={showConfirmDeleteModal}

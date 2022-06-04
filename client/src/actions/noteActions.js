@@ -146,7 +146,7 @@ export function updateNote(noteId, relatedCharacter, content) {
         dispatch(setUpdateNoteError(null));
         try {
             const endpoint = API.notes.note.replaceAll('{noteId}', noteId);
-            await axios.patch(endpoint, { withCredentials: true });
+            await axios.patch(endpoint, { relatedCharacter, content }, { withCredentials: true });
             dispatch(updateNoteInStore(noteId, relatedCharacter, content));
             dispatch(setUpdateNoteSuccess(true));
             dispatch(setUpdateNotePending(false));
@@ -183,7 +183,7 @@ export function addNote(campaignId, relatedCharacter, content) {
         try {
             const endpoint = API.campaigns.notes.replaceAll('{campaignId}', campaignId);
             const response = await axios.post(endpoint, { relatedCharacter, content }, { withCredentials: true });
-            dispatch(addNoteToStore(response));
+            dispatch(addNoteToStore(response.data));
             dispatch(setAddNoteSuccess(true));
             dispatch(setAddNotePending(false));
         } catch (err) {

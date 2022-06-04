@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
-    Box,
+    Box, Button,
     Checkbox,
     CircularProgress,
     FormControl,
@@ -14,10 +14,13 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
+import { useSnackbar } from 'notistack';
 
-import { getAllNotes } from '../actions/noteActions';
+import { addNote, getAllNotes } from '../actions/noteActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
 import NoteCard from './NoteCard';
+import AddEditNote from './Modals/AddEditNote';
+import { usePrevious } from '../hooks/usePrevious';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
 
@@ -57,11 +60,18 @@ const Notes = () => {
     const [page, setPage] = useState(1);
     const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
     const [to, setTo] = useState(dayjs().add(1, 'hour',));
-    const [filterCharacters, setFilterCharacter] = useState(() => getCharacters(characters))
+    const [filterCharacters, setFilterCharacter] = useState(() => getCharacters(characters));
+    const [showAddNoteModal, setShowAddNoteModal] = useState(false);
 
     const dispatch = useDispatch();
 
     const { id } = useParams();
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    const prevAddNotePending = usePrevious(addNotePending);
+    const prevUpdateNotePending = usePrevious(updateNotePending);
+    const prevDeleteNotePending = usePrevious(deleteNotePending);
 
     const handleChange = (event) => {
         const {
@@ -83,7 +93,7 @@ const Notes = () => {
             <>
                 {notesData.map(note => (
                     <React.Fragment key={note._id}>
-                        <NoteCard note={note} />
+                        <NoteCard note={note} characters={characters} />
                     </React.Fragment>
                 ))}
             </>
@@ -101,12 +111,25 @@ const Notes = () => {
         dispatch(getAllNotes(id, { page, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
     }, [filterCharacters, from, to]);
 
+    useEffect(() => {
+        if (!addNotePending && prevAddNotePending) {
+            if (addNoteSuccess) enqueueSnackbar('Note successfully added', { variant: 'success' });
+            if (addNoteError) enqueueSnackbar(addNoteError, { variant: 'error' });
+        }
+    }, [addNotePending, prevAddNotePending, addNoteSuccess, addNoteError]);
+
     useDebouncedPending(setPending, [notesPending]);
 
     return (
         <>
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
                 <Stack gap={2} marginTop='2rem'>
+                    <Button
+                        variant="contained"
+                        onClick={() => setShowAddNoteModal(true)}
+                    >
+                        Add note
+                    </Button>
                     <Paper
                         sx={{
                             padding: '1rem'
@@ -163,6 +186,16 @@ const Notes = () => {
                     {renderNotes()}
                 </Stack>
             </Box>
+            <AddEditNote
+                open={showAddNoteModal}
+                mode='add'
+                onClose={() => setShowAddNoteModal(false)}
+                onSave={(relatedCharacter, content) => {
+                    dispatch(addNote(id, relatedCharacter, content));
+                    setShowAddNoteModal(false);
+                }}
+                characters={characters}
+            />
         </>
     );
 }
