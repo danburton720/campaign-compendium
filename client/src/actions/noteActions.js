@@ -148,6 +148,24 @@ export function getAllNotes(campaignId, params) {
     };
 }
 
+export function getPlayerNotes(campaignId, params) {
+    return async dispatch => {
+        dispatch(setNotesPending(true));
+        dispatch(setNotesData([]));
+        dispatch(setNotesError(null));
+        try {
+            const endpoint = API.campaigns.my_notes.replaceAll('{campaignId}', campaignId);
+            const response = await axios.get(endpoint, { params, withCredentials: true });
+            dispatch(setNotesData(response.data.data));
+            dispatch(setNotesTotal(response.data.count));
+            dispatch(setNotesPending(false));
+        } catch (err) {
+            dispatch(setNotesError(err.response.data));
+            dispatch(setNotesPending(false));
+        }
+    };
+}
+
 export function updateNote(noteId, relatedCharacter, content) {
     return async dispatch => {
         dispatch(setUpdateNotePending(true));

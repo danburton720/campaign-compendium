@@ -18,7 +18,8 @@ export const API = {
         invite: `${API_ROOT}/campaigns/{campaignId}/invite`,
         remove_player: `${API_ROOT}/campaigns/{campaignId}/user/{userId}`,
         session_updates: `${API_ROOT}/campaigns/{campaignId}/session-updates`,
-        notes: `${API_ROOT}/campaigns/{campaignId}/notes`
+        notes: `${API_ROOT}/campaigns/{campaignId}/notes`,
+        my_notes: `${API_ROOT}/campaigns/{campaignId}/notes/created-by-me`,
     },
     characters: {
         character: `${API_ROOT}/characters/{characterId}`,

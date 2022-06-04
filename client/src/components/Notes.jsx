@@ -20,18 +20,20 @@ import {
     Typography
 } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 
-import { addNote, getAllNotes } from '../actions/noteActions';
+import { addNote, getAllNotes, getPlayerNotes } from '../actions/noteActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
 import NoteCard from './NoteCard';
 import AddEditNote from './Modals/AddEditNote';
 import { usePrevious } from '../hooks/usePrevious';
 import { ROUTES } from '../constants';
+import { filter } from 'ramda';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
 // TODO provide option to reset filters - only display when filters are different to initial values
@@ -55,6 +57,8 @@ const getCharacters = (characters) => {
 }
 
 const Notes = () => {
+    const currentUser = useSelector(state => state.auth.currentUser);
+    const campaignData = useSelector(state => state.campaigns.campaignData);
     const notesPending = useSelector(state => state.notes.pending);
     const notesData = useSelector(state => state.notes.data);
     const notesTotal = useSelector(state => state.notes.total);
@@ -73,9 +77,19 @@ const Notes = () => {
     const [page, setPage] = useState(1);
     const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
     const [to, setTo] = useState(dayjs().add(1, 'hour',));
-    const [filterCharacters, setFilterCharacter] = useState(() => getCharacters(characters));
+    const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(characters));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
+    const [defaultCharacterFilters, setDefaultCharacterFilters] = useState(getCharacters(characters));
+    const [currentCharacterFilters, setCurrentCharacterFilters] = useState(getCharacters(characters));
+    const [defaultFrom, setDefaultFrom] = useState(from);
+    const [currentFrom, setCurrentFrom] = useState(from);
+    const [defaultTo, setDefaultTo] = useState(to);
+    const [currentTo, setCurrentTo] = useState(to);
+    const [anyFiltersApplied, setAnyFiltersApplied] = useState(false);
+    const [anyFiltersChanged, setAnyFiltersChanged] = useState(false);
+
+    const isDM = campaignData?.createdBy === currentUser?._id;
 
     const dispatch = useDispatch();
 
@@ -93,7 +107,7 @@ const Notes = () => {
         const {
             target: { value },
         } = event;
-        setFilterCharacter(
+        setFilterCharacters(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
@@ -102,7 +116,9 @@ const Notes = () => {
     const renderNotes = () => {
         if (!pending && notesData.length === 0) {
             return (
-                <Alert severity="info" sx={{ marginTop: '1rem' }}>No notes have been added to this campaign</Alert>
+                <Alert severity="info" sx={{ marginTop: '1rem' }}>
+                    {anyFiltersApplied ? 'No notes found for provided filters' : 'No notes have been added to this campaign'}
+                </Alert>
             )
         }
 
@@ -124,16 +140,54 @@ const Notes = () => {
         )
     }
 
-    const fetchData = () => {
+    const fetchData = (from, to, filterCharacters) => {
         // TODO only get all notes if you're the DM - otherwise all the player get notes endpoint
-        const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
-        if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
-        dispatch(getAllNotes(id, { page, pageSize: 10, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
+        if (isDM) {
+            let anyApplied = false;
+            if (from !== defaultFrom) anyApplied = true;
+            if (to !== defaultTo) anyApplied = true;
+            if (JSON.stringify(filterCharacters) !== JSON.stringify(defaultCharacterFilters)) anyApplied = true;
+            setAnyFiltersApplied(anyApplied);
+
+            const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
+            console.log('filterCharacters', filterCharacters)
+            if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
+            dispatch(getAllNotes(id, { page, pageSize: 10, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
+        } else {
+            dispatch(getPlayerNotes(id, { page, pageSize: 10 }));
+        }
+    }
+
+    const resetFilters = async () => {
+        await setFrom(defaultFrom);
+        await setTo(defaultTo);
+        await setFilterCharacters(defaultCharacterFilters);
+        await setCurrentFrom(defaultFrom);
+        await setCurrentTo(defaultTo);
+        await setCurrentCharacterFilters(defaultCharacterFilters);
+        fetchData(defaultFrom, defaultTo, defaultCharacterFilters);
     }
 
     useEffect(() => {
-        fetchData();
+        fetchData(from, to, filterCharacters);
     }, [page]);
+
+    useEffect(() => {
+        let anyChanged = false;
+        if (from !== currentFrom) anyChanged = true;
+        if (to !== currentTo) anyChanged = true;
+        if (JSON.stringify(filterCharacters) !== JSON.stringify(currentCharacterFilters)) anyChanged = true;
+        setAnyFiltersChanged(anyChanged);
+    }, [from, to, filterCharacters, showFilters]);
+
+    useEffect(() => {
+        if (showFilters) {
+            setFrom(currentFrom);
+            setTo(currentTo);
+            setFilterCharacters(currentCharacterFilters);
+        }
+
+    }, [showFilters]);
 
     useEffect(() => {
         if (!addNotePending && prevAddNotePending) {
@@ -171,35 +225,54 @@ const Notes = () => {
                     Go back
                 </Button>
                 <Stack gap={2} marginTop='2rem'>
-                    <Button
-                        variant="contained"
-                        onClick={() => setShowAddNoteModal(true)}
-                        startIcon={<AddIcon />}
-                        sx={{
-                            width: 'fit-content',
-                            alignSelf: 'flex-end'
-                        }}
-                    >
-                        Add note
-                    </Button>
-                    <Box
-                        height='30px'
-                        width='30px'
-                        borderRadius='4px'
-                        bgcolor='white'
-                        display='flex'
-                        justifyContent='center'
-                        alignItems='center'
-                        alignSelf='flex-end'
-                    >
-                        <IconButton onClick={() => setShowFilters(!showFilters)} disabled={pending}>
-                            <FilterAltIcon />
-                        </IconButton>
+                    <Box display='flex' alignItems='center' gap={2} justifyContent='end'>
+                        <Button
+                            variant="contained"
+                            onClick={() => setShowAddNoteModal(true)}
+                            startIcon={<AddIcon />}
+                            sx={{
+                                width: 'fit-content',
+                            }}
+                        >
+                            Add note
+                        </Button>
+                        {isDM &&
+                            <Box
+                                height='36.5px'
+                                width='36.5px'
+                                borderRadius='4px'
+                                bgcolor='white'
+                                display='flex'
+                                justifyContent='center'
+                                alignItems='center'
+                                alignSelf='flex-end'
+                            >
+                                <IconButton onClick={() => setShowFilters(!showFilters)} disabled={pending}>
+                                    <FilterAltIcon/>
+                                </IconButton>
+                            </Box>
+                        }
+                        {isDM && anyFiltersApplied &&
+                            <Box
+                                height='36.5px'
+                                width='36.5px'
+                                borderRadius='4px'
+                                bgcolor='white'
+                                display='flex'
+                                justifyContent='center'
+                                alignItems='center'
+                                alignSelf='flex-end'
+                            >
+                                <IconButton onClick={() => resetFilters()} disabled={pending}>
+                                    <FilterAltOffIcon />
+                                </IconButton>
+                            </Box>
+                        }
                     </Box>
                     <Collapse in={showFilters}>
                         <Paper
                             sx={{
-                                padding: '1rem'
+                                padding: '1rem',
                             }}
                         >
                             <Stack gap={2} width="100%">
@@ -248,7 +321,7 @@ const Notes = () => {
                                         sx={{ marginTop: '1rem' }}
                                     />
                                 </Box>
-                                <Box display='flex' gap={2} width='400px' alignSelf='flex-end'>
+                                <Box display='flex' gap={2} maxWidth='450px' width='100%' alignSelf='flex-end'>
                                     <Button
                                         variant="contained"
                                         sx={{
@@ -263,8 +336,12 @@ const Notes = () => {
                                         sx={{
                                             width: '50%'
                                         }}
+                                        disabled={!anyFiltersChanged}
                                         onClick={() => {
-                                            fetchData();
+                                            setCurrentCharacterFilters(filterCharacters);
+                                            setCurrentFrom(from);
+                                            setCurrentTo(to);
+                                            fetchData(from, to, filterCharacters);
                                             setShowFilters(false);
                                         }}
                                     >
@@ -282,22 +359,22 @@ const Notes = () => {
                     >
                         {renderNotes()}
                         {notesData.length > 0 &&
-                            <Paper
-                                sx={{
-                                    padding: '1rem 0',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    justifySelf: 'flex-end'
-                                }}
-                            >
-                                <Pagination
-                                    count={Math.ceil(notesTotal / 10)}
-                                    color="primary"
-                                    page={page}
-                                    onChange={(_, value) => setPage(value)}
-                                    disabled={pending}
-                                />
-                            </Paper>
+                        <Paper
+                            sx={{
+                                padding: '1rem 0',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                justifySelf: 'flex-end'
+                            }}
+                        >
+                            <Pagination
+                                count={Math.ceil(notesTotal / 10)}
+                                color="primary"
+                                page={page}
+                                onChange={(_, value) => setPage(value)}
+                                disabled={pending}
+                            />
+                        </Paper>
                         }
                     </Box>
                 </Stack>

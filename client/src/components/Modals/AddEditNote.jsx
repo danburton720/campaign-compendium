@@ -18,8 +18,6 @@ import {
 
 import { usePrevious } from '../../hooks/usePrevious';
 
-// TODO need to get the character to relate to the note if it's in 'add' mode
-// if the user is the DM, don't show the related character option
 // if the user has an active character - use that character, display select disabled with that option
 // if the user only has one character that is dead, do the same as above
 // if the user has multiple characters which are active/dead, enable the select dropdown so they can pick the related character
@@ -32,7 +30,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
         if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
         if (campaignData?.createdBy === currentUser?._id) return 'DM';
         const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-        if (userCharacters.length === 1) return userCharacters[0]._id;
+        return userCharacters[0]._id;
     });
     const [noteContent, setNoteContent] = useState(currentNote ? currentNote.content : '');
     const [noteError, setNoteError] = useState(false);
@@ -50,7 +48,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                 if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
                 if (campaignData?.createdBy === currentUser?._id) return 'DM';
                 const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-                if (userCharacters.length === 1) return userCharacters[0]._id;
+                return userCharacters[0]._id;
             });
             setUserCharacters(() => characters.filter(character => character.userId === currentUser._id && character.status !== "invited"));
             setNoteContent(currentNote ? currentNote.content : '');
@@ -82,7 +80,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                                 value={relatedCharacter}
                                 label="Related character"
                                 onChange={e => setRelatedCharacter(e.target.value)}
-                                disabled={userCharacters.length === 0}
+                                disabled={userCharacters.length === 1}
                             >
                                 {userCharacters.map(character => (
                                     <MenuItem
@@ -109,7 +107,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                         required
                         error={noteError}
                         helperText={noteError ? 'Note cannot be empty' : ' '}
-                        autofocus
+                        autoFocus
                         inputProps={{
                             maxLength: 280
                         }}

@@ -36,6 +36,10 @@ axios.interceptors.response.use(response => {
 const App = () => {
     const theme = createTheme(mui_theme);
 
+    useEffect(() => {
+        document.body.style.overflowY = 'scroll';
+    }, []);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Provider store={store}>
