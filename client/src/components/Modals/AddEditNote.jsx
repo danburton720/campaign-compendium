@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -18,10 +19,8 @@ import {
 
 import { usePrevious } from '../../hooks/usePrevious';
 import { sortCharactersActiveFirst } from '../../utils/character';
-
-// if the user has an active character - use that character, display select disabled with that option
-// if the user only has one character that is dead, do the same as above
-// if the user has multiple characters which are active/dead, enable the select dropdown so they can pick the related character
+import { getCharacterImage } from '../../utils/images';
+import tombstone from '../../assets/tombstone.svg';
 
 const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
@@ -83,26 +82,56 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
             <DialogContent sx={{ padding: '1rem', marginTop: '1rem' }}>
                 <Stack paddingTop='1rem' gap={2}>
                     {!isDM &&
-                        <FormControl fullWidth>
-                            <InputLabel id="related-character-select-label">Related character</InputLabel>
-                            <Select
-                                labelId="related-character-select-label"
-                                id="related-character-select"
-                                value={relatedCharacter}
-                                label="Related character"
-                                onChange={e => setRelatedCharacter(e.target.value)}
-                                disabled={userCharacters.length === 1}
-                            >
-                                {userCharacters.map(character => (
+                    <FormControl fullWidth>
+                        <InputLabel id="related-character-select-label">Related character</InputLabel>
+                        <Select
+                            labelId="related-character-select-label"
+                            id="related-character-select"
+                            value={relatedCharacter}
+                            label="Related character"
+                            onChange={e => setRelatedCharacter(e.target.value)}
+                            disabled={userCharacters.length === 1}
+                        >
+                            {userCharacters.map(character => {
+                                const characterImage = getCharacterImage(character.chosenImage);
+
+                                return (
                                     <MenuItem
                                         key={character._id}
                                         value={character._id}
                                     >
-                                        {character.name}
+                                        <Box display='flex' alignItems='center'>
+                                            <Box height='30px' width='30px' marginRight='8px'>
+                                                <img
+                                                    src={characterImage}
+                                                    alt='character'
+                                                    style={{
+                                                        height: '100%',
+                                                        width: '100%',
+                                                        '-webkit-filter': 'invert(100%)',
+                                                        filter: 'invert(100%)'
+                                                    }}
+                                                />
+                                            </Box>
+                                            {character.name}
+                                            {character.status === "dead" &&
+                                            <Box height='20px' width='20px' marginLeft='8px' marginBottom='3px'>
+                                                <img
+                                                    src={tombstone}
+                                                    alt='tombstone'
+                                                    style={{
+                                                        height: '100%',
+                                                        width: '100%',
+                                                    }}
+                                                />
+                                            </Box>
+                                            }
+                                        </Box>
                                     </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
                     }
                     <TextField
                         id='note-content'
