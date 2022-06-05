@@ -20,7 +20,6 @@ import { usePrevious } from '../../hooks/usePrevious';
 import WysiwygButtonGroup from '../UI/WysiwygButtonGroup';
 
 const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent, currentDate }) => {
-    console.log('currentDate', currentDate)
     const [editorState, setEditorState] = useState(currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty());
     const [sessionDate, setSessionDate] = useState(currentDate ? dayjs(currentDate) : dayjs());
     const [maxLengthError, setMaxLengthError] = useState(false);

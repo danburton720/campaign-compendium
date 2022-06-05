@@ -17,7 +17,9 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import axios from 'axios';
 import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import dayjs from 'dayjs';
@@ -130,7 +132,22 @@ const SessionUpdates = () => {
     const renderSessionUpdate = () => {
         if (!pending && sessionUpdatesData.length === 0) {
             return (
-                <Alert severity="info" sx={{ marginTop: '1rem' }}>No session updates have been published</Alert>
+                <Stack>
+                    <Alert severity="info" sx={{ marginTop: '1rem' }}>No session updates have been published</Alert>
+                    {isDM &&
+                        <Button
+                            variant="contained"
+                            onClick={() => setShowAddEditSessionUpdate(true)}
+                            sx={{
+                                marginTop: '1rem',
+                                marginLeft: 'auto'
+                            }}
+                            startIcon={<AddIcon/>}
+                        >
+                            Publish a new update
+                        </Button>
+                    }
+                </Stack>
             )
         }
 
@@ -139,10 +156,25 @@ const SessionUpdates = () => {
             const editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(sessionUpdate.content)));
             return (
                 <>
-                    <Stack marginBottom='.5rem' sx={{ color: '#fff' }}>
-                        <Typography variant="subtitle2" sx={{ fontSize: '13px', fontWeight: 700 }}>SESSION DATE</Typography>
-                        <Typography variant="subtitle2">{dayjs(sessionUpdate.sessionDate).format('DD/MM/YYYY')}</Typography>
-                    </Stack>
+                    <Box display='flex' alignItems='center' marginBottom='.5rem'>
+                        <Stack justifySelf='flex-start' sx={{ color: '#fff' }}>
+                            <Typography variant="subtitle2" sx={{ fontSize: '13px', fontWeight: 700 }}>SESSION DATE</Typography>
+                            <Typography variant="subtitle2">{dayjs(sessionUpdate.sessionDate).format('DD/MM/YYYY')}</Typography>
+                        </Stack>
+                        {isDM &&
+                            <Button
+                                variant="contained"
+                                onClick={() => setShowAddEditSessionUpdate(true)}
+                                sx={{
+                                    maxWidth: '300px',
+                                    marginLeft: 'auto'
+                                }}
+                                startIcon={<AddIcon/>}
+                            >
+                                Publish a new update
+                            </Button>
+                        }
+                    </Box>
                     <Card key={sessionUpdate._id} height='62vh'>
                         <CardContent sx={{ height: '62vh', overflow: 'auto' }}>
                             <Stack>
@@ -168,6 +200,7 @@ const SessionUpdates = () => {
                             variant="contained"
                             onClick={() => setIndex(index + 1)}
                             disabled={index + 1 === sessionUpdatesData.length}
+                            startIcon={<ArrowBackIcon />}
                         >
                             Previous update
                         </Button>
@@ -175,6 +208,7 @@ const SessionUpdates = () => {
                             variant="contained"
                             onClick={() => setIndex(index -1)}
                             disabled={index === 0}
+                            endIcon={<ArrowForwardIcon />}
                         >
                             Next update
                         </Button>
@@ -269,14 +303,6 @@ const SessionUpdates = () => {
                 </Button>
                 <Stack gap={2}>
                     {renderSessionUpdate()}
-                    {isDM &&
-                        <Button
-                            variant="contained"
-                            onClick={() => setShowAddEditSessionUpdate(true)}
-                        >
-                            Publish a new update
-                        </Button>
-                    }
                 </Stack>
             </Box>
             <AddEditSessionUpdate

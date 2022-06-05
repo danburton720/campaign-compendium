@@ -145,7 +145,6 @@ const Notes = () => {
             if (to !== defaultTo) anyApplied = true;
             if (JSON.stringify(filterCharacters) !== JSON.stringify(defaultCharacterFilters)) anyApplied = true;
             setAnyFiltersApplied(anyApplied);
-
             const relatedCharacterParams = charactersData.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
             if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
             dispatch(getAllNotes(id, { page, pageSize: 10, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
@@ -215,28 +214,31 @@ const Notes = () => {
     return (
         <>
             <Box minHeight='calc(100vh - 7rem)' paddingBottom='4rem' marginTop='1rem'>
-                <Button
-                    startIcon={<ArrowBackIcon />}
-                    variant="contained"
-                    size="small"
-                    sx={{ marginBottom: '1rem' }}
-                    onClick={() => navigate(ROUTES.CAMPAIGNS)}
-                >
-                    Go back
-                </Button>
+                {!pending &&
+                    <Button
+                        startIcon={<ArrowBackIcon/>}
+                        variant="contained"
+                        size="small"
+                        sx={{ marginBottom: '1rem' }}
+                        onClick={() => navigate(ROUTES.CAMPAIGNS)}
+                    >
+                        Go back
+                    </Button>
+                }
                 <Stack gap={2} marginTop='2rem'>
-                    <Box display='flex' alignItems='center' gap={2} justifyContent='end'>
-                        <Button
-                            variant="contained"
-                            onClick={() => setShowAddNoteModal(true)}
-                            startIcon={<AddIcon />}
-                            sx={{
-                                width: 'fit-content',
-                            }}
-                        >
-                            Add note
-                        </Button>
-                        {isDM &&
+                    {!pending &&
+                        <Box display='flex' alignItems='center' gap={2} justifyContent='end'>
+                            <Button
+                                variant="contained"
+                                onClick={() => setShowAddNoteModal(true)}
+                                startIcon={<AddIcon/>}
+                                sx={{
+                                    width: 'fit-content',
+                                }}
+                            >
+                                Add note
+                            </Button>
+                            {isDM &&
                             <Box
                                 height='36.5px'
                                 width='36.5px'
@@ -251,8 +253,8 @@ const Notes = () => {
                                     <FilterAltIcon/>
                                 </IconButton>
                             </Box>
-                        }
-                        {isDM && anyFiltersApplied &&
+                            }
+                            {isDM && anyFiltersApplied &&
                             <Box
                                 height='36.5px'
                                 width='36.5px'
@@ -264,11 +266,12 @@ const Notes = () => {
                                 alignSelf='flex-end'
                             >
                                 <IconButton onClick={() => resetFilters()} disabled={pending}>
-                                    <FilterAltOffIcon />
+                                    <FilterAltOffIcon/>
                                 </IconButton>
                             </Box>
-                        }
-                    </Box>
+                            }
+                        </Box>
+                    }
                     <Collapse in={showFilters}>
                         <Paper
                             sx={{
@@ -385,7 +388,7 @@ const Notes = () => {
                 onClose={() => setShowAddNoteModal(false)}
                 onSave={async (relatedCharacter, content) => {
                     await dispatch(addNote(id, relatedCharacter, content));
-                    fetchData();
+                    fetchData(from, to, filterCharacters);
                     setShowAddNoteModal(false);
                 }}
                 characters={charactersData}
