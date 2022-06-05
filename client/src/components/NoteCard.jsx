@@ -9,7 +9,6 @@ import {
     Menu,
     MenuItem,
     Stack,
-    SvgIcon,
     Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -97,18 +96,20 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                         >
                             <Box display='flex' alignItems='center'>
                                 <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
-                                <Box height='20px' width='20px' marginLeft='8px' marginBottom='3px'>
-                                    <img
-                                        src={tombstone}
-                                        alt='tombstone'
-                                        style={{
-                                            height: '100%',
-                                            width: '100%',
-                                            '-webkit-filter': 'invert(100%)',
-                                            filter: 'invert(100%)'
-                                        }}
-                                    />
-                                </Box>
+                                {note.character && note.character.status === "dead" &&
+                                    <Box height='20px' width='20px' marginLeft='8px' marginBottom='3px'>
+                                        <img
+                                            src={tombstone}
+                                            alt='tombstone'
+                                            style={{
+                                                height: '100%',
+                                                width: '100%',
+                                                '-webkit-filter': 'invert(100%)',
+                                                filter: 'invert(100%)'
+                                            }}
+                                        />
+                                    </Box>
+                                }
                             </Box>
                             <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{character !== 'DM' ? `${character.race} | ${character.class}` : 'Dungeon Master'}</Typography>
                         </Box>

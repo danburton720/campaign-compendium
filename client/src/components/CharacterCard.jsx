@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 import { getCharacterImage } from '../utils/images';
+import tombstone from '../assets/tombstone.svg';
 
 const CharacterCard = ({ character }) => {
     const characterImage = getCharacterImage(character.chosenImage);
@@ -31,7 +32,23 @@ const CharacterCard = ({ character }) => {
                 marginTop='5px'
                 width='78%'
             >
-                <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character.name}</Typography>
+                <Box display='flex' alignItems='center'>
+                    <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character.name}</Typography>
+                    {character.status === "dead" &&
+                        <Box height='20px' width='20px' marginLeft='8px'>
+                            <img
+                                src={tombstone}
+                                alt='tombstone'
+                                style={{
+                                    height: '100%',
+                                    width: '100%',
+                                    '-webkit-filter': 'invert(100%)',
+                                    filter: 'invert(100%)'
+                                }}
+                            />
+                        </Box>
+                    }
+                </Box>
                 <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{`${character.race} | ${character.class}`}</Typography>
             </Box>
         </Box>
