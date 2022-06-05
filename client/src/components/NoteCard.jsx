@@ -108,7 +108,7 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                                             style={{
                                                 height: '100%',
                                                 width: '100%',
-                                                '-webkit-filter': 'invert(100%)',
+                                                WebkitFilter: 'invert(100%)',
                                                 filter: 'invert(100%)'
                                             }}
                                         />
