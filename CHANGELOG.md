@@ -1,3 +1,27 @@
+## [1.1.0] - 2022-06-05
+### Added
+
+- Added new `GET` `/campaigns/:id/characters` endpoint so all characters (including deleted ones) on a campaign can be fetched
+- Added new `POST` `/campaigns/:id/notes` endpoint for users to create notes on campaigns
+- Added new `GET` `/campaigns/:id/notes` endpoint for DMs to fetch all notes on a campaign
+- Added new `GET` `/campaigns/:id/notes/created-by-me` endpoint for players to fetch their notes on a campaign
+- Added new `PATCH` `/notes/:id` endpoint for users to update the notes they've created
+- Added new `DELETE` `/notes/:id` endpoint for users to delete their notes
+- Added new `POST` `/campaigns/:id/session-updates` endpoint for DMs to create new session updates
+- Added new `PATCH` `/session-updates/:id` endpoint for DMs to update their session updates
+- Added new `GET` `/campaigns/:id/session-updates` endpoint for users to get all session updates on a campaign
+- Added new `DELETE` `/session-updates/:id` endpoint so a DM can delete a session update
+- Added new menu to UI to allow users to navigate between campaign overview, session updates, and notes
+- Added new campaign page for users to interact with session updates
+- Added new campaign page for users to interact with notes
+
+### Changed
+
+- Changed character card to display a tombstone next to the character name if the character is dead
+
+### Fixed
+
+
 ## [1.0.0] - 2022-04-15
 ### Added
 
