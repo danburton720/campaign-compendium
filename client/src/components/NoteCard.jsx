@@ -25,8 +25,6 @@ import { deleteNote, updateNote } from '../actions/noteActions';
 import ConfirmDelete from './Modals/ConfirmDelete';
 import tombstone from '../assets/tombstone.svg';
 
-// TODO make it so the note cannot be edited if it's for a deleted character
-
 const NoteCard = ({ note, characters, onAddOrDelete }) => {
     const currentUser = useSelector((state) => state.auth?.currentUser);
 
@@ -54,6 +52,9 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
         setAnchorEl(null);
     }
 
+    let canEditNote = note.createdBy === currentUser._id;
+    if (note.character && note.character.deletedAt) canEditNote = false;
+
     return (
         <>
             <Card
@@ -68,7 +69,7 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                         position: 'relative'
                     }}
                 >
-                    {note.createdBy === currentUser._id &&
+                    {canEditNote &&
                         <Box
                             display='flex'
                             position='absolute'
@@ -96,6 +97,9 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                         >
                             <Box display='flex' alignItems='center'>
                                 <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
+                                {note.character && note.character.deletedAt &&
+                                    <Typography variant="caption" sx={{ marginLeft: '5px' }}>(deleted)</Typography>
+                                }
                                 {note.character && note.character.status === "dead" &&
                                     <Box height='20px' width='20px' marginLeft='8px' marginBottom='3px'>
                                         <img

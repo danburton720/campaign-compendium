@@ -12,7 +12,7 @@ import {
     MenuItem,
     Select,
     Stack,
-    TextField,
+    TextField, Typography,
     useMediaQuery,
     useTheme
 } from '@mui/material';
@@ -26,16 +26,17 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
     const currentUser = useSelector(state => state.auth.currentUser);
     const campaignData = useSelector(state => state.campaigns.campaignData);
     const [userCharacters, setUserCharacters] = useState(() => {
-        const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited');
+        const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited' && !character.deletedAt);
         return sortCharactersActiveFirst(userCharacters);
     });
     const [relatedCharacter, setRelatedCharacter] = useState(() => {
         if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
         if (campaignData?.createdBy === currentUser?._id) return 'DM';
-        const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-        if (userCharacters.length === 0) return userCharacters[0]._id;
+        const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited' && !character.deletedAt);
+        if (userCharacters.length === 1) return userCharacters[0]._id;
         const userCharactersSorted = sortCharactersActiveFirst(userCharacters);
-        return userCharactersSorted[0]._id;
+        if (userCharactersSorted.length > 0) return userCharactersSorted[0]._id;
+        return '';
     });
     const [noteContent, setNoteContent] = useState(currentNote ? currentNote.content : '');
     const [noteError, setNoteError] = useState(false);
@@ -52,13 +53,14 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
             setRelatedCharacter(() => {
                 if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
                 if (campaignData?.createdBy === currentUser?._id) return 'DM';
-                const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-                if (userCharacters.length === 0) return userCharacters[0]._id;
+                const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited' && !character.deletedAt);
+                if (userCharacters.length === 1) return userCharacters[0]._id;
                 const userCharactersSorted = sortCharactersActiveFirst(userCharacters);
-                return userCharactersSorted[0]._id;
+                if (userCharactersSorted.length > 0) return userCharactersSorted[0]._id;
+                return '';
             });
             setUserCharacters(() => {
-                const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited');
+                const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited' && !character.deletedAt);
                 return sortCharactersActiveFirst(userCharacters);
             });
             setNoteContent(currentNote ? currentNote.content : '');

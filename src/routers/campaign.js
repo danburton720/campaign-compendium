@@ -125,9 +125,6 @@ router.get("/campaigns/:id/characters", async (req, res) => {
             if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A campaign could not be found for the given ID');
             const campaign = await Campaign.findById(_id).lean();
             if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
-            if (!campaign.createdBy.equals(req.user._id)) {
-                return res.status(401).send('You are not authorised to get all characters on this campaign');
-            }
             // we've found a campaign so we need to get associated player and character info
             // first get all characters in this campaign
             const characters = await Character.find({ 'campaignId': _id }).lean();

@@ -35,9 +35,6 @@ import { usePrevious } from '../hooks/usePrevious';
 import { ROUTES } from '../constants';
 import { getAllCampaignCharacters } from '../actions/characterActions';
 
-// TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
-// TODO provide option to reset filters - only display when filters are different to initial values
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -64,7 +61,6 @@ const Notes = () => {
     const charactersData = useSelector(state => state.characters.data);
     const notesData = useSelector(state => state.notes.data);
     const notesTotal = useSelector(state => state.notes.total);
-    // const characters = useSelector(state => state.campaigns.campaignData.characters || []);
     const updateNotePending = useSelector(state => state.notes.updatePending);
     const updateNoteSuccess = useSelector(state => state.notes.updateSuccess);
     const updateNoteError = useSelector(state => state.notes.updateError);
@@ -78,7 +74,7 @@ const Notes = () => {
     const [pending, setPending] = useState(false);
     const [page, setPage] = useState(1);
     const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
-    const [to, setTo] = useState(dayjs().add(1, 'hour',));
+    const [to, setTo] = useState(dayjs().add(1, 'hour'));
     const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(charactersData));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
