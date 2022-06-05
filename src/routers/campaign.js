@@ -117,6 +117,38 @@ router.get("/campaigns/:id", async (req, res) => {
     }
 });
 
+// get all characters on a campaign, including deleted ones
+router.get("/campaigns/:id/characters", async (req, res) => {
+    if (req.user) {
+        const _id = req.params.id;
+        try {
+            if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('A campaign could not be found for the given ID');
+            const campaign = await Campaign.findById(_id).lean();
+            if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
+            if (!campaign.createdBy.equals(req.user._id)) {
+                return res.status(401).send('You are not authorised to get all characters on this campaign');
+            }
+            // we've found a campaign so we need to get associated player and character info
+            // first get all characters in this campaign
+            const characters = await Character.find({ 'campaignId': _id }).lean();
+            const charactersAndUsers = [];
+            if (characters) {
+                // we have characters so we need to get the user to whom each of these characters belongs
+                for (const character of characters) {
+                    const user = await User.findById(character.userId, '_id displayName firstName lastName email image').lean();
+                    // if we found a user (we should) then include the character and user info
+                    if (user) charactersAndUsers.push({ ...character, user });
+                }
+            }
+            res.send(charactersAndUsers);
+        } catch (e) {
+            res.status(500).send(e);
+        }
+    } else {
+        res.status(401).send({});
+    }
+});
+
 router.patch("/campaigns/:id", async (req, res) => {
     if (req.user) {
         const _id = req.params.id;

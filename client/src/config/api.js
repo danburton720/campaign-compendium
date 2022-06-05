@@ -20,6 +20,7 @@ export const API = {
         session_updates: `${API_ROOT}/campaigns/{campaignId}/session-updates`,
         notes: `${API_ROOT}/campaigns/{campaignId}/notes`,
         my_notes: `${API_ROOT}/campaigns/{campaignId}/notes/created-by-me`,
+        characters: `${API_ROOT}/campaigns/{campaignId}/characters`
     },
     characters: {
         character: `${API_ROOT}/characters/{characterId}`,

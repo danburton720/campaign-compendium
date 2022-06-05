@@ -33,6 +33,7 @@ import NoteCard from './NoteCard';
 import AddEditNote from './Modals/AddEditNote';
 import { usePrevious } from '../hooks/usePrevious';
 import { ROUTES } from '../constants';
+import { getAllCampaignCharacters } from '../actions/characterActions';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
 // TODO provide option to reset filters - only display when filters are different to initial values
@@ -59,9 +60,11 @@ const Notes = () => {
     const currentUser = useSelector(state => state.auth.currentUser);
     const campaignData = useSelector(state => state.campaigns.campaignData);
     const notesPending = useSelector(state => state.notes.pending);
+    const charactersPending = useSelector(state => state.characters.pending);
+    const charactersData = useSelector(state => state.characters.data);
     const notesData = useSelector(state => state.notes.data);
     const notesTotal = useSelector(state => state.notes.total);
-    const characters = useSelector(state => state.campaigns.campaignData.characters || []);
+    // const characters = useSelector(state => state.campaigns.campaignData.characters || []);
     const updateNotePending = useSelector(state => state.notes.updatePending);
     const updateNoteSuccess = useSelector(state => state.notes.updateSuccess);
     const updateNoteError = useSelector(state => state.notes.updateError);
@@ -76,11 +79,11 @@ const Notes = () => {
     const [page, setPage] = useState(1);
     const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
     const [to, setTo] = useState(dayjs().add(1, 'hour',));
-    const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(characters));
+    const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(charactersData));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
-    const [defaultCharacterFilters] = useState(getCharacters(characters));
-    const [currentCharacterFilters, setCurrentCharacterFilters] = useState(getCharacters(characters));
+    const [defaultCharacterFilters] = useState(getCharacters(charactersData));
+    const [currentCharacterFilters, setCurrentCharacterFilters] = useState(getCharacters(charactersData));
     const [defaultFrom] = useState(from);
     const [currentFrom, setCurrentFrom] = useState(from);
     const [defaultTo] = useState(to);
@@ -132,7 +135,7 @@ const Notes = () => {
             <Box height='100%' overflow='auto' display='flex' flexDirection='column' gap={2}>
                 {notesData.map(note => (
                     <React.Fragment key={note._id}>
-                        <NoteCard note={note} characters={characters} onAddOrDelete={() => fetchData()} />
+                        <NoteCard note={note} characters={charactersData} onAddOrDelete={() => fetchData()} />
                     </React.Fragment>
                 ))}
             </Box>
@@ -140,7 +143,6 @@ const Notes = () => {
     }
 
     const fetchData = (from, to, filterCharacters) => {
-        // TODO only get all notes if you're the DM - otherwise all the player get notes endpoint
         if (isDM) {
             let anyApplied = false;
             if (from !== defaultFrom) anyApplied = true;
@@ -148,8 +150,7 @@ const Notes = () => {
             if (JSON.stringify(filterCharacters) !== JSON.stringify(defaultCharacterFilters)) anyApplied = true;
             setAnyFiltersApplied(anyApplied);
 
-            const relatedCharacterParams = characters.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
-            console.log('filterCharacters', filterCharacters)
+            const relatedCharacterParams = charactersData.filter(character => filterCharacters.includes(character.name)).map(character => character._id);
             if (filterCharacters.includes('DM')) relatedCharacterParams.push('DM');
             dispatch(getAllNotes(id, { page, pageSize: 10, from: from.toISOString(), to: to.toISOString(), relatedCharacter: relatedCharacterParams }));
         } else {
@@ -166,6 +167,10 @@ const Notes = () => {
         await setCurrentCharacterFilters(defaultCharacterFilters);
         fetchData(defaultFrom, defaultTo, defaultCharacterFilters);
     }
+
+    useEffect(() => {
+        dispatch(getAllCampaignCharacters(id));
+    }, []);
 
     useEffect(() => {
         fetchData(from, to, filterCharacters);
@@ -209,7 +214,7 @@ const Notes = () => {
         }
     }, [deleteNotePending, prevDeleteNotePending, deleteNoteSuccess, deleteNoteError]);
 
-    useDebouncedPending(setPending, [notesPending]);
+    useDebouncedPending(setPending, [notesPending, charactersPending]);
 
     return (
         <>
@@ -288,7 +293,7 @@ const Notes = () => {
                                         renderValue={(selected) => selected.join(', ')}
                                         MenuProps={MenuProps}
                                     >
-                                        {[{ _id: 0, name: 'DM' }].concat(characters).map((character) => (
+                                        {[{ _id: 0, name: 'DM' }].concat(charactersData).map((character) => (
                                             <MenuItem key={character._id} value={character.name}>
                                                 <Checkbox checked={filterCharacters.indexOf(character.name) > -1} />
                                                 <ListItemText primary={character.name} />
@@ -387,7 +392,7 @@ const Notes = () => {
                     fetchData();
                     setShowAddNoteModal(false);
                 }}
-                characters={characters}
+                characters={charactersData}
             />
         </>
     );
