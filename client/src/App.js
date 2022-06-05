@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import axios from 'axios';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import Routes from './pages/Routes';
 import configureStore from './config/store';
@@ -34,15 +36,21 @@ axios.interceptors.response.use(response => {
 const App = () => {
     const theme = createTheme(mui_theme);
 
+    useEffect(() => {
+        document.body.style.overflowY = 'scroll';
+    }, []);
+
     return (
-        <Provider store={store}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <SnackbarProvider>
-                    <Routes/>
-                </SnackbarProvider>
-            </ThemeProvider>
-        </Provider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Provider store={store}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <SnackbarProvider>
+                        <Routes/>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </Provider>
+        </LocalizationProvider>
     );
 };
 

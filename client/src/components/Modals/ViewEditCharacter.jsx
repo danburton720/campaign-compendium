@@ -61,6 +61,7 @@ const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
             open={open}
             onClose={() => onClose()}
             aria-labelledby="view-edit-character"
+            disableScrollLock
         >
             <DialogTitle id="view-edit-character-title">
                 View character

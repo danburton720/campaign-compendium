@@ -34,6 +34,7 @@ const SelectColor = ({ currentColor, open, onClose, onSave }) => {
             open={open}
             onClose={() => onClose()}
             aria-labelledby="select-color"
+            disableScrollLock
         >
             <DialogTitle id="select-color-title">
                 Select color

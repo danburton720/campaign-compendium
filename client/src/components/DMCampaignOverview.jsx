@@ -15,7 +15,7 @@ import { API } from '../config/api';
 import { getCampaign, updateCampaignDescription, updateCampaignName } from '../actions/campaignActions';
 import PlayerCard from './PlayerCard';
 
-const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
+const DMCampaignOverview = ({ campaignData, players, deadPlayers }) => {
     const [editNameMode, setEditNameMode] = useState(false);
     const [editDescriptionMode, setEditDescriptionMode] = useState(false);
     const [name, setName] = useState(campaignData?.name);
@@ -195,4 +195,4 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     )
 }
 
-export default DMCampaignView;
+export default DMCampaignOverview;

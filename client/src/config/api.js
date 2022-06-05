@@ -16,11 +16,21 @@ export const API = {
         player: `${API_ROOT}/campaigns/player`,
         campaign: `${API_ROOT}/campaigns/{campaignId}`,
         invite: `${API_ROOT}/campaigns/{campaignId}/invite`,
-        remove_player: `${API_ROOT}/campaigns/{campaignId}/user/{userId}`
+        remove_player: `${API_ROOT}/campaigns/{campaignId}/user/{userId}`,
+        session_updates: `${API_ROOT}/campaigns/{campaignId}/session-updates`,
+        notes: `${API_ROOT}/campaigns/{campaignId}/notes`,
+        my_notes: `${API_ROOT}/campaigns/{campaignId}/notes/created-by-me`,
+        characters: `${API_ROOT}/campaigns/{campaignId}/characters`
     },
     characters: {
         character: `${API_ROOT}/characters/{characterId}`,
         kill: `${API_ROOT}/characters/{characterId}/kill`,
         revive: `${API_ROOT}/characters/{characterId}/revive`
+    },
+    session_updates: {
+        session_update: `${API_ROOT}/session-updates/{sessionUpdateId}`
+    },
+    notes: {
+        note: `${API_ROOT}/notes/{noteId}`
     }
 };
