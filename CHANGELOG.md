@@ -1,3 +1,12 @@
+## [1.1.1] - 2022-06-05
+### Added
+
+### Changed
+
+### Fixed
+
+- Fixed issue with list of characters on notes filter persisting from a previously-viewed campaign
+
 ## [1.1.0] - 2022-06-05
 ### Added
 
