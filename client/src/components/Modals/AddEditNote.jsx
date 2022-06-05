@@ -103,7 +103,7 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                             setNoteContent(e.target.value);
                         }}
                         multiline
-                        rows={3}
+                        rows={4}
                         required
                         error={noteError}
                         helperText={noteError ? 'Note cannot be empty' : ' '}

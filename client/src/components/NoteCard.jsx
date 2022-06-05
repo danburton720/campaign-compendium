@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Card, CardContent, IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    IconButton,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Stack,
+    SvgIcon,
+    Typography
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +24,7 @@ import DM from '../assets/dm.svg';
 import AddEditNote from './Modals/AddEditNote';
 import { deleteNote, updateNote } from '../actions/noteActions';
 import ConfirmDelete from './Modals/ConfirmDelete';
+import tombstone from '../assets/tombstone.svg';
 
 // TODO make it so the note cannot be edited if it's for a deleted character
 
@@ -83,7 +95,21 @@ const NoteCard = ({ note, characters, onAddOrDelete }) => {
                             marginTop='5px'
                             width='78%'
                         >
-                            <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
+                            <Box display='flex' alignItems='center'>
+                                <Typography noWrap sx={{ color: '#fff', fontWeight: 400, lineHeight: '14px' }}>{character !== 'DM' ? character.name : 'DM'}</Typography>
+                                <Box height='20px' width='20px' marginLeft='8px' marginBottom='3px'>
+                                    <img
+                                        src={tombstone}
+                                        alt='tombstone'
+                                        style={{
+                                            height: '100%',
+                                            width: '100%',
+                                            '-webkit-filter': 'invert(100%)',
+                                            filter: 'invert(100%)'
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
                             <Typography noWrap sx={{ color: '#fff', fontWeight: 300, fontSize: '14px' }}>{character !== 'DM' ? `${character.race} | ${character.class}` : 'Dungeon Master'}</Typography>
                         </Box>
                     </Box>
