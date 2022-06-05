@@ -75,10 +75,10 @@ const Notes = () => {
     const [page, setPage] = useState(1);
     const [from, setFrom] = useState(dayjs().startOf('year').subtract(1, 'year'));
     const [to, setTo] = useState(dayjs().add(1, 'hour'));
-    const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(charactersData));
+    const [filterCharacters, setFilterCharacters] = useState(getCharacters(charactersData));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
-    const [defaultCharacterFilters] = useState(getCharacters(charactersData));
+    const [defaultCharacterFilters, setDefaultCharacterFilters] = useState(getCharacters(charactersData));
     const [currentCharacterFilters, setCurrentCharacterFilters] = useState(getCharacters(charactersData));
     const [defaultFrom] = useState(from);
     const [currentFrom, setCurrentFrom] = useState(from);
@@ -100,6 +100,7 @@ const Notes = () => {
     const prevAddNotePending = usePrevious(addNotePending);
     const prevUpdateNotePending = usePrevious(updateNotePending);
     const prevDeleteNotePending = usePrevious(deleteNotePending);
+    const prevCharactersPending = usePrevious(charactersPending);
 
     const handleChange = (event) => {
         const {
@@ -170,6 +171,15 @@ const Notes = () => {
     useEffect(() => {
         fetchData(from, to, filterCharacters);
     }, [page]);
+
+    useEffect(() => {
+        if (!charactersPending && prevCharactersPending && charactersData) {
+            const characters = getCharacters(charactersData);
+            setDefaultCharacterFilters(characters);
+            setCurrentCharacterFilters(characters);
+            setFilterCharacters(characters);
+        }
+    }, [prevCharactersPending, charactersPending, charactersData]);
 
     useEffect(() => {
         let anyChanged = false;
