@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 
 import { usePrevious } from '../../hooks/usePrevious';
+import { sortCharactersActiveFirst } from '../../utils/character';
 
 // if the user has an active character - use that character, display select disabled with that option
 // if the user only has one character that is dead, do the same as above
@@ -25,12 +26,17 @@ import { usePrevious } from '../../hooks/usePrevious';
 const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
     const campaignData = useSelector(state => state.campaigns.campaignData);
-    const [userCharacters, setUserCharacters] = useState(() => characters.filter(character => character.userId === currentUser._id && character.status !== "invited"));
+    const [userCharacters, setUserCharacters] = useState(() => {
+        const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited');
+        return sortCharactersActiveFirst(userCharacters);
+    });
     const [relatedCharacter, setRelatedCharacter] = useState(() => {
         if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
         if (campaignData?.createdBy === currentUser?._id) return 'DM';
         const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-        return userCharacters[0]._id;
+        if (userCharacters.length === 0) return userCharacters[0]._id;
+        const userCharactersSorted = sortCharactersActiveFirst(userCharacters);
+        return userCharactersSorted[0]._id;
     });
     const [noteContent, setNoteContent] = useState(currentNote ? currentNote.content : '');
     const [noteError, setNoteError] = useState(false);
@@ -48,9 +54,14 @@ const AddEditNote = ({ open, mode, onClose, onSave, characters, currentNote }) =
                 if (currentNote && currentNote.relatedCharacter) return currentNote.relatedCharacter;
                 if (campaignData?.createdBy === currentUser?._id) return 'DM';
                 const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== "invited");
-                return userCharacters[0]._id;
+                if (userCharacters.length === 0) return userCharacters[0]._id;
+                const userCharactersSorted = sortCharactersActiveFirst(userCharacters);
+                return userCharactersSorted[0]._id;
             });
-            setUserCharacters(() => characters.filter(character => character.userId === currentUser._id && character.status !== "invited"));
+            setUserCharacters(() => {
+                const userCharacters = characters.filter(character => character.userId === currentUser._id && character.status !== 'invited');
+                return sortCharactersActiveFirst(userCharacters);
+            });
             setNoteContent(currentNote ? currentNote.content : '');
             setNoteError(false);
         }

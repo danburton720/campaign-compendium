@@ -33,7 +33,6 @@ import NoteCard from './NoteCard';
 import AddEditNote from './Modals/AddEditNote';
 import { usePrevious } from '../hooks/usePrevious';
 import { ROUTES } from '../constants';
-import { filter } from 'ramda';
 
 // TODO create an endpoint to get all characters on a campaign, including deleted ones instead of getting characters off campaign state
 // TODO provide option to reset filters - only display when filters are different to initial values
@@ -80,11 +79,11 @@ const Notes = () => {
     const [filterCharacters, setFilterCharacters] = useState(() => getCharacters(characters));
     const [showAddNoteModal, setShowAddNoteModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
-    const [defaultCharacterFilters, setDefaultCharacterFilters] = useState(getCharacters(characters));
+    const [defaultCharacterFilters] = useState(getCharacters(characters));
     const [currentCharacterFilters, setCurrentCharacterFilters] = useState(getCharacters(characters));
-    const [defaultFrom, setDefaultFrom] = useState(from);
+    const [defaultFrom] = useState(from);
     const [currentFrom, setCurrentFrom] = useState(from);
-    const [defaultTo, setDefaultTo] = useState(to);
+    const [defaultTo] = useState(to);
     const [currentTo, setCurrentTo] = useState(to);
     const [anyFiltersApplied, setAnyFiltersApplied] = useState(false);
     const [anyFiltersChanged, setAnyFiltersChanged] = useState(false);
@@ -124,7 +123,7 @@ const Notes = () => {
 
         if (pending) {
             return (
-                <Box height='100%' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                <Box minHeight='50vh' paddingBottom='4rem' marginTop='1rem' display='flex' alignItems='center' justifyContent='center'>
                     <CircularProgress />
                 </Box>
             )
@@ -358,23 +357,23 @@ const Notes = () => {
                         gap={2}
                     >
                         {renderNotes()}
-                        {notesData.length > 0 &&
-                        <Paper
-                            sx={{
-                                padding: '1rem 0',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                justifySelf: 'flex-end'
-                            }}
-                        >
-                            <Pagination
-                                count={Math.ceil(notesTotal / 10)}
-                                color="primary"
-                                page={page}
-                                onChange={(_, value) => setPage(value)}
-                                disabled={pending}
-                            />
-                        </Paper>
+                        {!pending && notesData.length > 0 &&
+                            <Paper
+                                sx={{
+                                    padding: '1rem 0',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    justifySelf: 'flex-end'
+                                }}
+                            >
+                                <Pagination
+                                    count={Math.ceil(notesTotal / 10)}
+                                    color="primary"
+                                    page={page}
+                                    onChange={(_, value) => setPage(value)}
+                                    disabled={pending}
+                                />
+                            </Paper>
                         }
                     </Box>
                 </Stack>
