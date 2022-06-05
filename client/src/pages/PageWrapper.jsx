@@ -27,11 +27,12 @@ const PageWrapper = () => {
                     backgroundRepeat: 'no-repeat',
                     backgroundAttachment: 'fixed',
                     backgroundPosition: 'center',
-                    // height: '100vh',
                 }}
             >
-                <Box sx={{ position: 'absolute', top: '2rem', right: '2rem'}}><AccountMenu /></Box>
-                <Outlet />
+                <Container maxWidth='xl' disableGutters>
+                    <Box sx={{ position: 'absolute', top: '2rem', right: '2rem'}}><AccountMenu /></Box>
+                    <Outlet />
+                </Container>
             </Container>
         </Box>
     )

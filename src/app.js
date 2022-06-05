@@ -11,6 +11,8 @@ const authRouter = require('./routers/auth');
 const userRouter = require('./routers/user');
 const campaignRouter = require('./routers/campaign');
 const characterRouter = require('./routers/character');
+const sessionUpdateRouter = require('./routers/sessionUpdate');
+const noteRouter = require('./routers/note');
 
 const app = express();
 
@@ -80,13 +82,11 @@ passport.use(new GoogleStrategy({
                 done(null, newUser);
             }
         } catch (err) {
-            console.log('err', err)
             done('There was a problem logging you in. Try again later.', null);
         }
     }));
 
 if (process.env.NODE_ENV === "production") {
-    console.log('')
     app.use(express.static(path.resolve("client", "build")));
 }
 
@@ -94,6 +94,8 @@ app.use(authRouter);
 app.use('/api', userRouter);
 app.use('/api', campaignRouter);
 app.use('/api', characterRouter);
+app.use('/api', sessionUpdateRouter);
+app.use('/api', noteRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{

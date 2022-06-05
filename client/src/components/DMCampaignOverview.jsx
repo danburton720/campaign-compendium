@@ -15,7 +15,7 @@ import { API } from '../config/api';
 import { getCampaign, updateCampaignDescription, updateCampaignName } from '../actions/campaignActions';
 import PlayerCard from './PlayerCard';
 
-const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
+const DMCampaignOverview = ({ campaignData, players, deadPlayers }) => {
     const [editNameMode, setEditNameMode] = useState(false);
     const [editDescriptionMode, setEditDescriptionMode] = useState(false);
     const [name, setName] = useState(campaignData?.name);
@@ -67,10 +67,10 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     }
 
     const getPlayers = () => {
-        if (players.length > 0) {
+        if (players?.length > 0) {
             return (
                 <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
-                    {players.map(character => (
+                    {players?.map(character => (
                         <React.Fragment key={character._id}>
                             <PlayerCard player={character} campaignId={campaignData._id} />
                         </React.Fragment>
@@ -87,12 +87,12 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     }
 
     const getDeadPlayers = () => {
-        if (deadPlayers.length > 0) {
+        if (deadPlayers?.length > 0) {
             return (
                 <Box display='flex' flexDirection='column' marginTop='1rem'>
                     <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
                     <Box display='flex' sx={{ flexWrap: 'wrap' }} gap={2}>
-                        {deadPlayers.map(character => (
+                        {deadPlayers?.map(character => (
                             <React.Fragment key={character._id}>
                                 <PlayerCard player={character} campaignId={campaignData._id} />
                             </React.Fragment>
@@ -104,7 +104,7 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     }
 
     return (
-        <Box minHeight='calc(100vh - 5rem - 2rem)'>
+        <Box minHeight='calc(100vh - 7rem)'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
@@ -195,4 +195,4 @@ const DMCampaignView = ({ campaignData, players, deadPlayers }) => {
     )
 }
 
-export default DMCampaignView;
+export default DMCampaignOverview;

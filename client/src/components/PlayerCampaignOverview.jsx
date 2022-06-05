@@ -15,7 +15,7 @@ import ViewEditCharacter from './Modals/ViewEditCharacter';
 import { getCampaign } from '../actions/campaignActions';
 import { API } from '../config/api';
 
-const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
+const PlayerCampaignOverview = ({ campaignData, players, deadPlayers, usersCharacter, usersDeadCharacters }) => {
     const currentUser = useSelector(state => state.auth.currentUser);
     const [createCharacterMode, setCreateCharacterMode] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && isEmpty(usersDeadCharacters));
     const [showReinviteAlert, setShowReinviteAlert] = useState(!isEmpty(usersCharacter) && usersCharacter.status === "invited" && !isEmpty(usersDeadCharacters));
@@ -42,15 +42,15 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     }
 
     const renderPlayers = () => {
-        if (players.length > 0) {
-            const charactersOtherThanCurrentUser = players.filter(character => character.userId !== currentUser._id && character.status !== 'invited');
+        if (players?.length > 0) {
+            const charactersOtherThanCurrentUser = players?.filter(character => character.userId !== currentUser._id && character.status !== 'invited');
             return (
                 <Card sx={{ width: '100%', maxWidth: '400px' }}>
                     <CardContent>
                         <Typography>Other characters</Typography>
-                        {charactersOtherThanCurrentUser.length > 0 ? (
+                        {charactersOtherThanCurrentUser?.length > 0 ? (
                             <Box display='flex' flexDirection='column' gap={2}>
-                                {charactersOtherThanCurrentUser.map(character => (
+                                {charactersOtherThanCurrentUser?.map(character => (
                                     <React.Fragment key={character._id}>
                                         <CharacterCard character={character}/>
                                     </React.Fragment>
@@ -72,15 +72,15 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     }
 
     const renderDeadPlayers = () => {
-        if (deadPlayers.length > 0) {
+        if (deadPlayers?.length > 0) {
             return (
                 <Box display='flex' flexDirection='column'>
                     <Typography variant="h3" sx={{ margin: '1rem 0', color: extraPalette.WHITE }}>Player graveyard</Typography>
                     <Card sx={{ width: '100%', maxWidth: '400px' }}>
                         <CardContent>
-                            {deadPlayers.length > 0 && (
+                            {deadPlayers?.length > 0 && (
                                 <Box display='flex' flexDirection='column' gap={2}>
-                                    {deadPlayers.map(character => (
+                                    {deadPlayers?.map(character => (
                                         <React.Fragment key={character._id}>
                                             <CharacterCard character={character}/>
                                         </React.Fragment>
@@ -95,7 +95,7 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     }
 
     return (
-        <Box minHeight='calc(100vh - 5rem - 2rem)'>
+        <Box minHeight='calc(100vh - 7rem)'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
@@ -171,4 +171,4 @@ const PlayerCampaignView = ({ campaignData, players, deadPlayers, usersCharacter
     )
 }
 
-export default PlayerCampaignView;
+export default PlayerCampaignOverview;

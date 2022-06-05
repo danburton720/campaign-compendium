@@ -60,9 +60,10 @@ const ViewEditCharacter = ({ character, open, onClose, onSave, editMode }) => {
             maxWidth={'sm'}
             open={open}
             onClose={() => onClose()}
-            aria-labelledby="confirm-delete"
+            aria-labelledby="view-edit-character"
+            disableScrollLock
         >
-            <DialogTitle id="confirm-delete-title">
+            <DialogTitle id="view-edit-character-title">
                 View character
             </DialogTitle>
             <DialogContent sx={{ padding: '1rem' }}>

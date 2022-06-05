@@ -33,9 +33,10 @@ const SelectColor = ({ currentColor, open, onClose, onSave }) => {
             maxWidth={'sm'}
             open={open}
             onClose={() => onClose()}
-            aria-labelledby="confirm-delete"
+            aria-labelledby="select-color"
+            disableScrollLock
         >
-            <DialogTitle id="confirm-delete-title">
+            <DialogTitle id="select-color-title">
                 Select color
             </DialogTitle>
             <DialogContent sx={{ padding: '1rem' }}>

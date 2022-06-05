@@ -23,12 +23,18 @@ const CreatedCampaigns = () => {
                 Campaigns I've created
             </Typography>
             {pending ? (
-                <Box display='flex' height='200px' width='100%' justifyContent='center' alignItems='center'>
+                <Box
+                    display='flex'
+                    height='200px'
+                    width='100%'
+                    justifyContent='center'
+                    alignItems='center'
+                >
                     <CircularProgress />
                 </Box>
             ) : (
                 <Box display="flex" flexWrap='wrap' gap={3}>
-                    {createdCampaigns.map(campaign => (
+                    {createdCampaigns?.map(campaign => (
                         <React.Fragment key={campaign._id}>
                             <CampaignCard
                                 campaign={campaign}

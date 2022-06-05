@@ -23,13 +23,13 @@ const CreatedCampaigns = () => {
             const campaignList = [];
 
             invitedCampaigns.forEach(campaign => {
-                const invitedCharacters = campaign.characters.filter(character => character.status === "invited");
-                const deadCharacters = campaign.characters.filter(character => character.status === "dead");
-                const activeCharacters = campaign.characters.filter(character => character.status === "active");
+                const invitedCharacters = campaign.characters?.filter(character => character.status === "invited");
+                const deadCharacters = campaign.characters?.filter(character => character.status === "dead");
+                const activeCharacters = campaign.characters?.filter(character => character.status === "active");
                 if (
-                    invitedCharacters.length > 0 &&
-                    deadCharacters.length === 0 &&
-                    activeCharacters.length === 0
+                    invitedCharacters?.length > 0 &&
+                    deadCharacters?.length === 0 &&
+                    activeCharacters?.length === 0
                 ) return;
 
                 campaignList.push(campaign);
@@ -50,7 +50,7 @@ const CreatedCampaigns = () => {
                 </Box>
             ) : (
                 <Box display="flex" flexWrap='wrap' gap={3}>
-                    {campaigns.map(campaign => (
+                    {campaigns?.map(campaign => (
                         <React.Fragment key={campaign._id}>
                             <CampaignCard
                                 campaign={campaign}
@@ -59,7 +59,7 @@ const CreatedCampaigns = () => {
                             />
                         </React.Fragment>
                     ))}
-                    {campaigns.length === 0 &&
+                    {campaigns?.length === 0 &&
                         <Alert severity="info">Looks like you aren't playing in any campaigns right now</Alert>
                     }
                 </Box>

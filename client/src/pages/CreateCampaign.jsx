@@ -26,7 +26,7 @@ const CreateCampaign = () => {
     }
 
     const handleRemovePlayer = playerToRemove => {
-        setInvitedPlayers(invitedPlayers.filter(player => player !== playerToRemove));
+        setInvitedPlayers(invitedPlayers?.filter(player => player !== playerToRemove));
     }
 
     const handleCreateCampaign = async () => {
@@ -44,7 +44,7 @@ const CreateCampaign = () => {
     }
 
     return (
-        <Box minHeight='calc(100vh - 5rem - 2rem)'>
+        <Box minHeight='calc(100vh - 7rem)'>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="contained"
@@ -76,7 +76,7 @@ const CreateCampaign = () => {
                                 marginBottom: '1rem'
                             }}
                             inputProps={{
-                                maxLimit: '100'
+                                maxLength: '100'
                             }}
                         />
                         <TextField
@@ -91,7 +91,7 @@ const CreateCampaign = () => {
                             error={!description}
                             helperText={!description ? 'Description is required' : ' '}
                             inputProps={{
-                                maxLimit: '10000'
+                                maxLength: '10000'
                             }}
                         />
                     </CardContent>
@@ -122,7 +122,7 @@ const CreateCampaign = () => {
                         <Box display="flex" flexDirection="column" flex={1}>
                             <Typography variant="h4">Players to be invited</Typography>
                             <Box width='100%' minWidth='300px' height='100%' display="flex" flexWrap='wrap' gap={2} sx={{marginTop: '1rem'}}>
-                                {invitedPlayers.length > 0 ? invitedPlayers.map((player, key) => (
+                                {invitedPlayers?.length > 0 ? invitedPlayers?.map((player, key) => (
                                     <Chip color="primary" key={key} label={player} onDelete={() => handleRemovePlayer(player)} />
                                 )) : <Alert severity="info" sx={{ height: '100%', width: '100%' }}>No players have been added, try adding one!</Alert>}
                             </Box>
