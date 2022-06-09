@@ -132,7 +132,7 @@ const Notes = () => {
             <Box height='100%' overflow='auto' display='flex' flexDirection='column' gap={2}>
                 {notesData.map(note => (
                     <React.Fragment key={note._id}>
-                        <NoteCard note={note} characters={charactersData} onAddOrDelete={() => fetchData()} />
+                        <NoteCard note={note} characters={charactersData} onAddOrDelete={() => fetchData(from, to, filterCharacters)} />
                     </React.Fragment>
                 ))}
             </Box>

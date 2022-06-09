@@ -72,7 +72,7 @@ const PlayerCard = ({ player, campaignId }) => {
 
     const handleRemovePlayer = async () => {
         let endpoint = API.campaigns.remove_player.replaceAll('{campaignId}', campaignId);
-        endpoint = endpoint.replaceAll('{userId}', player._id);
+        endpoint = endpoint.replaceAll('{userId}', player.userId);
 
         try {
             await axios.delete(endpoint, { withCredentials: true });

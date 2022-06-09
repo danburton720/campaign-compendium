@@ -1,3 +1,14 @@
+## [1.1.2] - 2022-06-09
+### Added
+
+### Changed
+
+### Fixed
+
+- Fixed issue with delete note modal not closing on confirmation
+- Fixed issue with removing a player from a campaign
+- Ensure session update modal state is reset when adding a new session update
+
 ## [1.1.1] - 2022-06-05
 ### Added
 

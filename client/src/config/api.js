@@ -16,7 +16,7 @@ export const API = {
         player: `${API_ROOT}/campaigns/player`,
         campaign: `${API_ROOT}/campaigns/{campaignId}`,
         invite: `${API_ROOT}/campaigns/{campaignId}/invite`,
-        remove_player: `${API_ROOT}/campaigns/{campaignId}/user/{userId}`,
+        remove_player: `${API_ROOT}/campaigns/{campaignId}/users/{userId}`,
         session_updates: `${API_ROOT}/campaigns/{campaignId}/session-updates`,
         notes: `${API_ROOT}/campaigns/{campaignId}/notes`,
         my_notes: `${API_ROOT}/campaigns/{campaignId}/notes/created-by-me`,
