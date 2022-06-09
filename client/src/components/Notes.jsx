@@ -178,6 +178,7 @@ const Notes = () => {
             setDefaultCharacterFilters(characters);
             setCurrentCharacterFilters(characters);
             setFilterCharacters(characters);
+            fetchData(from, to, characters);
         }
     }, [prevCharactersPending, charactersPending, charactersData]);
 
@@ -195,7 +196,6 @@ const Notes = () => {
             setTo(currentTo);
             setFilterCharacters(currentCharacterFilters);
         }
-
     }, [showFilters]);
 
     useEffect(() => {
