@@ -137,7 +137,10 @@ const SessionUpdates = () => {
                     {isDM &&
                         <Button
                             variant="contained"
-                            onClick={() => setShowAddEditSessionUpdate(true)}
+                            onClick={() => {
+                                setMode('add');
+                                setShowAddEditSessionUpdate(true);
+                            }}
                             sx={{
                                 marginTop: '1rem',
                                 marginLeft: 'auto'
@@ -164,7 +167,10 @@ const SessionUpdates = () => {
                         {isDM &&
                             <Button
                                 variant="contained"
-                                onClick={() => setShowAddEditSessionUpdate(true)}
+                                onClick={() => {
+                                    setMode('add');
+                                    setShowAddEditSessionUpdate(true);
+                                }}
                                 sx={{
                                     maxWidth: '300px',
                                     marginLeft: 'auto'
