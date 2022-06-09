@@ -20,8 +20,11 @@ import { usePrevious } from '../../hooks/usePrevious';
 import WysiwygButtonGroup from '../UI/WysiwygButtonGroup';
 
 const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent, currentDate }) => {
-    const [editorState, setEditorState] = useState(currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty());
-    const [sessionDate, setSessionDate] = useState(currentDate ? dayjs(currentDate) : dayjs());
+    const [editorState, setEditorState] = useState(() => {
+        if (mode === 'edit') return EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent)));
+        else return EditorState.createEmpty();
+    });
+    const [sessionDate, setSessionDate] = useState(mode === 'edit' ? dayjs(currentDate) : dayjs());
     const [maxLengthError, setMaxLengthError] = useState(false);
 
     const theme = useTheme();
@@ -59,11 +62,14 @@ const AddEditSessionUpdate = ({ open, mode, onClose, onSave, currentContent, cur
 
     useEffect(() => {
         if (open && !prevOpen) {
-            setSessionDate(currentDate ? dayjs(currentDate) : dayjs());
-            setEditorState(currentContent ? currentContent ? EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent))) : EditorState.createEmpty() : EditorState.createEmpty());
+            setSessionDate(mode === 'edit' ? dayjs(currentDate) : dayjs());
+            setEditorState(() => {
+                if (mode === 'edit') return EditorState.createWithContent(convertFromRaw(JSON.parse(currentContent)));
+                else return EditorState.createEmpty();
+            });
             setMaxLengthError(false);
         }
-    }, [open, prevOpen]);
+    }, [open, prevOpen, mode]);
 
     return (
         <Dialog
