@@ -54,7 +54,7 @@ const InvitedCampaigns = () => {
                         </React.Fragment>
                     ))}
                     {campaigns?.length === 0 &&
-                    <Alert severity="info">Looks like you aren't playing in any campaigns right now</Alert>
+                    <Alert severity="info">Looks like you aren't invited to any campaigns right now</Alert>
                     }
                 </Box>
             )}

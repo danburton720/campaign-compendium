@@ -14,7 +14,7 @@ router.delete("/characters/:id", async (req, res) => {
 
             // get the campaign this character relates to
             const campaign = await Campaign.findById(character.campaignId);
-            if (!campaign) return res.status(500).send('A campaign could not be found for this character');
+            if (!campaign) return res.status(404).send('A campaign could not be found for this character');
 
             // check if the campaign this character relates to was created by the same user who is sending this request
             if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to delete this character');
