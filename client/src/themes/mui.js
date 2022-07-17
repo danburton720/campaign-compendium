@@ -144,8 +144,8 @@ export const mui_theme = {
         },
         // Table content
         body2: {
-            fontWeight: 400, // regular
-            fontSize: '16px',
+            fontWeight: 500, // regular
+            fontSize: '14px',
             // letterSpacing: '-0.24px',
             lineHeight: '24px',
         },

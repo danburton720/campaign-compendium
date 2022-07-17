@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ROUTES } from '../constants';
 import { getAllQuests } from '../actions/questActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
+import QuestAccordion from './QuestAccordion';
 
 const Quests = () => {
     const questsPending = useSelector(state => state.quests.pending);
@@ -33,12 +34,11 @@ const Quests = () => {
             )
         }
 
-        // TODO create quest component which is an accordion with all detail inside
         return (
-            <Box height='100%' overflow='auto' display='flex' flexDirection='column' gap={2}>
+            <Box height='100%' overflow='auto' display='flex' flexDirection='column'>
                 {questsData.map(quest => (
                     <React.Fragment key={quest._id}>
-                        <Card>{quest.title}</Card>
+                        <QuestAccordion quest={quest} />
                     </React.Fragment>
                 ))}
             </Box>
@@ -65,9 +65,9 @@ const Quests = () => {
                 >
                     Go back
                 </Button>
-                <Stack gap={2}>
+                <>
                     {!pending && renderQuests()}
-                </Stack>
+                </>
             </Box>
         </>
     )

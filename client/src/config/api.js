@@ -38,6 +38,8 @@ export const API = {
         quest: `${API_ROOT}/quests/{questId}`
     },
     quest_milestones: {
-        quest_milestone: `${API_ROOT}/quest-milestones/{questMilestoneId}`
+        quest_milestone: `${API_ROOT}/quest-milestones/{questMilestoneId}`,
+        mark_complete: `${API_ROOT}/quest-milestones/{questMilestoneId}/complete`,
+        mark_incomplete: `${API_ROOT}/quest-milestones/{questMilestoneId}/incomplete`
     }
 };

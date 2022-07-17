@@ -1,7 +1,7 @@
 import {
     SET_QUESTS_PENDING,
     SET_QUESTS_DATA,
-    SET_QUESTS_ERROR
+    SET_QUESTS_ERROR,
 } from '../actions/questActions';
 
 const initialState = {
