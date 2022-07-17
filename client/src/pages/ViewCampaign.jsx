@@ -5,26 +5,30 @@ import { Alert, BottomNavigation, BottomNavigationAction, Box, CircularProgress,
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import FeedIcon from '@mui/icons-material/Feed';
 import NotesIcon from '@mui/icons-material/Notes';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import { isEmpty } from 'ramda';
 
 import CampaignOverview from '../components/CampaignOverview';
 import SessionUpdates from '../components/SessionUpdates';
 import Notes from '../components/Notes';
+import Quests from '../components/Quests';
 import { getCampaign } from '../actions/campaignActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
-import { isEmpty } from 'ramda';
 import { usePrevious } from '../hooks/usePrevious';
 
-const getTabIndex = (tab) => {
+const getTabIndex = (tab, isDM) => {
     if (tab === null) return 0;
     if (tab === 'session-updates') return 1;
     if (tab === 'notes') return 2;
+    if (tab === 'quests') return isDM ? 3 : 0;
     return 0;
 }
 
-const getTabString = (id) => {
+const getTabString = (id, isDM) => {
     if (id === 0) return '';
     if (id === 1) return '?tab=session-updates';
     if (id === 2) return '?tab=notes';
+    if (id === 3) return isDM ? '?tab=quests' : '';
 }
 
 const ViewCampaign = () => {
@@ -36,8 +40,8 @@ const ViewCampaign = () => {
     const { search } = useLocation();
     const tab = new URLSearchParams(search).get('tab');
 
-    const [campaignTab, setCampaignTab] = useState(() => getTabIndex(tab));
     const [isDM, setIsDM] = useState(campaignData?.createdBy === currentUser?._id);
+    const [campaignTab, setCampaignTab] = useState(() => getTabIndex(tab, isDM));
     const [pending, setPending] = useState(true);
     const [players, setPlayers] = useState(campaignData?.characters?.filter(character => character.status !== 'dead') || []);
     const [deadPlayers, setDeadPlayers] = useState(campaignData?.characters?.filter(character => character.status === 'dead') || []);
@@ -113,19 +117,21 @@ const ViewCampaign = () => {
             }
             {campaignTab === 1 && <SessionUpdates />}
             {campaignTab === 2 && <Notes />}
+            {campaignTab === 3 && isDM && <Quests />}
             {!pending && !invitedCharacter &&
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={4}>
                     <BottomNavigation
-                        showLabels
+                        showLabels={!isDM}
                         value={campaignTab}
                         onChange={(_event, newValue) => {
-                            navigate({ search: getTabString(newValue) });
+                            navigate({ search: getTabString(newValue, isDM) });
                             setCampaignTab(newValue);
                         }}
                     >
                         <BottomNavigationAction label="Overview" icon={<ImportContactsIcon/>}/>
-                        <BottomNavigationAction label="Session updates" icon={<FeedIcon/>}/>
+                        <BottomNavigationAction label="DM updates" icon={<FeedIcon/>}/>
                         <BottomNavigationAction label="Notes" icon={<NotesIcon/>}/>
+                        {isDM && <BottomNavigationAction label="Quests" icon={<TravelExploreIcon />}/>}
                     </BottomNavigation>
                 </Paper>
             }

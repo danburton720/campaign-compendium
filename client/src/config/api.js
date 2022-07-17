@@ -20,7 +20,8 @@ export const API = {
         session_updates: `${API_ROOT}/campaigns/{campaignId}/session-updates`,
         notes: `${API_ROOT}/campaigns/{campaignId}/notes`,
         my_notes: `${API_ROOT}/campaigns/{campaignId}/notes/created-by-me`,
-        characters: `${API_ROOT}/campaigns/{campaignId}/characters`
+        characters: `${API_ROOT}/campaigns/{campaignId}/characters`,
+        quests: `${API_ROOT}/campaigns/{campaignId}/quests`
     },
     characters: {
         character: `${API_ROOT}/characters/{characterId}`,
@@ -32,5 +33,11 @@ export const API = {
     },
     notes: {
         note: `${API_ROOT}/notes/{noteId}`
+    },
+    quests: {
+        quest: `${API_ROOT}/quests/{questId}`
+    },
+    quest_milestones: {
+        quest_milestone: `${API_ROOT}/quest-milestones/{questMilestoneId}`
     }
 };

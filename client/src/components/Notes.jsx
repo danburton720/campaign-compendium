@@ -121,13 +121,6 @@ const Notes = () => {
             )
         }
 
-        if (pending) {
-            return (
-                <Box minHeight='50vh' paddingBottom='4rem' marginTop='1rem' display='flex' alignItems='center' justifyContent='center'>
-                    <CircularProgress />
-                </Box>
-            )
-        }
         return (
             <Box height='100%' overflow='auto' display='flex' flexDirection='column' gap={2}>
                 {notesData.map(note => (
@@ -220,6 +213,14 @@ const Notes = () => {
     }, [deleteNotePending, prevDeleteNotePending, deleteNoteSuccess, deleteNoteError]);
 
     useDebouncedPending(setPending, [notesPending, charactersPending]);
+
+    if (pending) {
+        return (
+            <Box minHeight='calc(100vh - 7rem)' display='flex' justifyContent='center' alignItems='center'>
+                <CircularProgress />
+            </Box>
+        )
+    }
 
     return (
         <>
@@ -370,7 +371,7 @@ const Notes = () => {
                         flexDirection='column'
                         gap={2}
                     >
-                        {renderNotes()}
+                        {!pending && renderNotes()}
                         {!pending && notesData.length > 0 &&
                             <Paper
                                 sx={{
