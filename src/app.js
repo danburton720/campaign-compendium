@@ -13,6 +13,8 @@ const campaignRouter = require('./routers/campaign');
 const characterRouter = require('./routers/character');
 const sessionUpdateRouter = require('./routers/sessionUpdate');
 const noteRouter = require('./routers/note');
+const questRouter = require('./routers/quest');
+const questMilestoneRouter = require('./routers/questMilestone');
 
 const app = express();
 
@@ -66,7 +68,7 @@ passport.use(new GoogleStrategy({
             const newUser = new User({
                 googleId: profile.id,
                 displayName: profile.displayName,
-                email: profile.emails[0].value,
+                email: profile.emails[0].value.toLowerCase(),
                 firstName: profile.name.givenName,
                 lastName: profile.name.familyName,
                 image: profile.photos[0].value,
@@ -96,6 +98,8 @@ app.use('/api', campaignRouter);
 app.use('/api', characterRouter);
 app.use('/api', sessionUpdateRouter);
 app.use('/api', noteRouter);
+app.use('/api', questRouter);
+app.use('/api', questMilestoneRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.get('*', (req,res) =>{

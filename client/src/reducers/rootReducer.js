@@ -6,13 +6,15 @@ import campaignReducer from './campaignReducer';
 import sessionUpdateReducer from './sessionUpdateReducer';
 import noteReducer from './noteReducer';
 import characterReducer from './characterReducer';
+import questReducer from './questReducer';
 
 const appReducer = combineReducers({
     auth: authReducer,
     campaigns: campaignReducer,
     sessionUpdates: sessionUpdateReducer,
     notes: noteReducer,
-    characters: characterReducer
+    characters: characterReducer,
+    quests: questReducer
 });
 
 const rootReducer = (state, action) => {

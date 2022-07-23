@@ -51,7 +51,7 @@ router.post('/campaigns', async (req, res) => {
             }
             res.status(201).send(campaign);
         } catch (e) {
-
+            res.status(400).send({});
         }
     } else {
         res.status(401).send({});
@@ -178,11 +178,11 @@ router.post("/campaigns/:id/invite", async (req, res) => {
         if (!req.body.email) return res.status(400).send('No email address provided');
 
         const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
-        if (!foundUser) return res.status(400).send("User not in system");
+        if (!foundUser) return res.status(404).send("User not in system");
 
         // get campaign to which this invite relates
         const campaign = await Campaign.findById(_id);
-        if (!campaign) return res.status(500).send('A campaign could not be found for the given ID');
+        if (!campaign) return res.status(404).send('A campaign could not be found for the given ID');
 
         // check if the campaign to which this user is being invited to has been created by the requesting user
         if (!campaign.createdBy.equals(req.user._id)) return res.status(401).send('You are not authorised to invite users to this campaign');

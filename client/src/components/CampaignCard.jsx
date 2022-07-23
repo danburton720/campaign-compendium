@@ -24,7 +24,7 @@ const CampaignCard = ({ campaign, buttonText, onButtonClick }) => {
                             textOverflow: 'ellipsis'
                         }}
                     >
-                        <Typography variant="body2">{campaign.description}</Typography>
+                        <Typography>{campaign.description}</Typography>
                     </Box>
                 </Box>
                 <Button

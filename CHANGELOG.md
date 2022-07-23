@@ -1,3 +1,30 @@
+## Next Release - TBC
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [1.2.0] - 23/07/2022
+### Added
+
+- Added new `POST` `/campaigns/:id/quests` endpoint for users to create quests on a campaign
+- Added new `GET` `/campaigns/:id/quests` endpoint for users to fetch quests on a campaign
+- Added new `DELETE` `/quests/:id` endpoint for users to delete a quest and all associated milestones
+- Added new `PATCH` `/quests/:id` endpoint for users to edit a quest
+- Added new `POST` `/quest-milestones/:id/complete` endpoint for users to mark a quest as complete
+- Added new `POST` `/quest-milestones/:id/incomplete` endpoint for users to mark a quest as incomplete
+- Added navigation to `quests` feature from campaign page
+- Added UI elements to create, edit, and delete quests, and tick off objectives as they are completed
+- Swapped out rich text formatting for an ordinary text input on session updates due to lack of mobile support
+
+### Changed
+
+### Fixed
+
+- Fixed a bug with edit campaign description which populated the edit box with the campaign name.
+
 ## [1.1.2] - 2022-06-09
 ### Added
 
