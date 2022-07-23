@@ -208,7 +208,7 @@ const Notes = () => {
     useEffect(() => {
         if (!deleteNotePending && prevDeleteNotePending) {
             if (deleteNoteSuccess) enqueueSnackbar('Note successfully deleted', { variant: 'success' });
-            if (deleteNoteError) enqueueSnackbar(addNoteError, { variant: 'error' });
+            if (deleteNoteError) enqueueSnackbar(deleteNoteError, { variant: 'error' });
         }
     }, [deleteNotePending, prevDeleteNotePending, deleteNoteSuccess, deleteNoteError]);
 
