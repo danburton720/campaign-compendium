@@ -270,7 +270,6 @@ const QuestAccordion = ({ quest, characters }) => {
                 mode='edit'
                 onClose={() => setShowEditQuestModal(false)}
                 onSave={async (title, description, giverName, milestones, characters) => {
-                    console.log('clicking save')
                     await dispatch(editQuest(quest._id, title, description, giverName, milestones, characters));
                     await dispatch(getAllQuests(id));
                     setShowEditQuestModal(false);

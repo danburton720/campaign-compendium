@@ -7,6 +7,9 @@
 - Added new `PATCH` `/quests/:id` endpoint for users to edit a quest
 - Added new `POST` `/quest-milestones/:id/complete` endpoint for users to mark a quest as complete
 - Added new `POST` `/quest-milestones/:id/incomplete` endpoint for users to mark a quest as incomplete
+- Added navigation to `quests` feature from campaign page
+- Added UI elements to create, edit, and delete quests, and tick off objectives as they are completed
+- Swapped out rich text formatting for an ordinary text input on session updates due to lack of mobile support
 
 ### Changed
 

@@ -21,7 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import axios from 'axios';
-import { convertFromRaw, Editor, EditorState } from 'draft-js';
+// import { convertFromRaw, Editor, EditorState } from 'draft-js';
 import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 
@@ -44,7 +44,7 @@ const SessionUpdates = () => {
     const [sessionUpdateId, setSessionUpdateId] = useState('');
     const [sessionUpdateDate, setSessionUpdateDate] = useState('');
     const [mode, setMode] = useState('add');
-    const [currentContent, setCurrentContent] = useState(undefined);
+    const [currentContent, setCurrentContent] = useState('');
     const [currentDate, setCurrentDate] = useState(undefined);
     const [pending, setPending] = useState(false);
     const [index, setIndex] = useState(0);
@@ -156,7 +156,7 @@ const SessionUpdates = () => {
 
         if (!pending) {
             const sessionUpdate = sessionUpdatesData[index];
-            const editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(sessionUpdate.content)));
+            // const editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(sessionUpdate.content)));
             return (
                 <>
                     <Box display='flex' alignItems='center' marginBottom='.5rem'>
@@ -193,11 +193,12 @@ const SessionUpdates = () => {
                                         </IconButton>
                                     </Box>
                                 }
-                                <Editor
-                                    editorState={editorState}
-                                    onChange={x => x}
-                                    readOnly
-                                />
+                                <Typography sx={{ width: '100%', wordWrap: 'break-word' }}>{sessionUpdate.content}</Typography>
+                                {/*<Editor*/}
+                                {/*    editorState={editorState}*/}
+                                {/*    onChange={x => x}*/}
+                                {/*    readOnly*/}
+                                {/*/>*/}
                             </Stack>
                         </CardContent>
                     </Card>
