@@ -1,4 +1,12 @@
-## [1.2.0] - TBC
+## Next Release - TBC
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [1.2.0] - 23/07/2022
 ### Added
 
 - Added new `POST` `/campaigns/:id/quests` endpoint for users to create quests on a campaign
