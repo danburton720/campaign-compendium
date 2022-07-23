@@ -22,7 +22,9 @@ import CharacterCard from './CharacterCard';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmDelete from './Modals/ConfirmDelete';
-import { deleteQuest } from '../actions/questActions';
+import { addQuest, deleteQuest, editQuest, getAllQuests } from '../actions/questActions';
+import AddEditQuest from './Modals/AddEditQuest';
+import { useParams } from 'react-router-dom';
 
 const QuestAccordion = ({ quest, characters }) => {
     const theme = useTheme();
@@ -35,8 +37,10 @@ const QuestAccordion = ({ quest, characters }) => {
         quest.milestones.filter(milestone => milestone.complete).length
     );
     const [anchorEl, setAnchorEl] = useState(null);
-    const [showAddEditQuestModal, setShowAddEditQuestModal] = useState(false);
+    const [showEditQuestModal, setShowEditQuestModal] = useState(false);
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+
+    const { id } = useParams();
 
     const totalNumberOfMilestones = quest.milestones.length;
     const involvedCharacters = characters.filter(character => quest.characters.includes(character._id));
@@ -226,7 +230,7 @@ const QuestAccordion = ({ quest, characters }) => {
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem
-                        onClick={() => setShowAddEditQuestModal(true)}
+                        onClick={() => setShowEditQuestModal(true)}
                     >
                         <ListItemIcon>
                             <EditIcon />
@@ -260,6 +264,19 @@ const QuestAccordion = ({ quest, characters }) => {
                 }}
                 modalTitle={`Delete quest?`}
                 modalSubheading={`Are you sure you want to delete this quest? This action cannot be reversed.`}
+            />
+            <AddEditQuest
+                open={showEditQuestModal}
+                mode='edit'
+                onClose={() => setShowEditQuestModal(false)}
+                onSave={async (title, description, giverName, milestones, characters) => {
+                    console.log('clicking save')
+                    await dispatch(editQuest(quest._id, title, description, giverName, milestones, characters));
+                    await dispatch(getAllQuests(id));
+                    setShowEditQuestModal(false);
+                }}
+                allCharacters={characters}
+                currentQuest={quest}
             />
         </Accordion>
     );

@@ -37,6 +37,11 @@ const MenuProps = {
     },
 };
 
+const getCharacters = (allCharacters, involvedCharacters) => {
+    const characterList = allCharacters.filter(character => involvedCharacters.includes(character._id));
+    return characterList.map(character => character.name);
+}
+
 const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest }) => {
     const [title, setTitle] = useState(currentQuest ? currentQuest.title : '');
     const [titleError, setTitleError] = useState(false);
@@ -45,7 +50,7 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
     const [giverName, setGiverName] = useState(currentQuest ? currentQuest.giverName : '');
     const [milestones, setMilestones] = useState(currentQuest ? currentQuest.milestones : []);
     const [milestoneErrors, setMilestoneErrors] = useState(currentQuest ? currentQuest.milestones.map(_milestone => false) : []);
-    const [characters, setCharacters] = useState(currentQuest ? currentQuest.characters : []);
+    const [characters, setCharacters] = useState(currentQuest ? getCharacters(allCharacters, currentQuest.characters) : []);
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -68,7 +73,7 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
             setDescription(currentQuest ? currentQuest.description : '');
             setGiverName(currentQuest ? currentQuest.giverName : '');
             setMilestones(currentQuest ? currentQuest.milestones : []);
-            setCharacters(currentQuest ? currentQuest.characters : []);
+            setCharacters(currentQuest ? getCharacters(allCharacters, currentQuest.characters) : []);
             setTitleError(false);
             setDescriptionError(false);
             setMilestoneErrors(currentQuest ? currentQuest.milestones.map(_milestone => false) : []);

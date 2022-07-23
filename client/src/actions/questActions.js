@@ -11,6 +11,9 @@ export const DELETE_QUEST_IN_STORE = 'DELETE_QUEST_IN_STORE';
 export const SET_ADD_QUEST_PENDING = 'SET_ADD_QUEST_PENDING';
 export const SET_ADD_QUEST_SUCCESS = 'SET_ADD_QUEST_SUCCESS';
 export const SET_ADD_QUEST_ERROR = 'SET_ADD_QUEST_ERROR';
+export const SET_EDIT_QUEST_PENDING = 'SET_EDIT_QUEST_PENDING';
+export const SET_EDIT_QUEST_SUCCESS = 'SET_EDIT_QUEST_SUCCESS';
+export const SET_EDIT_QUEST_ERROR = 'SET_EDIT_QUEST_ERROR';
 
 export function setQuestsPending(pending) {
     return {
@@ -82,6 +85,27 @@ export function setAddQuestError(error) {
     }
 }
 
+export function setEditQuestPending(pending) {
+    return {
+        type: SET_EDIT_QUEST_PENDING,
+        payload: pending
+    }
+}
+
+export function setEditQuestSuccess(success) {
+    return {
+        type: SET_EDIT_QUEST_SUCCESS,
+        payload: success
+    }
+}
+
+export function setEditQuestError(error) {
+    return {
+        type: SET_EDIT_QUEST_ERROR,
+        payload: error
+    }
+}
+
 export function getAllQuests(campaignId) {
     return async dispatch => {
         dispatch(setQuestsPending(true));
@@ -130,6 +154,23 @@ export function addQuest(campaignId, title, description, giverName, milestones, 
         } catch (err) {
             dispatch(setAddQuestError(err.response.data));
             dispatch(setAddQuestPending(false));
+        }
+    };
+}
+
+export function editQuest(questId, title, description, giverName, milestones, characters) {
+    return async dispatch => {
+        dispatch(setEditQuestPending(true));
+        dispatch(setEditQuestSuccess(false));
+        dispatch(setEditQuestError(null));
+        try {
+            const endpoint = API.quests.quest.replaceAll('{questId}', questId);
+            await axios.patch(endpoint, { title, description, giverName, milestones, characters }, { withCredentials: true });
+            dispatch(setEditQuestSuccess(true));
+            dispatch(setEditQuestPending(false));
+        } catch (err) {
+            dispatch(setEditQuestError(err.response.data));
+            dispatch(setEditQuestPending(false));
         }
     };
 }

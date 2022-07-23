@@ -8,7 +8,10 @@ import {
     DELETE_QUEST_IN_STORE,
     SET_ADD_QUEST_PENDING,
     SET_ADD_QUEST_SUCCESS,
-    SET_ADD_QUEST_ERROR
+    SET_ADD_QUEST_ERROR,
+    SET_EDIT_QUEST_PENDING,
+    SET_EDIT_QUEST_SUCCESS,
+    SET_EDIT_QUEST_ERROR
 } from '../actions/questActions';
 
 const initialState = {
@@ -20,7 +23,10 @@ const initialState = {
     deleteError: null,
     addPending: false,
     addSuccess: false,
-    addError: false
+    addError: false,
+    editPending: false,
+    editSuccess: false,
+    editError: false,
 };
 
 const questsReducer = (state = initialState, action) => {
@@ -76,6 +82,21 @@ const questsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 addError: action.payload
+            }
+        case SET_EDIT_QUEST_PENDING:
+            return {
+                ...state,
+                editPending: action.payload
+            }
+        case SET_EDIT_QUEST_SUCCESS:
+            return {
+                ...state,
+                editSuccess: action.payload
+            }
+        case SET_EDIT_QUEST_ERROR:
+            return {
+                ...state,
+                editError: action.payload
             }
         default:
             return state;

@@ -25,12 +25,16 @@ const Quests = () => {
     const addQuestPending = useSelector(state => state.quests.addPending);
     const addQuestSuccess = useSelector(state => state.quests.addSuccess);
     const addQuestError = useSelector(state => state.quests.addError);
+    const editQuestPending = useSelector(state => state.quests.editPending);
+    const editQuestSuccess = useSelector(state => state.quests.editSuccess);
+    const editQuestError = useSelector(state => state.quests.editError);
 
     const [pending, setPending] = useState(false);
     const [showAddQuestModal, setShowAddQuestModal] = useState(false);
 
     const prevDeleteQuestPending = usePrevious(deleteQuestPending);
     const prevAddQuestPending = usePrevious(addQuestPending);
+    const prevEditQuestPending = usePrevious(editQuestPending);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -53,6 +57,13 @@ const Quests = () => {
             if (addQuestError) enqueueSnackbar(addQuestError, { variant: 'error' });
         }
     }, [addQuestPending, prevAddQuestPending, addQuestSuccess, addQuestError]);
+
+    useEffect(() => {
+        if (!editQuestPending && prevEditQuestPending) {
+            if (editQuestSuccess) enqueueSnackbar('Quest successfully edited', { variant: 'success' });
+            if (editQuestError) enqueueSnackbar(editQuestError, { variant: 'error' });
+        }
+    }, [editQuestPending, prevEditQuestPending, editQuestSuccess, editQuestError]);
 
     useEffect(() => {
         if (!deleteQuestPending && prevDeleteQuestPending) {
