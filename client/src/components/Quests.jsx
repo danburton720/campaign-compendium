@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
 
 import { ROUTES } from '../constants';
 import { getAllQuests } from '../actions/questActions';
@@ -11,6 +12,7 @@ import QuestAccordion from './QuestAccordion';
 import { getAllCampaignCharacters } from '../actions/characterActions';
 import { usePrevious } from '../hooks/usePrevious';
 import { useSnackbar } from 'notistack';
+import AddEditQuest from './Modals/AddEditQuest';
 
 const Quests = () => {
     const questsPending = useSelector(state => state.quests.pending);
@@ -22,6 +24,7 @@ const Quests = () => {
     const deleteQuestError = useSelector(state => state.quests.deleteError);
 
     const [pending, setPending] = useState(false);
+    const [showAddQuestModal, setShowAddQuestModal] = useState(false);
 
     const prevDeleteQuestPending = usePrevious(deleteQuestPending);
 
@@ -31,9 +34,13 @@ const Quests = () => {
 
     const { enqueueSnackbar } = useSnackbar();
 
+    const fetchData = async () => {
+        await dispatch(getAllQuests(id));
+        await dispatch(getAllCampaignCharacters(id));
+    }
+
     useEffect(() => {
-        dispatch(getAllQuests(id));
-        dispatch(getAllCampaignCharacters(id));
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -56,6 +63,18 @@ const Quests = () => {
 
         return (
             <Box height='100%' overflow='auto' display='flex' flexDirection='column'>
+                <Box display='flex' alignItems='center' gap={2} justifyContent='end' marginBottom='1rem'>
+                    <Button
+                        variant="contained"
+                        onClick={() => setShowAddQuestModal(true)}
+                        startIcon={<AddIcon/>}
+                        sx={{
+                            width: 'fit-content',
+                        }}
+                    >
+                        Add quest
+                    </Button>
+                </Box>
                 {questsData.map(quest => (
                     <React.Fragment key={quest._id}>
                         <QuestAccordion quest={quest} characters={charactersData} />
@@ -88,6 +107,17 @@ const Quests = () => {
                 <>
                     {!pending && renderQuests()}
                 </>
+                <AddEditQuest
+                    open={showAddQuestModal}
+                    mode='add'
+                    onClose={() => setShowAddQuestModal(false)}
+                    onSave={async (title, description, giverName, milestones, characters) => {
+                        // await dispatch(addQuest(id, title, description, giverName, milestones, characters));
+                        await fetchData();
+                        setShowAddQuestModal(false);
+                    }}
+                    allCharacters={charactersData}
+                />
             </Box>
         </>
     )

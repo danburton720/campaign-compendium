@@ -75,7 +75,11 @@ const QuestAccordion = ({ quest, characters }) => {
     return (
         <Accordion
             sx={{
-                backgroundColor: numberOfCompleteMilestones === totalNumberOfMilestones ? '#c2c2c2' : 'white'
+                backgroundColor: numberOfCompleteMilestones === totalNumberOfMilestones ? '#cfcfcf' : 'white',
+                webkitTransition: 'background-color .5s ease-out',
+                mozTransition: 'background-color .5s ease-out',
+                oTransition: 'background-color .5s ease-out',
+                transition: 'background-color .5s ease-out',
             }}
         >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -174,13 +178,13 @@ const QuestAccordion = ({ quest, characters }) => {
                     </FormGroup>
                     <Stack>
                         <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Characters</Typography>
-                        <Stack gap={2}>
+                        <Box display='flex' flexWrap='wrap' gap={2}>
                             {involvedCharacters.map(character => (
                                 <React.Fragment key={character._id}>
                                     <CharacterCard character={character} />
                                 </React.Fragment>
                             ))}
-                        </Stack>
+                        </Box>
                     </Stack>
                 </Stack>
                 <Menu
