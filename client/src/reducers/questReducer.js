@@ -5,7 +5,10 @@ import {
     SET_DELETE_QUEST_PENDING,
     SET_DELETE_QUEST_SUCCESS,
     SET_DELETE_QUEST_ERROR,
-    DELETE_QUEST_IN_STORE
+    DELETE_QUEST_IN_STORE,
+    SET_ADD_QUEST_PENDING,
+    SET_ADD_QUEST_SUCCESS,
+    SET_ADD_QUEST_ERROR
 } from '../actions/questActions';
 
 const initialState = {
@@ -14,7 +17,10 @@ const initialState = {
     error: null,
     deletePending: false,
     deleteSuccess: false,
-    deleteError: null
+    deleteError: null,
+    addPending: false,
+    addSuccess: false,
+    addError: false
 };
 
 const questsReducer = (state = initialState, action) => {
@@ -55,6 +61,21 @@ const questsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: newDataWithoutDeletedQuest
+            }
+        case SET_ADD_QUEST_PENDING:
+            return {
+                ...state,
+                addPending: action.payload
+            }
+        case SET_ADD_QUEST_SUCCESS:
+            return {
+                ...state,
+                addSuccess: action.payload
+            }
+        case SET_ADD_QUEST_ERROR:
+            return {
+                ...state,
+                addError: action.payload
             }
         default:
             return state;

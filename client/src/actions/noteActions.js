@@ -209,7 +209,7 @@ export function addNote(campaignId, relatedCharacter, content) {
         dispatch(setAddNoteError(null));
         try {
             const endpoint = API.campaigns.notes.replaceAll('{campaignId}', campaignId);
-            const response = await axios.post(endpoint, { relatedCharacter, content }, { withCredentials: true });
+            await axios.post(endpoint, { relatedCharacter, content }, { withCredentials: true });
             // dispatch(addNoteToStore(response.data));
             dispatch(setAddNoteSuccess(true));
             dispatch(setAddNotePending(false));

@@ -6,7 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 
 import { ROUTES } from '../constants';
-import { getAllQuests } from '../actions/questActions';
+import { addQuest, getAllQuests } from '../actions/questActions';
 import useDebouncedPending from '../hooks/useDebouncedPending';
 import QuestAccordion from './QuestAccordion';
 import { getAllCampaignCharacters } from '../actions/characterActions';
@@ -22,11 +22,15 @@ const Quests = () => {
     const deleteQuestPending = useSelector(state => state.quests.deletePending);
     const deleteQuestSuccess = useSelector(state => state.quests.deleteSuccess);
     const deleteQuestError = useSelector(state => state.quests.deleteError);
+    const addQuestPending = useSelector(state => state.quests.addPending);
+    const addQuestSuccess = useSelector(state => state.quests.addSuccess);
+    const addQuestError = useSelector(state => state.quests.addError);
 
     const [pending, setPending] = useState(false);
     const [showAddQuestModal, setShowAddQuestModal] = useState(false);
 
     const prevDeleteQuestPending = usePrevious(deleteQuestPending);
+    const prevAddQuestPending = usePrevious(addQuestPending);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -42,6 +46,13 @@ const Quests = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!addQuestPending && prevAddQuestPending) {
+            if (addQuestSuccess) enqueueSnackbar('Quest successfully added', { variant: 'success' });
+            if (addQuestError) enqueueSnackbar(addQuestError, { variant: 'error' });
+        }
+    }, [addQuestPending, prevAddQuestPending, addQuestSuccess, addQuestError]);
 
     useEffect(() => {
         if (!deleteQuestPending && prevDeleteQuestPending) {
@@ -112,7 +123,7 @@ const Quests = () => {
                     mode='add'
                     onClose={() => setShowAddQuestModal(false)}
                     onSave={async (title, description, giverName, milestones, characters) => {
-                        // await dispatch(addQuest(id, title, description, giverName, milestones, characters));
+                        await dispatch(addQuest(id, title, description, giverName, milestones, characters));
                         await fetchData();
                         setShowAddQuestModal(false);
                     }}

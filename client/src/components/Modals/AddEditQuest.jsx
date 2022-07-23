@@ -144,9 +144,6 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
                             <>
                                 {milestones.map((milestone, index) => {
                                     const isError = milestoneErrors[index];
-                                    console.log('seeing if the milestone is in error')
-                                    console.log('milestoneErrors', milestoneErrors)
-                                    console.log('index', index)
                                     return (
                                         <Box
                                             key={milestone._id}
@@ -160,12 +157,7 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
                                                 variant="standard"
                                                 value={milestone.name}
                                                 onChange={e => {
-                                                    console.log('in text field onChange')
-                                                    console.log('milestones', milestones)
                                                     const newMilestones = [ ...milestones ];
-                                                    console.log('newMilestones', newMilestones)
-                                                    console.log('index', index)
-                                                    console.log('value', e.target.value)
                                                     newMilestones[index].name = e.target.value;
                                                     setMilestones(newMilestones);
                                                     const newMilestoneErrors = [ ...milestoneErrors ];
@@ -204,14 +196,12 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
                             variant="contained"
                             startIcon={<AddIcon />}
                             onClick={() => {
-                                console.log('adding new milestone')
                                 const newMilestones = [ ...milestones ];
                                 newMilestones.push({
                                     _id: Math.random(),
                                     name: '',
-                                    completed: false
+                                    complete: false
                                 });
-                                console.log('newMilestones', newMilestones)
 
                                 setMilestones(newMilestones);
                                 const newMilestoneErrors = [ ...milestoneErrors ];
@@ -252,7 +242,11 @@ const AddEditQuest = ({ open, mode, onClose, onSave, allCharacters, currentQuest
                     Cancel
                 </Button>
                 <Button
-                    onClick={() => onSave(title, description, giverName, milestones, characters)}
+                    onClick={() => {
+                        const formattedMilestones = milestones.map(milestone => ({ name: milestone.name, complete: milestone.complete }));
+                        const characterIds = allCharacters.filter(character => characters.includes(character.name)).map(character => character._id);
+                        onSave(title, description, giverName, formattedMilestones, characterIds);
+                    }}
                     disabled={
                         titleError ||
                         !title ||
