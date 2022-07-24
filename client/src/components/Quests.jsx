@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Box, Button, CircularProgress } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Stack } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -77,9 +77,23 @@ const Quests = () => {
     const renderQuests = () => {
         if (!pending && questsData.length === 0) {
             return (
-                <Alert severity="info" sx={{ marginTop: '1rem' }}>
-                    No quests have been added to this campaign
-                </Alert>
+                <Stack>
+                    <Alert severity="info" sx={{ marginTop: '1rem' }}>
+                        No quests have been added to this campaign
+                    </Alert>
+                    <Button
+                        variant="contained"
+                        onClick={() => setShowAddQuestModal(true)}
+                        startIcon={<AddIcon/>}
+                        sx={{
+                            marginTop: '1rem',
+                            marginLeft: 'auto',
+                            width: 'fit-content',
+                        }}
+                    >
+                        Add quest
+                    </Button>
+                </Stack>
             )
         }
 

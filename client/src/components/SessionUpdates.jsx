@@ -193,7 +193,15 @@ const SessionUpdates = () => {
                                         </IconButton>
                                     </Box>
                                 }
-                                <Typography sx={{ width: '100%', wordWrap: 'break-word' }}>{sessionUpdate.content}</Typography>
+                                <Typography
+                                    sx={{
+                                        width: '100%',
+                                        wordWrap: 'break-word',
+                                        whiteSpace: 'pre-line'
+                                    }}
+                                >
+                                    {sessionUpdate.content}
+                                </Typography>
                                 {/*<Editor*/}
                                 {/*    editorState={editorState}*/}
                                 {/*    onChange={x => x}*/}

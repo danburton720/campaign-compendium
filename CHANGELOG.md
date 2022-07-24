@@ -6,6 +6,17 @@
 
 ### Fixed
 
+## [1.2.1] - 24/07/2022
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Fixed issue with "Add Quest" button not appearing when no quests exist on the campaign
+- Fixed issue with session update to render the line breaks entered and saved previously
+
 ## [1.2.0] - 23/07/2022
 ### Added
 
