@@ -138,6 +138,7 @@ const SessionUpdates = () => {
                         <Button
                             variant="contained"
                             onClick={() => {
+                                setCurrentContent('');
                                 setMode('add');
                                 setShowAddEditSessionUpdate(true);
                             }}
@@ -168,6 +169,7 @@ const SessionUpdates = () => {
                             <Button
                                 variant="contained"
                                 onClick={() => {
+                                    setCurrentContent('');
                                     setMode('add');
                                     setShowAddEditSessionUpdate(true);
                                 }}
